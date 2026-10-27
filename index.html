@@ -183,6 +183,46 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
   .card{padding:15px 16px}
   .tabs button{height:28px;padding:0 13px}
 }
+/* ---------- 餐厅与经济 ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.kpi{
+  background:var(--card);background-image:linear-gradient(180deg,rgba(255,255,255,.032),transparent 44%);
+  border-radius:14px;padding:14px 16px;box-shadow:var(--e2);min-width:0;
+}
+.kpi .lbl{font-size:10.5px;letter-spacing:.12em;color:var(--ink3)}
+.kpi .val{font-size:23px;font-weight:650;line-height:1.2;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi .val small{font-size:11.5px;font-weight:400;color:var(--ink3);margin-left:3px}
+.kpi .sub{font-size:11px;color:var(--ink3);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.two{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{font-size:10.5px;font-weight:500;letter-spacing:.08em;color:var(--ink3);text-align:left;padding:0 9px 8px 0;border-bottom:1px solid var(--hair);white-space:nowrap}
+.tbl td{padding:8px 9px 8px 0;border-bottom:1px solid var(--hair);color:var(--ink2);white-space:nowrap}
+.tbl tr:last-child td{border-bottom:0}
+.tbl th.r,.tbl td.r{text-align:right;font-variant-numeric:tabular-nums}
+.tbl td.name{color:var(--ink)}
+.econ-row{display:grid;grid-template-columns:128px minmax(0,1fr) 112px;gap:14px;align-items:center;padding:10px 0;border-top:1px solid var(--hair)}
+.econ-row:first-child{border-top:0;padding-top:0}
+.econ-row .lb b{display:block;font-size:12px;color:var(--ink);font-weight:600}
+.econ-row .lb span{font-size:10.5px;color:var(--ink3)}
+.econ-row .vv{text-align:right;font-variant-numeric:tabular-nums}
+.econ-row .vv b{font-size:15px}
+.econ-row .vv span{display:block;font-size:10.5px;color:var(--ink3)}
+.spark{width:100%;height:36px;display:block}
+.trend{width:100%;height:190px;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--ink3);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:2px;vertical-align:3px;margin-right:5px}
+.hbar{display:grid;grid-template-columns:minmax(70px,118px) minmax(0,1fr) 74px;gap:9px;align-items:center;font-size:12px;padding:4px 0}
+.hbar .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink2)}
+.hbar .tr{height:8px;background:rgba(255,255,255,.05);border-radius:5px;overflow:hidden}
+.hbar .tr i{display:block;height:100%;min-width:2px;border-radius:5px;background:var(--amber)}
+.hbar .v{text-align:right;font-size:11px;color:var(--ink2);font-variant-numeric:tabular-nums}
+@media (max-width:760px){
+  .two,.three{grid-template-columns:1fr}
+  .econ-row{grid-template-columns:minmax(0,1fr) 100px;gap:8px 12px}
+  .econ-row .spark{grid-column:1/-1;order:3;height:30px}
+}
 </style>
 </head>
 <body>
@@ -196,6 +236,7 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
   <div class="tabs">
     <button class="act" data-t="rank">排行榜</button>
     <button data-t="prog">大家的进度</button>
+    <button data-t="eco">餐厅与经济</button>
   </div>
 
   <section class="tab act" id="t-rank">
@@ -206,6 +247,38 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
 
   <section class="tab" id="t-prog">
     <div class="grid players" id="players"></div>
+  </section>
+
+  <section class="tab" id="t-eco">
+    <div class="kpis" id="ecoKpis"></div>
+    <div class="card" style="margin-bottom:14px">
+      <h3>全服经济总量<span class="r">近 24 小时 · 每 6 分钟一个点</span></h3>
+      <div id="econRows"></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <h3>餐厅排行<span class="r">数据来自下单了打单机</span></h3>
+      <div class="tbl-wrap"><table class="tbl" id="restTable"></table></div>
+    </div>
+    <div class="grid two" style="margin-bottom:14px">
+      <div class="card">
+        <h3>营收增长<span class="r">近 7 天 · 每小时一个点</span></h3>
+        <svg class="trend" id="earnChart" viewBox="0 0 800 190" preserveAspectRatio="none"></svg>
+        <div class="legend" id="earnLegend"></div>
+      </div>
+      <div class="card"><h3>今日营收<span class="r">从今天 0 点算</span></h3><div id="todayBars"></div></div>
+    </div>
+    <div class="grid two" style="margin-bottom:14px">
+      <div class="card"><h3>个人存量<span class="r">身上的币 + 末影箱 · 含离线最后一次</span></h3><div id="coinBars"></div></div>
+      <div class="card"><h3>玩家累计营收<span class="r">主线看这个</span></h3><div id="earnBars"></div></div>
+    </div>
+    <div class="grid two" style="margin-bottom:14px">
+      <div class="card"><h3>商店热卖<span class="r">按花掉的币</span></h3><div id="shopTop"></div></div>
+      <div class="card"><h3>各柜台<span class="r">花费</span></h3><div id="shopCounter"></div></div>
+    </div>
+    <div class="card">
+      <h3>最近购买<span class="r">最近 30 笔</span></h3>
+      <div class="tbl-wrap"><table class="tbl" id="shopLog"></table></div>
+    </div>
   </section>
 
   <footer>数据由服务器每 10 分钟自动更新 · 原版统计跟着存档走，最多再晚 5 分钟</footer>
@@ -273,6 +346,116 @@ const BOARDS = [
 ];
 const ava = (n, size) => `<div class="ava" style="width:${size}px;height:${size}px">${esc(n[0].toUpperCase())}<img src="https://mc-heads.net/avatar/${encodeURIComponent(n)}/${size}" alt="" onerror="this.remove()" onload="this.parentNode.firstChild.textContent=''"></div>`;
 
+// ---------- 餐厅与经济 ----------
+const PALETTE = ['#f2a541', '#7fa8ff', '#6fc49a', '#b79cff', '#e0614a', '#5fd0d6', '#f07fb5', '#c9d36a'];
+const COUNTERS = {leisure:'休闲柜台',t1:'工坊柜台',t2:'物流柜台',t3:'智控柜台',craft:'手作与摆件',redstone:'红石与电脑',tools:'工具柜台'};
+const starHtml = lv => Array.from({length: 8}, (_, i) => i < lv ? '<b>★</b>' : '★').join('');
+const hhmm = t => { const d = new Date(t); return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+function sparkSvg(vals, color) {
+  if (vals.length < 2) return '';
+  const W = 240, H = 36, pad = 2, n = vals.length;
+  const mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals), sp = (mx - mn) || 1;
+  let d = '';
+  vals.forEach((v, i) => {
+    const x = pad + i / (n - 1) * (W - pad * 2), y = H - pad - (v - mn) / sp * (H - pad * 2);
+    d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+  });
+  const area = d + ' L' + (W - pad) + ' ' + (H - pad) + ' L' + pad + ' ' + (H - pad) + ' Z';
+  const gid = 'sg' + color.replace('#', '');
+  return `<svg class="spark" viewBox="0 0 240 36" preserveAspectRatio="none"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity=".28"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></linearGradient></defs><path d="${area}" fill="url(#${gid})"/><path d="${d}" fill="none" stroke="${color}" stroke-width="1.4" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
+}
+function hbars(rows, f) {
+  if (!rows.length) return '<div class="empty">还没有数据</div>';
+  const max = Math.max.apply(null, rows.map(r => r.v)) || 1;
+  return rows.map(r => `<div class="hbar"><span class="nm" title="${esc(r.n)}">${esc(r.n)}</span><span class="tr"><i style="width:${r.v / max * 100}%;${r.c ? 'background:' + r.c : ''}"></i></span><span class="v">${esc(f(r.v))}</span></div>`).join('');
+}
+function renderEarnTrend() {
+  const svg = $('earnChart');
+  if (!svg) return;
+  const pts = D.earn || [];
+  const names = [...new Set(pts.flatMap(p => Object.keys(p.e || {})))];
+  if (pts.length < 2 || !names.length) {
+    svg.innerHTML = '<text x="400" y="95" text-anchor="middle" fill="#6b7385" font-size="13">有人开店赚钱以后，每小时记一个点</text>';
+    $('earnLegend').innerHTML = '';
+    return;
+  }
+  const W = 800, H = 190, P = {l: 46, r: 12, t: 10, b: 22};
+  const maxV = Math.max(100, ...pts.flatMap(p => Object.values(p.e || {})));
+  const t0 = pts[0].t, t1 = pts[pts.length - 1].t;
+  const x = t => P.l + (t - t0) / Math.max(1, t1 - t0) * (W - P.l - P.r);
+  const y = v => P.t + (1 - v / maxV) * (H - P.t - P.b);
+  let g = '';
+  [0, .5, 1].forEach(f => {
+    g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(maxV * f)}" y2="${y(maxV * f)}" stroke="rgba(255,255,255,.07)"/><text x="${P.l - 6}" y="${y(maxV * f) + 4}" text-anchor="end" fill="#6b7385" font-size="10">${fmt(maxV * f)}</text>`;
+  });
+  names.forEach((n, i) => {
+    const c = PALETTE[i % PALETTE.length];
+    g += `<path d="${pts.map((p, j) => (j ? 'L' : 'M') + x(p.t).toFixed(1) + ' ' + y((p.e && p.e[n]) || 0).toFixed(1)).join('')}" fill="none" stroke="${c}" stroke-width="2"/>`;
+  });
+  svg.innerHTML = g;
+  $('earnLegend').innerHTML = names.map((n, i) => `<span><i style="background:${PALETTE[i % PALETTE.length]}"></i>${esc(n)}</span>`).join('');
+}
+function renderEco() {
+  if (!$('ecoKpis')) return;
+  const e = D.economy || {}, rs = D.restaurants || [], ps = D.players || [];
+  const kpi = (l, v, s) => `<div class="kpi"><div class="lbl">${l}</div><div class="val">${typeof v === 'number' ? fmt(v) : (v || '—')}</div><div class="sub">${esc(s || '')}</div></div>`;
+  $('ecoKpis').innerHTML = kpi('全服累计营收', e.totalEarn, '所有玩家亲手完成的单')
+    + kpi('大家手里的币', e.coinsHeld, '所有人背包 + 末影箱')
+    + kpi('商店总消费', e.shopTotal, (e.shopCount || 0) + ' 笔')
+    + kpi('餐厅', rs.length, rs.length ? '最高 ' + Math.max(...rs.map(r => r.level)) + ' 星' : '还没人开店');
+
+  const hist = (D.econHist || []).filter(p => p && p.c != null);
+  if (hist.length < 2) {
+    $('econRows').innerHTML = '<div class="empty">等面板下一次同步，这里就有曲线了</div>';
+  } else {
+    const series = [
+      {k: 'c', lb: '大家手里的币', hint: '背包 + 末影箱', color: '#ffc978'},
+      {k: 'e', lb: '累计营收', hint: '所有玩家亲手完成的单', color: '#7aa2ff'},
+      {k: 's', lb: '商店消费', hint: '花在夜市商店的币', color: '#48c9a4'}
+    ];
+    $('econRows').innerHTML = series.map(s => {
+      const vals = hist.map(p => Number(p[s.k]) || 0);
+      const cur = vals[vals.length - 1], diff = cur - vals[0];
+      const pct = vals[0] ? diff / vals[0] * 100 : null;
+      const txt = (!diff && pct == null) ? '24 小时没变' : (diff > 0 ? '+' : '') + fmt(diff) + (pct == null ? '' : ' · ' + (diff > 0 ? '+' : '') + (Math.round(pct * 10) / 10) + '%');
+      return `<div class="econ-row"><div class="lb"><b>${s.lb}</b><span>${s.hint}</span></div>${sparkSvg(vals, s.color)}<div class="vv"><b>${fmt(cur)}</b><span>${txt}</span></div></div>`;
+    }).join('');
+  }
+
+  if (rs.length) {
+    $('restTable').innerHTML = '<tr><th>店名</th><th>店主</th><th>星级</th><th class="r">接单</th><th class="r">外卖</th><th class="r">到店</th><th class="r">营收</th></tr>'
+      + rs.slice().sort((a, b) => b.profit - a.profit).map(r => `<tr><td class="name">${esc(r.name || '（没起名）')}</td><td>${esc(r.owner || '—')}</td><td><span class="stars">${starHtml(Math.max(0, Math.min(8, r.level || 0)))}</span> <span class="dim">${r.level || 0} 星</span></td><td class="r">${fmt(r.accepted)}</td><td class="r">${fmt(r.delivery)}</td><td class="r">${fmt(r.walkIn)}</td><td class="r" style="color:var(--amber2)">${fmt(r.profit)}</td></tr>`).join('');
+  } else $('restTable').innerHTML = '<tr><td class="empty">还没有开店数据</td></tr>';
+
+  renderEarnTrend();
+
+  const todayRows = ps.map(p => ({n: p.name, v: p.todayEarn || 0})).filter(r => r.v > 0).sort((a, b) => b.v - a.v);
+  $('todayBars').innerHTML = todayRows.length ? hbars(todayRows, v => '+' + fmt(v)) : '<div class="empty">今天还没人赚到币</div>';
+  const earnRows = ps.map(p => ({n: p.name, v: p.earn || 0})).filter(r => r.v > 0).sort((a, b) => b.v - a.v).slice(0, 10);
+  $('earnBars').innerHTML = hbars(earnRows, fmt);
+
+  const coinRows = ps.map(p => ({n: p.name, v: (p.coins || 0) + (p.coinsEnder || 0), t: '身上 ' + fmt(p.coins) + ' · 末影箱 ' + fmt(p.coinsEnder)})).filter(r => r.v > 0).sort((a, b) => b.v - a.v);
+  $('coinBars').innerHTML = coinRows.length
+    ? coinRows.slice(0, 12).map(r => `<div class="hbar" title="${esc(r.t)}"><span class="nm">${esc(r.n)}</span><span class="tr"><i style="width:${r.v / coinRows[0].v * 100}%"></i></span><span class="v">${fmt(r.v)}</span></div>`).join('')
+      + '<div class="dim" style="font-size:11px;margin-top:8px">鼠标停在名字上看身上 / 末影箱各多少；离线的人按最后一次记录</div>'
+    : '<div class="empty">大家身上都还没币</div>';
+
+  const items = (D.shop && D.shop.items) || [];
+  $('shopTop').innerHTML = items.length
+    ? hbars(items.slice(0, 10).map(it => ({n: (it.name || it.id) + ' ×' + it.n, v: it.coins})), fmt)
+    : '<div class="empty">还没有人买过东西</div>';
+  const byC = {};
+  items.forEach(it => { byC[it.counter] = (byC[it.counter] || 0) + it.coins; });
+  const cRows = Object.keys(byC).map(k => ({n: COUNTERS[k] || k, v: byC[k], c: /^t|redstone/.test(k) ? 'var(--sky)' : ''})).sort((a, b) => b.v - a.v);
+  $('shopCounter').innerHTML = cRows.length ? hbars(cRows, fmt) : '<div class="empty">还没有人买过东西</div>';
+
+  const log = ((D.shop && D.shop.log) || []).slice(-30).reverse();
+  $('shopLog').innerHTML = log.length
+    ? '<tr><th>时间</th><th>玩家</th><th>商品</th><th class="r">数量</th><th class="r">花费</th></tr>'
+      + log.map(x => `<tr><td class="dim">${hhmm(x.t)}</td><td class="name">${esc(x.who || '—')}</td><td>${esc(x.name || '—')}</td><td class="r">×${fmt(x.n)}</td><td class="r" style="color:var(--amber2)">${fmt(x.price)}</td></tr>`).join('')
+    : '<tr><td class="empty">还没有购买记录（从现在开始记）</td></tr>';
+}
+
 function renderRank() {
   const ps = D.players || [];
   $('cats').innerHTML = CATS.map(c => `<button class="chip ${cat === c[0] ? 'act' : ''}" data-c="${c[0]}">${c[1]}</button>`).join('');
@@ -335,6 +518,7 @@ function render() {
   $('upd').textContent = '更新于 ' + ago(D.updated) + (live ? '' : (Date.now() - D.updated > 40 * 60000 ? '（服务器或面板没开，数据停在这里）' : ''));
   renderRank();
   renderPlayers();
+  renderEco();
 }
 
 async function load() {
