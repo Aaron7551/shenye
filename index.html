@@ -164,6 +164,18 @@ h1{margin:0;font-size:21px;font-weight:650;letter-spacing:.14em;line-height:1.2}
 .prog s{position:absolute;top:-3px;width:2px;height:13px;background:var(--line2);border-radius:1px}
 .prog s.ok{background:var(--amber2)}
 
+/* ---------- 近 24 小时在线时间轴 ---------- */
+.tl-row{display:grid;grid-template-columns:88px minmax(0,1fr) 62px;gap:12px;align-items:center;padding:5px 0;font-size:12px}
+.tl-row .nm{color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl-track{position:relative;height:16px;border-radius:5px;background:rgba(255,255,255,.05);overflow:hidden}
+.tl-track i{position:absolute;top:3px;bottom:3px;border-radius:3px;background:linear-gradient(180deg,#5c7fd6,#4a6cbd);opacity:.92}
+.tl-track i.live{background:linear-gradient(180deg,var(--jade),#37a98a);box-shadow:0 0 12px rgba(72,201,164,.35)}
+.tl-row .v{text-align:right;color:var(--ink3);font-size:11.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tl-axis{display:grid;grid-template-columns:88px minmax(0,1fr) 62px;gap:12px;margin-top:8px;height:12px;font-size:10px;color:#4d5464}
+.tl-axis i{display:block}
+.tl-axis div{position:relative;height:12px}
+.tl-axis span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+
 /* ---------- 杂项 ---------- */
 .dim{color:var(--ink3)}
 .empty{color:var(--ink3);text-align:center;padding:30px 0;font-size:12.5px}
@@ -182,6 +194,7 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
   .kv{grid-template-columns:64px minmax(0,1fr);gap:9px 10px}
   .card{padding:15px 16px}
   .tabs button{height:28px;padding:0 13px}
+  .tl-row,.tl-axis{grid-template-columns:64px minmax(0,1fr) 52px;gap:9px}
 }
 /* ---------- 餐厅与经济 ---------- */
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
@@ -240,6 +253,10 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
   </div>
 
   <section class="tab act" id="t-rank">
+    <div class="card" style="margin-bottom:14px">
+      <h3>近 24 小时谁在线<span class="r" id="tlInfo"></span></h3>
+      <div id="online24"></div>
+    </div>
     <div class="card"><h3>冠军墙<span class="r" style="color:var(--ink3)">谁拿的第一最多</span></h3><div id="wall"></div></div>
     <div class="chips" id="cats"></div>
     <div class="grid boards" id="boards"></div>
@@ -510,12 +527,36 @@ function renderPlayers() {
   }).join('');
 }
 
+function renderOnline24() {
+  const rows = D.online24 || [];
+  const el = $('online24');
+  $('tlInfo').textContent = rows.length ? rows.length + ' 人来过' : '';
+  if (!rows.length) { el.innerHTML = '<div class="empty">近 24 小时没人进服</div>'; return; }
+  const end = D.updated || Date.now(), from = end - 864e5;
+  const W = t => Math.max(0, Math.min(100, (t - from) / (end - from) * 100));
+  const hm = t => new Date(t).toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
+  let axis = '';
+  for (let h = Math.ceil(from / 3600e3) * 3600e3; h <= end; h += 3600e3) {
+    const hr = new Date(h).getHours();
+    if (hr % 4 === 0) axis += `<span style="left:${W(h)}%">${String(hr).padStart(2, '0')}:00</span>`;
+  }
+  const anyLive = rows.some(r => (r.segs || []).some(s => s[2]));
+  el.innerHTML = rows.map(r => {
+    const segs = (r.segs || []).filter(s => s[1] > from);
+    return `<div class="tl-row"><span class="nm" title="${esc(r.n)}">${esc(r.n)}</span>` +
+      `<div class="tl-track">${segs.map(s => `<i class="${s[2] ? 'live' : ''}" style="left:${W(s[0])}%;width:${Math.max(0.4, W(s[1]) - W(s[0]))}%" title="${hm(s[0])} – ${s[2] ? '现在还在服里' : hm(s[1])}"></i>`).join('')}</div>` +
+      `<span class="v">${dur(r.ms)}</span></div>`;
+  }).join('') +
+    `<div class="tl-axis"><i></i><div>${axis}</div><i></i></div>` +
+    `<div class="dim" style="font-size:11.5px;margin-top:10px">${anyLive ? '绿色是现在还在服里；' : ''}横轴是最近 24 小时，鼠标停在色块上看具体时间；进出记录从装上面板脚本开始记。</div>`;
+}
 function render() {
   const live = D.server && D.server.online && Date.now() - D.updated < 40 * 60000;
   const s = $('srv');
   s.className = 'pill' + (live ? ' on' : '');
   s.lastElementChild.textContent = live ? `服务器开着 · ${D.server.players} 人在线` : '服务器休息中';
   $('upd').textContent = '更新于 ' + ago(D.updated) + (live ? '' : (Date.now() - D.updated > 40 * 60000 ? '（服务器或面板没开，数据停在这里）' : ''));
+  renderOnline24();
   renderRank();
   renderPlayers();
   renderEco();
