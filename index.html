@@ -268,7 +268,7 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
       <div class="card"><h3>今日营收<span class="r">从今天 0 点算</span></h3><div id="todayBars"></div></div>
     </div>
     <div class="grid two" style="margin-bottom:14px">
-      <div class="card"><h3>个人存量<span class="r">身上的币 + 末影箱 · 含离线最后一次</span></h3><div id="coinBars"></div></div>
+      <div class="card"><h3>富豪榜<span class="r">身上的币 + 末影箱 · 含离线最后一次</span></h3><div id="coinBars"></div></div>
       <div class="card"><h3>玩家累计营收<span class="r">主线看这个</span></h3><div id="earnBars"></div></div>
     </div>
     <div class="grid two" style="margin-bottom:14px">
@@ -438,7 +438,7 @@ function renderEco() {
   $('coinBars').innerHTML = coinRows.length
     ? coinRows.slice(0, 12).map(r => `<div class="hbar" title="${esc(r.t)}"><span class="nm">${esc(r.n)}</span><span class="tr"><i style="width:${r.v / coinRows[0].v * 100}%"></i></span><span class="v">${fmt(r.v)}</span></div>`).join('')
       + '<div class="dim" style="font-size:11px;margin-top:8px">鼠标停在名字上看身上 / 末影箱各多少；离线的人按最后一次记录</div>'
-    : '<div class="empty">大家身上都还没币</div>';
+    : '<div class="empty">还没有富豪</div>';
 
   const items = (D.shop && D.shop.items) || [];
   $('shopTop').innerHTML = items.length
