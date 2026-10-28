@@ -359,14 +359,14 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
     </div>
 
     <div class="grid three" style="margin-top:14px">
-      <div class="card"><h3>持仓榜<span class="r">身上 + 末影箱</span></h3><div id="coinBars"></div></div>
-      <div class="card"><h3>今日进账<span class="r">今天 0 点起</span></h3><div id="todayBars"></div></div>
+      <div class="card"><h3>富豪榜<span class="r">身上 + 末影箱</span></h3><div id="coinBars"></div></div>
+      <div class="card"><h3>今日营收<span class="r">今天 0 点起</span></h3><div id="todayBars"></div></div>
       <div class="card"><h3>板块成交<span class="r">按柜台</span></h3><div id="shopCounter"></div></div>
     </div>
 
     <div class="grid two" style="margin-top:14px">
       <div class="card"><h3>热门品种<span class="r">按成交额</span></h3><div id="shopTop"></div></div>
-      <div class="card"><h3>累计收益<span class="r">玩家总营收</span></h3><div id="earnBars"></div></div>
+      <div class="card"><h3>玩家累计营收<span class="r">主线看这个</span></h3><div id="earnBars"></div></div>
     </div>
 
     <div class="card" style="margin-top:14px">
@@ -458,6 +458,8 @@ const ECON_S = {
   c: {t: '流通币', c: '#7aa2ff', hint: '所有人背包 + 末影箱'},
   s: {t: '商店成交', c: '#48c9a4', hint: '花在夜市商店的币'}
 };
+// 线按 24 小时整体涨跌上色：涨红、跌绿、不动灰（国内习惯；和 --red / --jade / --ink3 一致）
+const UP_C = '#e0614a', DN_C = '#48c9a4', FLAT_C = '#6b7385';
 let ECON_K = 'e', REST_SORT = 'profit', ECON_PTS = [];
 
 function sparkSvg(vals, color) {
@@ -559,6 +561,7 @@ function drawEconChart() {
   if (hist.length < 2) {
     svg.innerHTML = '<text x="410" y="128" text-anchor="middle" fill="#6b7385" font-size="13">等面板下一次同步，这里就有走势了</text>';
     $('quoteVal').textContent = fmt(fallback);
+    $('quoteVal').style.color = '';
     $('quoteChg').innerHTML = '<span class="chg flat">还没有 24 小时数据</span>';
     $('chartFt').innerHTML = '';
     ECON_PTS = [];
@@ -571,8 +574,11 @@ function drawEconChart() {
   const mn = Math.max(0, mn0 - gapv * 0.18), mx = mx0 + gapv * 0.18;
   const X = i => P.l + i / (vals.length - 1) * (W - P.l - P.r);
   const Y = v => P.t + (1 - (v - mn) / (mx - mn)) * (H - P.t - P.b);
-  const col = meta.c;
-  let g = `<defs><linearGradient id="ecArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${col}" stop-opacity=".32"/><stop offset="100%" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>`;
+  // 大数字用实时的那个汇总值（最多比曲线晚 2 分钟），颜色按它相对 24 小时前是涨是跌
+  const lastV = (fallback != null && isFinite(fallback)) ? Number(fallback) : vals[vals.length - 1];
+  const qc = {ok: true, d: lastV - vals[0], p: vals[0] ? (lastV - vals[0]) / vals[0] * 100 : null};
+  const col = !qc.d ? FLAT_C : (qc.d > 0 ? UP_C : DN_C);
+  let g = `<defs><linearGradient id="ecArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${col}" stop-opacity=".24"/><stop offset="100%" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>`;
   for (let i = 0; i <= 4; i++) {
     const v = mn + (mx - mn) * i / 4, y = Y(v);
     g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,${i === 0 ? '.09' : '.045'})"/>`;
@@ -588,7 +594,9 @@ function drawEconChart() {
   if (flat) {
     g += `<text x="${W - P.r - 2}" y="${P.t + 12}" text-anchor="end" fill="#5d6675" font-size="10">24 小时没有变化</text>`;
   } else {
-    g += `<path d="${line} L${X(vals.length - 1).toFixed(1)} ${H - P.b} L${X(0).toFixed(1)} ${H - P.b} Z" fill="url(#ecArea)"/>`;
+    g += `<path d="${line} L${X(vals.length - 1).toFixed(1)} ${Y(vals[0]).toFixed(1)} L${X(0).toFixed(1)} ${Y(vals[0]).toFixed(1)} Z" fill="url(#ecArea)"/>`;
+    g += `<line x1="${P.l}" x2="${W - P.r}" y1="${Y(vals[0]).toFixed(1)}" y2="${Y(vals[0]).toFixed(1)}" stroke="${FLAT_C}" stroke-dasharray="4 4" opacity=".55"/>`;
+    g += `<text x="${W - P.r - 2}" y="${(Y(vals[0]) - 5).toFixed(1)}" text-anchor="end" fill="#5d6675" font-size="9.5">24 小时前 ${fmt(vals[0])}</text>`;
   }
   g += `<path d="${line}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
   const lx = X(vals.length - 1).toFixed(1), ly = Y(vals[vals.length - 1]).toFixed(1);
@@ -598,8 +606,9 @@ function drawEconChart() {
   svg.innerHTML = g;
   ECON_PTS = vals.map((v, i) => ({x: X(i), y: Y(v), v: v, t: hist[i].t}));
 
-  $('quoteVal').textContent = fmt(vals[vals.length - 1]);
-  $('quoteChg').innerHTML = chgHtml(chgOf(vals)) + '<span class="dim" style="font-size:11px">较 24 小时前</span>';
+  $('quoteVal').textContent = fmt(lastV);
+  $('quoteVal').style.color = col;
+  $('quoteChg').innerHTML = chgHtml(qc) + '<span class="dim" style="font-size:11px">较 24 小时前</span>';
   $('chartFt').innerHTML = `<span>24h 最高 <b>${fmt(mx0)}</b></span><span>最低 <b>${fmt(mn0)}</b></span><span>口径 <b>${meta.hint}</b></span><span>截止 <b>${hhmm(D.updated || Date.now())}</b></span>`;
 
   if (!svg.dataset.wired) {
