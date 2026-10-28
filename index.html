@@ -359,7 +359,7 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
     </div>
 
     <div class="grid three" style="margin-top:14px">
-      <div class="card"><h3>富豪榜<span class="r">身上 + 末影箱</span></h3><div id="coinBars"></div></div>
+      <div class="card"><h3>富豪榜<span class="r">身上 + 末影箱 + 箱子里存的</span></h3><div id="coinBars"></div></div>
       <div class="card"><h3>今日营收<span class="r">今天 0 点起</span></h3><div id="todayBars"></div></div>
       <div class="card"><h3>板块成交<span class="r">按柜台</span></h3><div id="shopCounter"></div></div>
     </div>
@@ -455,7 +455,7 @@ const hmof = t => { const d = new Date(t); return String(d.getHours()).padStart(
 
 const ECON_S = {
   e: {t: '累计营收', c: '#ffc978', hint: '所有玩家亲手完成的单'},
-  c: {t: '流通币', c: '#7aa2ff', hint: '所有人背包 + 末影箱'},
+  c: {t: '流通币', c: '#7aa2ff', hint: '所有人背包 + 末影箱 + 箱子里存的'},
   s: {t: '商店成交', c: '#48c9a4', hint: '花在夜市商店的币'}
 };
 // 线按 24 小时整体涨跌上色：涨红、跌绿、不动灰（国内习惯；和 --red / --jade / --ink3 一致）
@@ -544,7 +544,7 @@ function renderTicker() {
   const items = [
     {k: '综合指数', v: ix.length ? ix[ix.length - 1].toFixed(1) : '—', c: ix.length > 1 ? {ok: true, d: ix[ix.length - 1] - ix[0], p: ix[0] ? (ix[ix.length - 1] - ix[0]) / ix[0] * 100 : null} : null, tip: '营收 5 : 流通币 3 : 成交 2'},
     {k: '累计营收', v: fmt(e.totalEarn), c: chgOf(econVals('e')), tip: '所有玩家亲手完成的单'},
-    {k: '流通币', v: fmt(e.coinsHeld), c: chgOf(econVals('c')), tip: '背包 + 末影箱'},
+    {k: '流通币', v: fmt(e.coinsHeld), c: chgOf(econVals('c')), tip: '背包 + 末影箱 + 箱子里存的'},
     {k: '商店成交', v: fmt(e.shopTotal), c: chgOf(econVals('s')), tip: (e.shopCount || 0) + ' 笔'},
     {k: '现在在线', v: (D.server && D.server.online ? (D.server.players || 0) : 0) + ' 人', c: null, tip: D.server && D.server.online ? '服务器开着' : '服务器休息中'}
   ];
@@ -698,10 +698,10 @@ function renderEco() {
   drawEconChart();
   renderRest();
 
-  const coinRows = ps.map(p => ({n: p.name, v: (p.coins || 0) + (p.coinsEnder || 0), t: '身上 ' + fmt(p.coins) + ' · 末影箱 ' + fmt(p.coinsEnder)})).filter(r => r.v > 0).sort((a, b) => b.v - a.v);
+  const coinRows = ps.map(p => ({n: p.name, v: (p.coins || 0) + (p.coinsEnder || 0) + (p.coinsStored || 0), t: '身上 ' + fmt(p.coins) + ' · 末影箱 ' + fmt(p.coinsEnder) + ' · 存储 ' + fmt(p.coinsStored || 0)})).filter(r => r.v > 0).sort((a, b) => b.v - a.v);
   $('coinBars').innerHTML = coinRows.length
     ? coinRows.slice(0, 12).map(r => `<div class="hbar" title="${esc(r.t)}"><span class="nm">${esc(r.n)}</span><span class="tr"><i style="width:${r.v / coinRows[0].v * 100}%"></i></span><span class="v">${fmt(r.v)}</span></div>`).join('')
-      + '<div class="dim" style="font-size:11px;margin-top:8px">鼠标停在名字上看身上 / 末影箱各多少；离线的人按最后一次记录</div>'
+      + '<div class="dim" style="font-size:11px;margin-top:8px">鼠标停在名字上看身上 / 末影箱 / 存储各多少；箱子里的币按最后一次数到的算</div>'
     : '<div class="empty">还没有人持有币</div>';
 
   const todayRows = ps.map(p => ({n: p.name, v: p.todayEarn || 0})).filter(r => r.v > 0).sort((a, b) => b.v - a.v);
