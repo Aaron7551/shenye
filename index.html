@@ -333,6 +333,10 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
             <button data-s="c">流通币</button>
             <button data-s="s">商店成交</button>
           </div>
+          <div class="seg" id="chartView">
+            <button class="act" data-v="k">K 线</button>
+            <button data-v="t">分时</button>
+          </div>
         </div>
         <div class="chart-box">
           <svg id="econChart" viewBox="0 0 820 260" preserveAspectRatio="none"></svg>
@@ -459,8 +463,32 @@ const ECON_S = {
   s: {t: '商店成交', c: '#48c9a4', hint: '花在夜市商店的币'}
 };
 // 线按 24 小时整体涨跌上色：涨红、跌绿、不动灰（国内习惯；和 --red / --jade / --ink3 一致）
-const UP_C = '#e0614a', DN_C = '#48c9a4', FLAT_C = '#6b7385';
+const UP_C = '#e0614a', DN_C = '#48c9a4', FLAT_C = '#6b7385', MA_C = '#ffc978';
 let ECON_K = 'e', REST_SORT = 'profit', ECON_PTS = [];
+// 主图两种画法：'k' K 线（蜡烛 + MA5 + 里程碑标注，默认）/ 't' 分时线
+let ECON_V = 'k', ECON_CDL = [];
+// 把 10 分钟一个点的序列压成 K 线：开=桶内第一个、收=最后一个、高/低=桶内极值
+function ecCandles(pts, key, want) {
+  if (!pts || pts.length < 4) return [];
+  const n = Math.max(4, Math.min(want || 48, Math.floor(pts.length / 2)));
+  const size = pts.length / n, out = [];
+  for (let i = 0; i < n; i++) {
+    const a = Math.floor(i * size), b = Math.min(pts.length, Math.floor((i + 1) * size));
+    if (b - a < 1) continue;
+    let hi = -Infinity, lo = Infinity;
+    for (let j = a; j < b; j++) { const v = Number(pts[j][key]) || 0; if (v > hi) hi = v; if (v < lo) lo = v; }
+    const o = Number(pts[a][key]) || 0, c = Number(pts[b - 1][key]) || 0;
+    out.push({o: o, h: hi, l: lo, c: c, t0: pts[a].t, t1: pts[b - 1].t, up: c >= o});
+  }
+  return out;
+}
+function ecMA(cdl, n) {
+  return cdl.map((c, i) => {
+    if (i < n - 1) return null;
+    let s = 0; for (let j = i - n + 1; j <= i; j++) s += cdl[j].c;
+    return s / n;
+  });
+}
 
 function sparkSvg(vals, color) {
   if (vals.length < 2) return '';
@@ -553,6 +581,114 @@ function renderTicker() {
 
 /* ---- 主走势图 ---- */
 function drawEconChart() {
+  if (!$('econChart')) return;
+  if (ECON_V === 'k') { drawEconK(); return; }
+  drawEconT();
+}
+
+/* ---- 主走势图：K 线 ---- */
+function drawEconK() {
+  const svg = $('econChart'); if (!svg) return;
+  const W = 820, H = 260, P = {l: 58, r: 14, t: 16, b: 26};
+  const hist = econHist(), meta = ECON_S[ECON_K];
+  const e = D.economy || {};
+  const fallback = ECON_K === 'e' ? e.totalEarn : ECON_K === 'c' ? e.coinsHeld : e.shopTotal;
+  if (hist.length < 4) {
+    svg.innerHTML = '<text x="410" y="128" text-anchor="middle" fill="#6b7385" font-size="13">等面板下一次同步，这里就有走势了</text>';
+    $('chartRange').textContent = '';
+    $('quoteVal').textContent = fmt(fallback);
+    $('quoteVal').style.color = '';
+    $('quoteChg').innerHTML = '<span class="chg flat">还没有 24 小时数据</span>';
+    $('chartFt').innerHTML = '';
+    ECON_PTS = []; ECON_CDL = [];
+    return;
+  }
+  const cdl = ecCandles(hist, ECON_K, 48);
+  if (!cdl.length) { ECON_PTS = []; ECON_CDL = []; return; }
+  let mn0 = Infinity, mx0 = -Infinity;
+  cdl.forEach(c => { if (c.l < mn0) mn0 = c.l; if (c.h > mx0) mx0 = c.h; });
+  const flat = mx0 === mn0;
+  const gapv = flat ? Math.max(1, Math.abs(mx0) * 0.06) : (mx0 - mn0);
+  const mn = Math.max(0, mn0 - gapv * 0.18), mx = mx0 + gapv * 0.18;
+  const slot = (W - P.l - P.r) / cdl.length;
+  const X = i => P.l + slot * (i + 0.5);
+  const Y = v => P.t + (1 - (v - mn) / (mx - mn)) * (H - P.t - P.b);
+  const lastV = (fallback != null && isFinite(fallback)) ? Number(fallback) : cdl[cdl.length - 1].c;
+  const base = cdl[0].o;
+  const qc = {ok: true, d: lastV - base, p: base ? (lastV - base) / base * 100 : null};
+  const col = !qc.d ? FLAT_C : (qc.d > 0 ? UP_C : DN_C);
+  let g = '';
+  for (let i = 0; i <= 4; i++) {
+    const v = mn + (mx - mn) * i / 4, y = Y(v);
+    g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,${i === 0 ? '.09' : '.045'})"/>`;
+    g += `<text x="${P.l - 8}" y="${(y + 3.5).toFixed(1)}" text-anchor="end" fill="#5d6675" font-size="10">${fmt(v)}</text>`;
+  }
+  const step = Math.max(1, Math.round(cdl.length / 5));
+  for (let i = 0; i < cdl.length; i += step) {
+    const x = X(i);
+    g += `<line x1="${x.toFixed(1)}" x2="${x.toFixed(1)}" y1="${P.t}" y2="${H - P.b}" stroke="rgba(255,255,255,.032)"/>`;
+    g += `<text x="${x.toFixed(1)}" y="${H - 8}" text-anchor="middle" fill="#5d6675" font-size="10">${hmof(cdl[i].t0)}</text>`;
+  }
+  if (!flat) {
+    g += `<line x1="${P.l}" x2="${W - P.r}" y1="${Y(base).toFixed(1)}" y2="${Y(base).toFixed(1)}" stroke="${MA_C}" stroke-dasharray="5 4" opacity=".62"/>`;
+    g += `<text x="${W - P.r - 2}" y="${(Y(base) - 5).toFixed(1)}" text-anchor="end" fill="${MA_C}" font-size="9.5" opacity=".9">24 小时前 ${fmt(base)}</text>`;
+  } else {
+    g += `<text x="${W - P.r - 2}" y="${P.t + 12}" text-anchor="end" fill="#5d6675" font-size="10">24 小时没有变化</text>`;
+  }
+  const bw = Math.max(1.8, Math.min(slot * 0.6, 11));
+  cdl.forEach((c, i) => {
+    const x = X(i), cc = c.up ? UP_C : DN_C;
+    const yo = Y(c.o), yc = Y(c.c);
+    const top = Math.max(P.t, Math.min(H - P.b - 2, Math.min(yo, yc)));
+    const hgt = Math.max(2, Math.abs(yc - yo));
+    g += `<line x1="${x.toFixed(1)}" x2="${x.toFixed(1)}" y1="${Y(c.h).toFixed(1)}" y2="${Y(c.l).toFixed(1)}" stroke="${cc}" stroke-width="1" opacity=".8"/>`;
+    g += `<rect x="${(x - bw / 2).toFixed(1)}" y="${top.toFixed(1)}" width="${bw.toFixed(1)}" height="${hgt.toFixed(1)}" rx="1" fill="${cc}" fill-opacity="${c.up ? '.26' : '.88'}" stroke="${cc}" stroke-width="1"/>`;
+  });
+  const ma = ecMA(cdl, 5);
+  const maD = ma.map((v, i) => v == null ? '' : ((i && ma[i - 1] != null ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1))).join('');
+  if (maD) g += `<path d="${maD}" fill="none" stroke="${MA_C}" stroke-width="1.3" opacity=".92" stroke-linejoin="round"/>`;
+  g += `<line x1="${P.l + 6}" x2="${P.l + 22}" y1="${P.t + 9}" y2="${P.t + 9}" stroke="${MA_C}" stroke-width="1.3"/>`;
+  g += `<text x="${P.l + 26}" y="${P.t + 12.5}" fill="${MA_C}" font-size="10.5">MA5</text>`;
+
+  const chips = [];
+  let hiI = 0, loI = 0;
+  cdl.forEach((c, i) => { if (c.h > cdl[hiI].h) hiI = i; if (c.l < cdl[loI].l) loI = i; });
+  chips.push({i: hiI, y: Y(cdl[hiI].h) - 19, label: '最高 ' + fmt(cdl[hiI].h)});
+  if (loI !== hiI) chips.push({i: loI, y: Y(cdl[loI].l) + 4, label: '最低 ' + fmt(cdl[loI].l)});
+  let big = null;
+  (((D.shop || {}).log) || []).forEach(l => { if (l && l.t && l.t >= hist[0].t && (!big || (l.price || 0) > (big.price || 0))) big = l; });
+  if (big && big.price > 0) {
+    let bi = cdl.length - 1;
+    for (let i = 0; i < cdl.length; i++) { if (big.t <= cdl[i].t1) { bi = i; break; } }
+    chips.push({i: bi, y: Y(cdl[bi].h) - 19, label: '大单 ' + fmt(big.price)});
+  }
+  const chipW = s => { let w = 0; for (const ch of s) w += (ch.charCodeAt(0) > 255 ? 10.5 : 6); return w + 14; };
+  chips.forEach(cp => {
+    const w = chipW(cp.label);
+    const cx = Math.max(P.l + 2, Math.min(W - P.r - 2 - w, X(cp.i) - w / 2));
+    const cy = Math.max(P.t + 2, Math.min(H - P.b - 19, cp.y));
+    g += `<rect x="${cx.toFixed(1)}" y="${cy.toFixed(1)}" width="${w.toFixed(1)}" height="17" rx="8.5" fill="#0b0e15" fill-opacity=".94" stroke="rgba(255,255,255,.12)" stroke-width="1"/>`;
+    g += `<text x="${(cx + w / 2).toFixed(1)}" y="${(cy + 12).toFixed(1)}" text-anchor="middle" fill="#eceae4" font-size="10.5">${cp.label}</text>`;
+  });
+
+  g += `<line id="ecV" x1="0" x2="0" y1="${P.t}" y2="${H - P.b}" stroke="rgba(255,255,255,.4)" stroke-dasharray="3 3" opacity="0"/>`;
+  g += `<circle id="ecD" cx="0" cy="0" r="3.4" fill="${col}" stroke="#0b0e15" stroke-width="1.5" opacity="0"/>`;
+  svg.innerHTML = g;
+  ECON_PTS = [];
+  ECON_CDL = cdl.map((c, i) => ({x: X(i), yc: Y(c.c), c: c}));
+
+  const upN = cdl.filter(c => c.up).length;
+  $('chartRange').textContent = '近 24 小时 · ' + cdl.length + ' 根 · 每根约 ' + Math.max(2, Math.round(1440 / cdl.length)) + ' 分钟';
+  $('quoteVal').textContent = fmt(lastV);
+  $('quoteVal').style.color = col;
+  $('quoteChg').innerHTML = chgHtml(qc) + '<span class="dim" style="font-size:11px">较 24 小时前</span>';
+  $('chartFt').innerHTML = `<span>24h 最高 <b>${fmt(mx0)}</b></span><span>最低 <b>${fmt(mn0)}</b></span>` +
+    `<span>阳线 <b style="color:${UP_C}">${upN}</b> / 阴线 <b style="color:${DN_C}">${cdl.length - upN}</b></span>` +
+    `<span>口径 <b>${meta.hint}</b></span><span>截止 <b>${hhmm(D.updated || Date.now())}</b></span>`;
+  ecoWire(svg);
+}
+
+function drawEconT() {
   const svg = $('econChart'); if (!svg) return;
   const hist = econHist(), meta = ECON_S[ECON_K], vals = econVals(ECON_K);
   const e = D.economy || {};
@@ -611,37 +747,51 @@ function drawEconChart() {
   $('quoteChg').innerHTML = chgHtml(qc) + '<span class="dim" style="font-size:11px">较 24 小时前</span>';
   $('chartFt').innerHTML = `<span>24h 最高 <b>${fmt(mx0)}</b></span><span>最低 <b>${fmt(mn0)}</b></span><span>口径 <b>${meta.hint}</b></span><span>截止 <b>${hhmm(D.updated || Date.now())}</b></span>`;
 
-  if (!svg.dataset.wired) {
-    svg.dataset.wired = '1';
-    const tip = $('chartTip');
-    svg.addEventListener('mousemove', ev => {
-      if (!ECON_PTS.length) return;
-      const r = svg.getBoundingClientRect();
-      if (!r.width) return;
-      const xv = (ev.clientX - r.left) / r.width * 820;
-      let bi = 0, bd = 1e9;
-      for (let i = 0; i < ECON_PTS.length; i++) {
-        const d = Math.abs(ECON_PTS[i].x - xv);
-        if (d < bd) { bd = d; bi = i; }
-      }
-      const p = ECON_PTS[bi];
-      const v = svg.querySelector('#ecV'), dot = svg.querySelector('#ecD');
-      if (v && dot) {
-        v.setAttribute('x1', p.x); v.setAttribute('x2', p.x); v.setAttribute('opacity', '1');
-        dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y); dot.setAttribute('opacity', '1');
-      }
+  ECON_CDL = [];
+  ecoWire(svg);
+}
+
+// 主图的十字光标 + 气泡，K 线和分时共用一套
+function ecoWire(svg) {
+  if (svg.dataset.wired) return;
+  svg.dataset.wired = '1';
+  const tip = $('chartTip');
+  svg.addEventListener('mousemove', ev => {
+    const isK = ECON_V === 'k';
+    const arr = isK ? ECON_CDL : ECON_PTS;
+    if (!arr || !arr.length) return;
+    const r = svg.getBoundingClientRect();
+    if (!r.width) return;
+    const xv = (ev.clientX - r.left) / r.width * 820;
+    let bi = 0, bd = 1e9;
+    for (let i = 0; i < arr.length; i++) {
+      const d = Math.abs(arr[i].x - xv);
+      if (d < bd) { bd = d; bi = i; }
+    }
+    const p = arr[bi];
+    const v = svg.querySelector('#ecV'), dot = svg.querySelector('#ecD');
+    if (v && dot) {
+      v.setAttribute('x1', p.x); v.setAttribute('x2', p.x); v.setAttribute('opacity', '1');
+      dot.setAttribute('cx', p.x); dot.setAttribute('cy', isK ? p.yc : p.y); dot.setAttribute('opacity', '1');
+    }
+    if (isK) {
+      const c = p.c;
+      tip.innerHTML = hmof(c.t0) + '–' + hmof(c.t1) + ' · 开 <b>' + fmt(c.o) + '</b> 高 <b>' + fmt(c.h) + '</b> 低 <b>' + fmt(c.l) + '</b> 收 <b>' + fmt(c.c) + '</b>';
+      tip.style.left = (p.x / 820 * 100) + '%';
+      tip.style.top = (p.yc / 260 * 100) + '%';
+    } else {
       tip.innerHTML = hmof(p.t) + ' · <b>' + fmt(p.v) + '</b>';
       tip.style.left = (p.x / 820 * 100) + '%';
       tip.style.top = (p.y / 260 * 100) + '%';
-      tip.style.opacity = '1';
-    });
-    svg.addEventListener('mouseleave', () => {
-      const v = svg.querySelector('#ecV'), dot = svg.querySelector('#ecD');
-      if (v) v.setAttribute('opacity', '0');
-      if (dot) dot.setAttribute('opacity', '0');
-      $('chartTip').style.opacity = '0';
-    });
-  }
+    }
+    tip.style.opacity = '1';
+  });
+  svg.addEventListener('mouseleave', () => {
+    const v = svg.querySelector('#ecV'), dot = svg.querySelector('#ecD');
+    if (v) v.setAttribute('opacity', '0');
+    if (dot) dot.setAttribute('opacity', '0');
+    if ($('chartTip')) $('chartTip').style.opacity = '0';
+  });
 }
 
 /* ---- 盘口 ---- */
@@ -731,6 +881,13 @@ function renderEco() {
 }
 
 function wireEco() {
+  const view = $('chartView');
+  if (view) view.onclick = ev => {
+    const b = ev.target.closest('[data-v]'); if (!b) return;
+    ECON_V = b.dataset.v;
+    Array.from(view.children).forEach(x => x.classList.toggle('act', x === b));
+    drawEconChart();
+  };
   const tabs = $('chartTabs');
   if (tabs) tabs.onclick = ev => {
     const b = ev.target.closest('[data-s]'); if (!b) return;
