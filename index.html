@@ -1046,7 +1046,7 @@ $('cats').onclick = e => {
   renderRank();
 };
 // ---------- YSM 皮肤上传 ----------
-const YSM_UPLOAD = '';   // 隧道开通后填 https://xxx.frp-ten.com，例如 'https://ysm-123.frp-ten.com'
+const YSM_UPLOAD = 'http://frp-rug.com:62781';   // 皮肤上传服务（TCP 隧道）。http 的话页面会给一个跳转按钮，https 才能直接跨域传
 (function ysmUpload(){
   const btn = document.getElementById('upGo');
   if (!btn) return;
@@ -1056,6 +1056,16 @@ const YSM_UPLOAD = '';   // 隧道开通后填 https://xxx.frp-ten.com，例如 
   if (!YSM_UPLOAD) {
     btn.disabled = true;
     tip.insertAdjacentHTML('afterbegin', '<b style="color:#ffd9a3">上传通道还没开通。</b>现在先把模型包直接发给服主。<br>');
+    return;
+  }
+  if (YSM_UPLOAD.indexOf('https://') !== 0) {
+    // http 隧道：跨域会被浏览器拦，改成跳转到上传页面（同源提交）
+    const form = document.querySelector('.up-form');
+    if (form) {
+      form.innerHTML = '<a class="up-btn" style="display:inline-flex;align-items:center;justify-content:center;width:auto;padding:0 22px;text-decoration:none" href="' +
+        YSM_UPLOAD.replace(/\/$/, '') + '/" target="_blank" rel="noopener">打开上传页面</a>' +
+        '<div class="up-msg ok" style="display:block">上传在新窗口里完成，传完回来告诉服主一声就行。</div>';
+    }
     return;
   }
   btn.onclick = async () => {
