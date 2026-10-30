@@ -1055,9 +1055,20 @@ let YSM_UPLOAD = '';
   const tip = document.getElementById('upTip');
   function say(t, ok){ msg.className = 'up-msg ' + (ok ? 'ok' : 'err'); msg.textContent = t; }
   btn.disabled = true;
+  // 两个源都试：Pages 有 10 分钟缓存，raw.githubusercontent 通常更快，取 at 更新的那个
   try {
-    const r = await fetch('./ysm.json?t=' + Date.now(), { cache: 'no-store' });
-    if (r.ok) { const j = await r.json(); YSM_UPLOAD = (j && j.url) || ''; }
+    const srcs = ['./ysm.json', 'https://raw.githubusercontent.com/Aaron7551/shenye/main/ysm.json'];
+    let best = null;
+    for (const s of srcs) {
+      try {
+        const r = await fetch(s + '?t=' + Date.now(), { cache: 'no-store' });
+        if (!r.ok) continue;
+        const j = await r.json();
+        if (!j || !j.url) continue;
+        if (!best || String(j.at || '') > String(best.at || '')) best = j;
+      } catch (e) {}
+    }
+    if (best) YSM_UPLOAD = best.url;
   } catch (e) {}
   if (!YSM_UPLOAD) {
     tip.insertAdjacentHTML('afterbegin', '<b style="color:#ffd9a3">上传通道还没开通。</b>现在先把模型包直接发给服主。<br>');
@@ -1079,7 +1090,7 @@ let YSM_UPLOAD = '';
       });
       const j = await r.json();
       say(j.msg || (j.ok ? '已收到，等服主审核' : '失败'), !!j.ok);
-    } catch (e) { say('上传失败：' + e.message, false); }
+    } catch (e) { say('上传失败：' + e.message + '（如果服主刚重启过上传通道，等两三分钟再试）', false); }
     btn.disabled = false;
   };
 })();
