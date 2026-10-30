@@ -287,6 +287,18 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
   #restTable th:nth-child(5),#restTable td:nth-child(5),
   #restTable th:nth-child(6),#restTable td:nth-child(6){display:none}
 }
+/* ---------- YSM 上传 ---------- */
+.up-form{max-width:420px}
+.up-form label{display:block;font-size:11.5px;color:var(--ink3);margin:14px 0 6px}
+.up-inp{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--bg2);color:var(--ink);outline:none;font:inherit}
+.up-inp:focus{border-color:rgba(240,164,75,.55)}
+.up-btn{margin-top:16px;height:36px;padding:0 20px;border:0;border-radius:10px;background:linear-gradient(180deg,#f5b25f,#e39538);color:#2a1a06;font-weight:600;font-size:12.5px;cursor:pointer}
+.up-btn:disabled{opacity:.45;cursor:not-allowed}
+.up-msg{margin-top:12px;font-size:12.5px;padding:10px 12px;border-radius:10px;display:none}
+.up-msg.ok{display:block;background:rgba(72,201,164,.12);color:#8de3c9}
+.up-msg.err{display:block;background:rgba(224,103,79,.12);color:#ffb3a5}
+.up-tip{margin-top:18px;color:var(--ink3);font-size:11.5px;line-height:1.9;max-width:560px}
+.up-tip code{background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px}
 </style>
 </head>
 <body>
@@ -301,6 +313,7 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
     <button class="act" data-t="rank">排行榜</button>
     <button data-t="prog">大家的进度</button>
     <button data-t="eco">餐厅与经济</button>
+    <button data-t="ysm">上传皮肤</button>
   </div>
 
   <section class="tab act" id="t-rank">
@@ -382,6 +395,24 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
     <div class="card" style="margin-top:14px">
       <h3>成交明细<span class="r">最近 30 笔</span></h3>
       <div class="tbl-wrap"><table class="tbl" id="shopLog"></table></div>
+    </div>
+  </section>
+  <section class="tab" id="t-ysm">
+    <div class="card">
+      <h3>上传 YSM 皮肤<span class="r">审核通过后才会进服务器</span></h3>
+      <div class="up-form">
+        <label>你的游戏 ID</label>
+        <input class="up-inp" id="upName" maxlength="16" placeholder="例如 Aaron7551" autocomplete="off">
+        <label>模型文件（.zip 或 .ysm，最大 60MB）</label>
+        <input class="up-inp" id="upFile" type="file" accept=".zip,.ysm">
+        <button class="up-btn" id="upGo">上传</button>
+        <div class="up-msg" id="upMsg"></div>
+      </div>
+      <div class="up-tip" id="upTip">
+        压缩包解压后要有 <code>ysm.json</code>，以及 models / textures 这些目录，就是能用的模型包。<br>
+        上传后服主会先审一遍，通过了才放进服务器并重载模型；之后你在游戏里按 YSM 的快捷键就能选到。<br>
+        只收模型文件，exe / bat 这类会被直接拒掉。
+      </div>
     </div>
   </section>
 
@@ -1014,6 +1045,39 @@ $('cats').onclick = e => {
   cat = b.dataset.c; try { localStorage.setItem('shenyeCat', cat); } catch (x) {}
   renderRank();
 };
+// ---------- YSM 皮肤上传 ----------
+const YSM_UPLOAD = '';   // 隧道开通后填 https://xxx.frp-ten.com，例如 'https://ysm-123.frp-ten.com'
+(function ysmUpload(){
+  const btn = document.getElementById('upGo');
+  if (!btn) return;
+  const msg = document.getElementById('upMsg');
+  const tip = document.getElementById('upTip');
+  function say(t, ok){ msg.className = 'up-msg ' + (ok ? 'ok' : 'err'); msg.textContent = t; }
+  if (!YSM_UPLOAD) {
+    btn.disabled = true;
+    tip.insertAdjacentHTML('afterbegin', '<b style="color:#ffd9a3">上传通道还没开通。</b>现在先把模型包直接发给服主。<br>');
+    return;
+  }
+  btn.onclick = async () => {
+    const name = document.getElementById('upName').value.trim();
+    const f = document.getElementById('upFile').files[0];
+    if (!/^[A-Za-z0-9_]{3,16}$/.test(name)) return say('游戏 ID 填 3~16 位字母数字下划线', false);
+    if (!f) return say('先选一个 .zip 或 .ysm 文件', false);
+    if (f.size > 60 * 1024 * 1024) return say('文件超过 60MB', false);
+    btn.disabled = true; say('上传中…', true);
+    try {
+      const r = await fetch(YSM_UPLOAD.replace(/\/$/, '') + '/api/upload', {
+        method: 'POST',
+        headers: { 'X-Player': name, 'X-Filename': f.name, 'Content-Type': 'application/octet-stream' },
+        body: f
+      });
+      const j = await r.json();
+      say(j.msg || (j.ok ? '已收到，等服主审核' : '失败'), !!j.ok);
+    } catch (e) { say('上传失败：' + e.message, false); }
+    btn.disabled = false;
+  };
+})();
+
 load();
 setInterval(load, 120000);
 setInterval(() => { if (D) render(); }, 30000);
