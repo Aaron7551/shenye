@@ -1085,7 +1085,7 @@ let YSM_UPLOAD = '';
     try {
       const r = await fetch(YSM_UPLOAD.replace(/\/$/, '') + '/api/upload', {
         method: 'POST',
-        headers: { 'X-Player': name, 'X-Filename': f.name, 'Content-Type': 'application/octet-stream' },
+        headers: { 'X-Player': encodeURIComponent(name), 'X-Filename': encodeURIComponent(f.name), 'Content-Type': 'application/octet-stream' },
         body: f
       });
       const j = await r.json();
