@@ -536,6 +536,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li>上一版公告里写的<b>规模税、每周人气榜、最佳个人店</b>，这一版正式生效（下面 beta3 那段有详细规则）</li>
         <li>规模税 2 人起按人数收：2 人 4%、3 人 8%、4 人 11%、5 人 17%、6 人 21%、7 人 25%、8 人 30%。一起做的单每人到手约是个人店的 110% / 106% / 102% / 95% / 91% / 86% / 80%，<b>4 人以内比自己开店多</b></li>
         <li>合作加成固定 +15%；一家店最多并 3 台打单机；7 天没参与订单的成员会在界面里标出来</li>
+        <li><b>11-01 晚补充：</b>老店并了 3 台以上打单机的，不再按台数额外加规模税（原来每多 1 台 +5%）。规模税现在只看人数，最高就是 8 人店的 30%</li>
         <li>每周一 0 点人气榜结算：前三名店里干过活的人各得 300 / 200 / 100 币；「最佳个人店」每周 200 币</li>
         <li>任务书「餐厅经营」里的「合作餐厅」「一起开店」两个引导任务这次也装上了</li>
       </ul>
@@ -1103,7 +1104,7 @@ function coopCardsHtml(cs, emptyHtml) {
         <div><span>合作营收</span><b>${fmt(c.total || 0)}</b></div>
         <div><span>合作单数</span><b>${fmt(c.orders || 0)}</b></div>
         <div><span>合作加成多赚</span><b class="ac">+${fmt(c.bonus || 0)}</b><small>${c.total ? '占 ' + bonusPct + '%' : ''}</small></div>
-        <div title="这家店现在的规模税率（按成员数和打单机台数算）和开店以来一共交进国库的规模税"><span>规模税</span><b style="color:var(--red)">${c.sizeTax == null ? '—' : Math.round(c.sizeTax * 1000) / 10 + '%'}</b><small>累计交 ${fmt(c.tax || 0)} 币</small></div>
+        <div title="这家店现在的规模税率（只按成员数算，最高 8 人 30%）和开店以来一共交进国库的规模税"><span>规模税</span><b style="color:var(--red)">${c.sizeTax == null ? '—' : Math.round(c.sizeTax * 1000) / 10 + '%'}</b><small>累计交 ${fmt(c.tax || 0)} 币</small></div>
       </div>
       <div class="coop-lbl"><span>钱是怎么分的</span><span>按分到的币</span></div>
       <div class="coop-split">${split}</div>
