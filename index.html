@@ -538,6 +538,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li>合作加成固定 +15%；一家店最多并 3 台打单机；7 天没参与订单的成员会在界面里标出来</li>
         <li><b>11-01 晚补充：</b>老店并了 3 台以上打单机的，不再按台数额外加规模税（原来每多 1 台 +5%）。规模税现在只看人数，最高就是 8 人店的 30%</li>
         <li>每周一 0 点人气榜结算：前三名店里干过活的人各得 300 / 200 / 100 币；「最佳个人店」每周 200 币</li>
+        <li><b>11-02 补充：</b>人气榜奖金改成<b>从夜市国库出</b>（就是大家交的传送税、领地税、成交税、规模税）。国库不够时奖金按比例少发，所以多交税、多营业，国库越满奖金越足；每一笔支出都能在「餐厅与经济」的国库流水里看到</li>
         <li>任务书「餐厅经营」里的「合作餐厅」「一起开店」两个引导任务这次也装上了</li>
       </ul>
       <h4>夜市 · 新增「税务」页</h4>
@@ -1176,7 +1177,7 @@ function renderRest() {
 }
 
 /* ---- 国库与税收 / 银行（夜市模组；和面板同一套口径，2026-11-01 对齐时补上） ---- */
-const BANK_SUB = {deposit: '存入', withdraw: '取出', transfer: '转账', pay: '付款', interest: '利息', grant: '国库拨款'};
+const BANK_SUB = {deposit: '存入', withdraw: '取出', transfer: '转账', pay: '付款', interest: '利息', grant: '国库拨款', weekly: '人气榜奖金'};
 // 纳税榜 + 领地税（夜市 1.1.0）：每人累计交了多少税（鼠标停上去看按税种分），领地欠税。面板 index.html 有同名函数，两边一起改
 function taxPayersHtml(eco, taxes) {
   const tp = eco.taxPaid || {}, land = eco.land || {}, fees = eco.fees || null;
