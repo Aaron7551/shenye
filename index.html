@@ -209,6 +209,16 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
 .ti .v{display:block;font-size:19px;font-weight:650;font-variant-numeric:tabular-nums;line-height:1.3;margin-top:1px}
 .ti .chg{display:block;font-size:10.5px}
 .note{font-size:10.5px;color:#545c6b;margin:-6px 2px 14px;line-height:1.5}
+/* 更新公告（5.0 beta3 起） */
+.news-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;border-radius:12px;background:linear-gradient(90deg,rgba(245,166,35,.16),rgba(245,166,35,.04));border:1px solid rgba(245,166,35,.25);font-size:13px;cursor:pointer}
+.news-bar b{color:var(--amber2)}
+.news-bar .go{margin-left:auto;color:var(--amber2);font-size:12px;white-space:nowrap}
+.news h4{margin:16px 0 6px;font-size:13.5px;color:var(--amber2)}
+.news h4:first-of-type{margin-top:4px}
+.news ul{margin:0;padding-left:18px;line-height:1.85;font-size:13px;color:var(--ink2)}
+.news li b{color:var(--ink)}
+.news .ver{display:inline-block;font-size:11px;padding:1px 8px;border-radius:99px;background:rgba(245,166,35,.15);color:var(--amber2);margin-left:6px;vertical-align:1px}
+.news code{background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px;font-size:12px}
 
 .eco-main{grid-template-columns:minmax(0,1fr) 300px}
 .chart-hd{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
@@ -313,10 +323,12 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
     <button class="act" data-t="rank">排行榜</button>
     <button data-t="prog">大家的进度</button>
     <button data-t="eco">餐厅与经济</button>
+    <button data-t="news">更新公告</button>
     <button data-t="ysm">上传皮肤</button>
   </div>
 
   <section class="tab act" id="t-rank">
+    <div class="news-bar" data-goto="news"><span>🏮</span><span><b>5.0 beta3</b> 来了：合作餐厅、夜市新开军械 / 弹药 / 背包柜台</span><span class="go">看更新公告 →</span></div>
     <div class="card" style="margin-bottom:14px">
       <h3>近 24 小时谁在线<span class="r" id="tlInfo"></span></h3>
       <div id="online24"></div>
@@ -375,6 +387,11 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
       <div class="tbl-wrap"><table class="tbl" id="restTable"></table></div>
     </div>
 
+    <div class="card" style="margin-top:14px" id="coopCard">
+      <div class="card-row"><h3>合作餐厅<span class="r" id="coopInfo"></span></h3></div>
+      <div class="tbl-wrap"><table class="tbl" id="coopTable"></table></div>
+    </div>
+
     <div class="grid three" style="margin-top:14px">
       <div class="card"><h3>富豪榜<span class="r">身上 + 末影箱 + 箱子 + 银行</span></h3><div id="coinBars"></div></div>
       <div class="card"><h3>今日营收<span class="r">今天 0 点起</span></h3><div id="todayBars"></div></div>
@@ -397,6 +414,48 @@ footer{color:#4d5464;font-size:11px;text-align:center;margin-top:30px;letter-spa
       <div class="tbl-wrap"><table class="tbl" id="shopLog"></table></div>
     </div>
   </section>
+  <section class="tab" id="t-news">
+    <div class="card news">
+      <h3>深夜食堂 5.0 beta3<span class="ver">2026-11-01</span><span class="r">这一版更新了什么</span></h3>
+      <h4>新增 · 合作餐厅：和朋友合开一家大餐厅</h4>
+      <ul>
+        <li>打开打单机，右边一列按钮最下面多了 <b>「合作餐厅」</b>。用自己的打单机建店，点在线玩家的名字邀请，对方在聊天栏点 [接受] 就加入了</li>
+        <li>成员自己的打单机也能加进来，几台打单机连成一家大店，最多 8 人</li>
+        <li>一单的钱由<b>参与这单的人平分</b>：送餐的人、打包的人，加上从接单前 10 分钟到上菜之间在店里（任意一台打单机 48 格内）动过灶台、锅、冰箱、操作台的成员</li>
+        <li>2 人以上一起做的单有<b>合作加成</b>：每多 1 人多给 5%，最多多 20%。一个人做的单和个人店完全一样</li>
+        <li>分到的钱照样算进你自己的累计营收，任务进度不受影响；餐厅星级还是看你自己的打单机</li>
+        <li>退出或解散后打单机回到个人店，星级、营收、店名都不丢；你不在线时分到的钱，上线自动补发</li>
+        <li>没装这个模组也能进服，用命令：<code>/coop</code> <code>/coop invite 名字</code> <code>/coop accept</code> <code>/coop leave</code></li>
+        <li>合作店的成员和各自分到多少，在「餐厅与经济」页的「合作餐厅」卡里能看到</li>
+      </ul>
+      <h4>夜市上新 · 三个新柜台</h4>
+      <ul>
+        <li><b>军械柜台</b>：53 把 TACZ 枪，手枪 1400 币起，步枪 3000 左右，狙击枪、机枪、火箭筒更贵。买到的枪是空膛的</li>
+        <li><b>弹药与配件柜台</b>：各种口径的子弹（9mm 手枪弹 50 发 90 币）、火箭弹，还有瞄具、消音器、握把、枪托、扩容弹匣。子弹要对口径，看枪的说明</li>
+        <li><b>背包柜台</b>：精妙背包（皮革背包 300 币，下界合金背包 10000）和各种升级，升级要装进背包才有用</li>
+        <li>枪和背包还是不能合成，只能在夜市买；背包不能用材料升级，要高级的就直接买，东西自己挪过去</li>
+        <li>爆炸弹不会炸坏方块，子弹也不会打碎玻璃，不用担心餐厅被打穿</li>
+      </ul>
+      <h4>修复</h4>
+      <ul>
+        <li>夜市里商品详情卡会把「购买」按钮和份数挡住，现在按钮都在最上面了</li>
+        <li>任务「烈火与寒霜」要的<b>烈焰永恒牛排</b>之前没有配方，任务卡住、连带归乡宴也做不了。现在炒锅能做了：3 个烈焰之心 + 2 个星辰砂 + 1 块熟牛肉 + 3 个鎏金碎片，翻炒 15 下（JEI 里搜「烈焰永恒牛排」能看到）</li>
+      </ul>
+      <h4>还没玩过 beta2 的看这里</h4>
+      <ul>
+        <li><b>夜市</b>取代了任务书里的商店：背包左上角的金币按钮、按 Y 或 <code>/shop</code> 打开。官方商店用 oTc 币买东西；自由市场可以自己定价上架任何东西（成交收 5% 税进国库）；还有摊位、收件箱和银行（存钱、转账）</li>
+        <li>新模组：聊天栏图片（ChatImage，图片链接能直接显示）、精妙背包、TACZ 枪械</li>
+      </ul>
+      <h4>怎么更新</h4>
+      <ul>
+        <li>第一次装或者想省事：导入 <b>「深夜食堂 5.0 beta3.zip」</b>（之前的 beta2 整合包是坏的，别用了）</li>
+        <li>已经装了 beta1 或 beta2：先删掉 mods 里旧的 <code>shenye_market-1.0.0.jar</code> 或 <code>1.0.1.jar</code>，再把 <b>「深夜食堂 5.0 beta3 更新包.zip」</b>里 mods 文件夹的 6 个 jar 复制进游戏的 mods 文件夹，同名的覆盖</li>
+        <li>开了版本隔离的，mods 在 <code>.minecraft\versions\深夜食堂 5.0 beta…\mods</code>；没开的在 <code>.minecraft\mods</code></li>
+        <li>装好的标志：背包左上角有金币按钮，打单机界面右边有「合作餐厅」按钮</li>
+      </ul>
+    </div>
+  </section>
+
   <section class="tab" id="t-ysm">
     <div class="card">
       <h3>上传 YSM 皮肤<span class="r">审核通过后才会进服务器</span></h3>
@@ -483,7 +542,7 @@ const ava = (n, size) => `<div class="ava" style="width:${size}px;height:${size}
 
 // ---------- 餐厅与经济（行情面板） ----------
 const PALETTE = ['#f2a541', '#7fa8ff', '#6fc49a', '#b79cff', '#e0614a', '#5fd0d6', '#f07fb5', '#c9d36a'];
-const COUNTERS = {leisure:'休闲柜台',t1:'工坊柜台',t2:'物流柜台',t3:'智控柜台',craft:'手作与摆件',redstone:'红石与电脑',tools:'工具柜台'};
+const COUNTERS = {leisure:'休闲柜台',t1:'工坊柜台',t2:'物流柜台',t3:'智控柜台',craft:'手作与摆件',redstone:'红石与电脑',tools:'工具柜台',arms:'军械柜台',ammo:'弹药与配件',bags:'背包柜台'};
 const starHtml = lv => Array.from({length: 8}, (_, i) => i < lv ? '<b>★</b>' : '★').join('');
 const hhmm = t => { const d = new Date(t); return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
 const hmof = t => { const d = new Date(t); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
@@ -850,7 +909,21 @@ function renderTape() {
 }
 
 /* ---- 餐厅行情 ---- */
+function renderCoops() {
+  const cs = D.coops;
+  if (!cs) { $('coopCard').style.display = 'none'; return; }
+  $('coopCard').style.display = '';
+  $('coopInfo').textContent = cs.length ? cs.length + ' 家' : '';
+  if (!cs.length) { $('coopTable').innerHTML = '<tr><td class="empty">还没有合作餐厅，打单机界面右边点「合作餐厅」就能开</td></tr>'; return; }
+  $('coopTable').innerHTML = '<tr><th>合作店</th><th>成员（分到的币）</th><th class="r">单数</th><th class="r">营收</th><th class="r">合作加成</th></tr>' +
+    cs.slice().sort((a, b) => (b.total || 0) - (a.total || 0)).map(c =>
+      `<tr><td class="name">${esc(c.name)}<span class="sub">店长 ${esc(c.leader)}</span></td>` +
+      `<td>${(c.members || []).map(m => esc(m.name) + (m.leader ? ' ★' : '') + ' <span class="sub" style="display:inline">' + fmt(m.earned || 0) + '</span>').join('　')}</td>` +
+      `<td class="r">${fmt(c.orders || 0)}</td><td class="r" style="color:var(--amber2)">${fmt(c.total || 0)}</td><td class="r">${fmt(c.bonus || 0)}</td></tr>`).join('');
+}
+
 function renderRest() {
+  renderCoops();
   const rs = (D.restaurants || []).slice();
   const tot = rs.reduce((a, r) => a + (r.profit || 0), 0);
   $('restInfo').textContent = rs.length ? rs.length + ' 家 · 合计营收 ' + fmt(tot) : '';
@@ -863,7 +936,7 @@ function renderRest() {
       const avg = acc ? (r.profit || 0) / acc : 0;
       const share = tot ? (r.profit || 0) / tot * 100 : 0;
       return `<tr><td><span class="rank-n ${i === 0 ? 'top' : ''}">${i + 1}</span></td>` +
-        `<td class="name">${esc(r.name || '（没起名）')}<span class="sub">${esc(r.owner || '—')}</span></td>` +
+        `<td class="name">${esc(r.name || '（没起名）')}<span class="sub">${esc(r.owner || '—')}${r.coop ? ' · 合作店「' + esc(r.coop.name) + '」' + esc((r.coop.members || []).join('、')) : ''}</span></td>` +
         `<td><span class="stars">${starHtml(Math.max(0, Math.min(8, r.level || 0)))}</span></td>` +
         `<td class="r">${fmt(acc)}</td><td class="r">${rate}%</td><td class="r">${fmt(avg)}</td>` +
         `<td class="r" style="color:var(--amber2)">${fmt(r.profit)}</td>` +
@@ -956,6 +1029,14 @@ function renderRank() {
     + (empty.length ? `<div class="dim" style="grid-column:1/-1;font-size:12.5px">还没人上榜：${empty.map(esc).join('、')}</div>` : '');
 }
 
+// 合作餐厅（5.0 beta3）：这个人在哪家合作店、分到多少
+function coopRow(p) {
+  for (const c of (D.coops || [])) {
+    const m = (c.members || []).find(x => x.name === p.name);
+    if (m) return `<div class="k">合作店</div><div>「${esc(c.name)}」${m.leader ? ' <span class="dim">店长</span>' : ''} <span class="dim">· ${(c.members || []).length} 人 · 分到 ${fmt(m.earned || 0)} 币 / ${fmt(m.orders || 0)} 单</span></div>`;
+  }
+  return '';
+}
 function renderPlayers() {
   const ps = (D.players || []).slice().sort((a, b) => (b.online - a.online) || (b.earn || 0) - (a.earn || 0));
   if (!ps.length) { $('players').innerHTML = '<div class="card empty">还没有玩家数据</div>'; return; }
@@ -979,6 +1060,7 @@ function renderPlayers() {
       <div class="kv">
         <div class="k">进度</div><div>${stage}</div>
         <div class="k">餐厅</div><div><span class="stars">${stars}</span> <span class="dim">${p.star || 0} 星</span></div>
+        ${coopRow(p)}
         <div class="k">累计营收</div><div><b>${fmt(earn)}</b> <span class="dim">/ 25,000${nextMs ? ' · 下一档 ' + fmt(nextMs) : ' · 满了'}</span><div class="prog"><i style="width:${Math.min(100, earn / 250)}%"></i>${ticks}</div></div>
         <div class="k">七盏灯</div><div class="lamps">${LAMPS.map((t, i) => `<span class="lamp ${p.lamps && p.lamps[i] ? 'lit' : ''}" title="第${i + 1}盏灯 · ${t}"></span>`).join('')}</div>
         <div class="k">记忆碎片</div><div class="mems">${mems}<span class="dim" style="margin-left:8px">${p.mem || 0} / 7</span></div>
@@ -1037,6 +1119,10 @@ async function load() {
 document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('act', x === b));
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('act', t.id === 't-' + b.dataset.t));
+});
+// 排行榜顶上的公告条：点了跳到「更新公告」
+document.querySelectorAll('[data-goto]').forEach(el => el.onclick = () => {
+  const b = document.querySelector('.tabs button[data-t="' + el.dataset.goto + '"]'); if (b) b.click();
 });
 wireEco();
 
