@@ -514,6 +514,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <div class="card"><h3>银行<span class="r">存款、转账、流水</span></h3><div id="bankBox"></div></div>
         <div class="card"><h3>国库与税收<span class="r">税收进国库</span></h3><div id="treasuryBox"></div></div>
       </div>
+      <div class="card" style="margin-top:14px"><h3>国库流水<span class="r">进账 · 支出 · 结余</span></h3><div id="ledgerBox"></div></div>
     </div>
 
     <div data-sub="shop">
@@ -538,7 +539,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li>合作加成固定 +15%；一家店最多并 3 台打单机；7 天没参与订单的成员会在界面里标出来</li>
         <li><b>11-01 晚补充：</b>老店并了 3 台以上打单机的，不再按台数额外加规模税（原来每多 1 台 +5%）。规模税现在只看人数，最高就是 8 人店的 30%</li>
         <li>每周一 0 点人气榜结算：前三名店里干过活的人各得 300 / 200 / 100 币；「最佳个人店」每周 200 币</li>
-        <li><b>11-02 补充：</b>人气榜奖金改成<b>从夜市国库出</b>（就是大家交的传送税、领地税、成交税、规模税）。国库不够时奖金按比例少发，所以多交税、多营业，国库越满奖金越足；每一笔支出都能在「餐厅与经济」的国库流水里看到</li>
+        <li><b>11-02 补充：</b>人气榜奖金改成<b>从夜市国库出</b>（就是大家交的传送税、领地税、成交税、规模税）。国库不够时奖金按比例少发，所以多交税、多营业，国库越满奖金越足；每一笔支出都能在「餐厅与经济 → 资金」新加的<b>「国库流水」</b>卡里看到：近 14 天每天进多少出多少、近 7 天钱从哪来到哪去、最近 20 笔明细</li>
         <li>任务书「餐厅经营」里的「合作餐厅」「一起开店」两个引导任务这次也装上了</li>
       </ul>
       <h4>夜市 · 新增「税务」页</h4>
@@ -1199,6 +1200,58 @@ function taxPayersHtml(eco, taxes) {
   return h;
 }
 
+// 国库流水（11-02）：panel_ledger.json → 近 14 天每天进 / 出柱状图 + 近 7 天分类 + 最近明细。面板 index.html 和玩家网页 site\index.html 有同名函数，两边一起改
+const LEDGER_OUT = {grant: '国库拨款', weekly: '人气榜奖金'};
+function ledgerName(c, taxes) { return (taxes && taxes[c] && taxes[c].name) || LEDGER_OUT[c] || c; }
+function ledgerHtml(L, taxes, bal) {
+  if (!L || !L.days) return '<div class="empty">国库流水要装好新版面板脚本、国库有收支之后才开始记</div>';
+  const p = String(L.today || '').split('-').map(Number);
+  if (p.length !== 3 || !p[0]) return '<div class="empty">国库流水还没有日期</div>';
+  const sum = a => (a || []).reduce((s, x) => s + (Number(x.a) || 0), 0);
+  const byDay = {};
+  (L.days || []).forEach(d => { byDay[d.k] = d; });
+  const base = Date.UTC(p[0], p[1] - 1, p[2]);
+  const rows = [];
+  for (let i = 13; i >= 0; i--) {
+    const dt = new Date(base - i * 86400000);
+    const k = dt.getUTCFullYear() + '-' + String(dt.getUTCMonth() + 1).padStart(2, '0') + '-' + String(dt.getUTCDate()).padStart(2, '0');
+    const d = byDay[k] || {};
+    rows.push({k: k, inc: d.inc || [], out: d.out || [], i: sum(d.inc), o: sum(d.out), bal: 0});
+  }
+  let b = Number(bal) || 0;            // 每天结束时国库有多少：从现在的余额往回推
+  for (let i = rows.length - 1; i >= 0; i--) { rows[i].bal = b; b -= rows[i].i - rows[i].o; }
+  const today = rows[rows.length - 1], w = rows.slice(-7);
+  const wi = w.reduce((s, r) => s + r.i, 0), wo = w.reduce((s, r) => s + r.o, 0);
+  const since = L.since ? new Date(L.since).toLocaleDateString('zh-CN', {month: 'numeric', day: 'numeric'}) : '—';
+  const net = x => (x >= 0 ? '+' : '−') + fmt(Math.abs(x));
+  const cell = (lab, v, sub, col) => `<div style="flex:1;min-width:120px"><div class="dim" style="font-size:12px">${lab}</div><div style="font-size:20px;font-weight:600${col ? ';color:' + col : ''}">${v}</div><div class="dim" style="font-size:12px">${sub}</div></div>`;
+  let h = '<div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px">'
+    + cell('今天', net(today.i - today.o), '进 ' + fmt(today.i) + ' · 出 ' + fmt(today.o), today.i - today.o >= 0 ? 'var(--jade)' : 'var(--red)')
+    + cell('近 7 天', net(wi - wo), '进 ' + fmt(wi) + ' · 出 ' + fmt(wo), wi - wo >= 0 ? 'var(--jade)' : 'var(--red)')
+    + cell('国库余额', fmt(bal), '自 ' + since + ' 起共支出 ' + fmt(sum(L.out)))
+    + '</div>';
+  const max = Math.max(1, ...rows.map(r => Math.max(r.i, r.o)));
+  const bar = (v, col) => `<i style="display:block;width:8px;height:${v > 0 ? Math.max(2, Math.round(v / max * 70)) : 0}px;background:${col};border-radius:3px 3px 0 0"></i>`;
+  h += '<div style="display:flex;gap:3px;align-items:flex-end">' + rows.map(r => {
+    const tt = r.k + '\n进 ' + fmt(r.i) + (r.inc.length ? '（' + r.inc.map(x => ledgerName(x.c, taxes) + ' ' + fmt(x.a)).join('、') + '）' : '')
+      + '\n出 ' + fmt(r.o) + (r.out.length ? '（' + r.out.map(x => ledgerName(x.c, taxes) + ' ' + fmt(x.a)).join('、') + '）' : '')
+      + '\n当天结束时国库约 ' + fmt(r.bal);
+    return `<div title="${esc(tt)}" style="flex:1;min-width:0;text-align:center"><div style="height:72px;display:flex;align-items:flex-end;justify-content:center;gap:2px">${bar(r.i, 'var(--jade)')}${bar(r.o, 'var(--red)')}</div><div class="dim" style="font-size:10px">${r.k.slice(5)}</div></div>`;
+  }).join('') + '</div>';
+  h += '<div class="dim" style="font-size:12px;margin:4px 0 10px"><span style="color:var(--jade)">■</span> 进账　<span style="color:var(--red)">■</span> 支出　鼠标停在柱子上看当天明细</div>';
+  const agg = side => {
+    const m = {};
+    w.forEach(r => (r[side] || []).forEach(x => { m[x.c] = (m[x.c] || 0) + (Number(x.a) || 0); }));
+    return Object.keys(m).map(c => ({n: ledgerName(c, taxes), v: m[c]})).sort((x, y) => y.v - x.v);
+  };
+  const bars = (rs, col, empty) => rs.length ? rs.map(x => `<div class="hbar"><span class="nm">${esc(x.n)}</span><span class="tr"><i style="width:${x.v / rs[0].v * 100}%;background:${col}"></i></span><span class="v">${fmt(x.v)}</span></div>`).join('') : '<div class="empty">' + empty + '</div>';
+  h += '<div style="display:flex;flex-wrap:wrap;gap:16px"><div style="flex:1;min-width:200px"><div class="dim" style="font-size:12px;margin-bottom:4px">近 7 天进账来源</div>' + bars(agg('inc'), 'var(--jade)', '这 7 天没有进账') + '</div>'
+    + '<div style="flex:1;min-width:200px"><div class="dim" style="font-size:12px;margin-bottom:4px">近 7 天支出去向</div>' + bars(agg('out'), 'var(--red)', '这 7 天没有支出') + '</div></div>';
+  const lg = (L.log || []).slice(-20).reverse();
+  h += '<div class="dim" style="font-size:12px;margin:12px 0 4px">最近流水</div>' + (lg.length ? lg.map(e => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:3px 0;border-bottom:1px dashed rgba(128,128,128,.25)"><span>${ago(e.t)} · ${esc(ledgerName(e.c, taxes))} · ${esc(e.w || '—')}${e.note ? ' · <span class="dim">' + esc(e.note) + '</span>' : ''}</span><b style="color:var(--${e.d === 'in' ? 'jade' : 'red'});white-space:nowrap">${e.d === 'in' ? '+' : '−'}${fmt(e.a)}</b></div>`).join('') : '<div class="empty">还没有流水</div>');
+  return h;
+}
+
 function renderTreasury() {
   const tb = $('treasuryBox'), bb = $('bankBox');
   if (!tb || !bb) return;
@@ -1215,6 +1268,7 @@ function renderTreasury() {
         + taxPayersHtml(e, taxes)
         + (mk.length ? '<div class="dim" style="font-size:12px;margin-top:8px">最近：' +
           mk.slice(-5).reverse().map(m => esc(m.who || '—') + ' 买 ' + esc(m.name || '') + ' 手续费 ' + fmt(m.fee || 0)).join(' · ') + '</div>' : '');
+    const lb = $('ledgerBox'); if (lb) lb.innerHTML = ledgerHtml(D.ledger, taxes, e.treasury);
     const bankRows = ps.map(p => ({n: p.name, v: p.coinsBank || 0})).filter(r => r.v > 0).sort((a, b) => b.v - a.v).slice(0, 8);
     const bl = shop.bank || [];
     bb.innerHTML = (e.coinsBank == null && !bankRows.length) ? '<div class="empty">还没装夜市模组</div>'
