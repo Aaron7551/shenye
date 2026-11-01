@@ -133,7 +133,7 @@ h1{margin:0;font-size:17px;font-weight:800;letter-spacing:2px;line-height:1.25}
 .row .v{font-variant-numeric:tabular-nums;color:var(--ink2);font-size:12.5px}
 .row.first .nm{font-weight:700}
 .row .tr{grid-column:2/4;height:4px;background:var(--fill);border-radius:99px;overflow:hidden;margin-top:-1px}
-.row .tr i{display:block;height:100%;min-width:3px;border-radius:99px;background:var(--ink2);transform-origin:left;animation:grow .9s var(--ease) both}
+.row .tr i{display:block;height:100%;min-width:3px;border-radius:99px;background:var(--ink2);transform-origin:left}
 .row.first .tr i{background:var(--amber)}
 @keyframes grow{from{transform:scaleX(0)}}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
@@ -166,7 +166,7 @@ h1{margin:0;font-size:17px;font-weight:800;letter-spacing:2px;line-height:1.25}
 .mem.has{background:var(--ink)}
 .mem.pend{background:transparent;box-shadow:inset 0 0 0 1.5px var(--ink2)}
 .prog{position:relative;height:8px;background:var(--fill2);border-radius:99px;margin:8px 0 3px}
-.prog i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--amber);transform-origin:left;animation:grow 1s var(--ease) both}
+.prog i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--amber);transform-origin:left}
 .prog s{position:absolute;top:-3px;width:2px;height:14px;background:var(--line2);border-radius:1px}
 .prog s.ok{background:var(--ink2)}
 
@@ -174,7 +174,7 @@ h1{margin:0;font-size:17px;font-weight:800;letter-spacing:2px;line-height:1.25}
 .tl-row{display:grid;grid-template-columns:110px minmax(0,1fr) 84px;gap:12px;align-items:center;padding:6px 0;font-size:13px}
 .tl-row .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
 .tl-track{position:relative;height:16px;border-radius:8px;background:var(--fill);overflow:hidden}
-.tl-track i{position:absolute;top:3px;bottom:3px;border-radius:5px;background:var(--ink2);opacity:.75;transform-origin:left;animation:grow .8s var(--ease) both}
+.tl-track i{position:absolute;top:3px;bottom:3px;border-radius:5px;background:var(--ink2);opacity:.75;transform-origin:left}
 .tl-track i.live{background:var(--amber);opacity:1}
 .tl-row .v{text-align:right;color:var(--ink2);font-size:12.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .tl-axis{display:grid;grid-template-columns:110px minmax(0,1fr) 84px;gap:12px;margin-top:6px;height:14px;font-size:11.5px;color:var(--ink3)}
@@ -270,7 +270,7 @@ footer{color:var(--ink3);font-size:12px;text-align:center;margin-top:36px}
 .hbar{display:grid;grid-template-columns:minmax(70px,120px) minmax(0,1fr) 80px;gap:12px;align-items:center;font-size:13px;padding:6px 0}
 .hbar .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hbar .tr{height:10px;background:var(--fill);border-radius:5px;overflow:hidden}
-.hbar .tr i{display:block;height:100%;min-width:2px;border-radius:5px;background:var(--ink);opacity:.82;transform-origin:left;animation:grow .9s var(--ease) both}
+.hbar .tr i{display:block;height:100%;min-width:2px;border-radius:5px;background:var(--ink);opacity:.82;transform-origin:left}
 .hbar .v{text-align:right;font-size:12.5px;color:var(--ink2);font-variant-numeric:tabular-nums}
 
 /* ---------- YSM 上传 ---------- */
@@ -321,8 +321,14 @@ svg [stroke="#0b0e15"]{stroke:var(--bg)}
 svg [fill="#eceae4"]{fill:var(--ink)}
 svg [stroke="#ffc978"]{stroke:var(--amber)}
 svg [fill="#ffc978"]{fill:var(--amber)}
+
+/* 数据每几秒重画一次：展开类动画只在刚打开页面 / 切页签时播，平时刷新不重播 */
+html.boot .row .tr i,.tab.entering .row .tr i{animation:grow .9s var(--ease) both}
+html.boot .prog i,.tab.entering .prog i{animation:grow 1s var(--ease) both}
+html.boot .tl-track i,.tab.entering .tl-track i{animation:grow .8s var(--ease) both}
+html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) both}
 </style>
-<script>try{var _t=localStorage.getItem('shenyeTheme');if(!_t)_t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
+<script>document.documentElement.classList.add('boot');setTimeout(function(){document.documentElement.classList.remove('boot')},2500);try{var _t=localStorage.getItem('shenyeTheme');if(!_t)_t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -1233,7 +1239,7 @@ document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tab').forEach(t => {
     const on = t.id === 't-' + b.dataset.t;
     t.classList.toggle('act', on);
-    if (on) { t.classList.remove('entering'); void t.offsetWidth; t.classList.add('entering'); clearTimeout(t._en); t._en = setTimeout(() => t.classList.remove('entering'), 900); }
+    if (on) { t.classList.remove('entering'); void t.offsetWidth; t.classList.add('entering'); clearTimeout(t._en); t._en = setTimeout(() => t.classList.remove('entering'), 1300); }
   });
   try { history.replaceState(null, '', '#' + b.dataset.t); } catch (e) {}
   if (b.dataset.t === 'eco' && D) { try { renderEco(); } catch (e) {} }
