@@ -373,6 +373,20 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 .rk-row .rw{color:var(--amber);font-size:11.5px;margin-left:6px}
 .rk-foot{margin-top:12px;font-size:12.5px;color:var(--ink2);line-height:1.8}
 .rk-foot b{color:var(--ink)}
+.rk-th{display:grid;grid-template-columns:34px minmax(0,1fr) 130px 70px 100px;gap:10px;padding:0 12px 6px;font-size:11.5px;color:var(--ink3)}
+.rk-th span:nth-child(3),.rk-th span:nth-child(4),.rk-th span:nth-child(5){text-align:right}
+.rk-row{grid-template-columns:34px minmax(0,1fr) 130px 70px 100px !important}
+.rk-row .nm em{font-style:normal;font-size:11px;margin-left:6px;padding:1px 7px;border-radius:8px;background:var(--fill);color:var(--ink2)}
+.rk-row .nm em.team{background:rgba(120,140,255,.16)}
+.rk-row .nm em.solo{background:rgba(255,170,60,.18)}
+.rk-row .calc{text-align:right;color:var(--ink3);font-size:12px;font-variant-numeric:tabular-nums}
+.rk-row .calc i{font-style:normal;margin:0 2px}
+.rk-row .aw{text-align:right;font-size:12px;color:var(--ink3)}
+.rk-row .aw b{color:var(--amber)}
+.rk-row .pc{font-size:15px}
+.rk-how{margin-top:6px}
+.rk-th+.rk-list .rk-row{}
+@media(max-width:640px){.rk-th{display:none}.rk-row{grid-template-columns:30px minmax(0,1fr) auto !important}.rk-row .calc,.rk-row .aw{grid-column:2/4;text-align:left}}
 .coop-tax{display:inline-block;margin-left:6px;font-size:11px;padding:1px 7px;border-radius:99px;background:rgba(224,103,79,.14);color:var(--red)}
 .coop-m .idle{font-size:11px;color:var(--red);margin-left:6px}
 .coop-empty{display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;padding:30px 20px;color:var(--ink2);font-size:13px}
@@ -498,7 +512,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <div class="tbl-wrap"><table class="tbl" id="restTable"></table></div>
       </div>
       <div class="card mt" id="rankCard">
-        <h3>本周人气榜<span class="r">按人均营收排名 · 个人店另评</span></h3>
+        <h3>本周人气榜<span class="r">本周营收 ÷ 店里人数 = 人均 · 人均高的排前面</span></h3>
         <div id="coopRank"></div>
       </div>
       <div class="card mt" id="coopCard">
@@ -1119,29 +1133,38 @@ function coopCardsHtml(cs, emptyHtml) {
 function coopRankHtml(w) {
   if (!w) return '';
   const h = Math.floor((w.msLeft || 0) / 3600000);
-  const rw = (w.rewards || []).join(' / ');
+  const rws = w.rewards || [];
   const list = w.list || [];
+  const medal = ['🥇', '🥈', '🥉'];
   const rows = list.length ? list.map(u => {
     const solo = u.type === 'solo';
-    const rew = (w.rewards || [])[u.pos - 1];
+    const n = solo ? 1 : (u.size || (u.people || []).length || 1);
+    const rew = rws[u.pos - 1];
     return `<div class="rk-row ${u.pos <= 3 ? 'top' : ''}">
-      <span class="pos">${u.pos}</span>
-      <span class="nm"><b>${esc(u.name)}</b><small>${esc((u.people || []).join('、'))}</small></span>
-      <span class="ty">${solo ? '个人店' : u.size + ' 人'}</span>
-      <span class="pc">人均 ${fmt(u.perCapita)}${rew ? '<span class="rw">+' + rew + '</span>' : ''}</span>
-      <span class="tt">合计 ${fmt(u.total)}</span>
+      <span class="pos">${medal[u.pos - 1] || u.pos}</span>
+      <span class="nm"><b>${esc(u.name)}</b><em class="${solo ? 'solo' : 'team'}">${solo ? '个人店' : '合作店'}</em><small>${esc((u.people || []).join('、'))}</small></span>
+      <span class="calc">${fmt(u.total)} <i>÷</i> ${n} 人</span>
+      <span class="pc">${fmt(u.perCapita)}</span>
+      <span class="aw">${rew ? '每人 <b>+' + rew + '</b> 币' : '<span class="dim">无奖金</span>'}</span>
     </div>`;
-  }).join('') : `<div class="coop-empty"><b>本周还没有店上榜</b><span>本周营收 ${fmt(w.minEarn || 0)} 币起上榜</span></div>`;
-  let foot = '';
-  if (w.bestSolo) foot += `目前最佳个人店：<b>${esc(w.bestSolo.name)}</b>（${esc((w.bestSolo.people || [])[0] || '')}，人均 ${fmt(w.bestSolo.perCapita)}）`;
+  }).join('') : `<div class="coop-empty"><b>本周还没有店上榜</b><span>本周营收合计满 ${fmt(w.minEarn || 0)} 才会上榜</span></div>`;
+  const head = list.length ? `<div class="rk-th"><span></span><span>店</span><span>本周营收 ÷ 店里人数</span><span>人均</span><span>名次奖金</span></div>` : '';
+  const top = list[0];
+  const eg = top ? `比如第一名「${esc(top.name)}」：本周营收 ${fmt(top.total)}，店里 ${top.type === 'solo' ? 1 : (top.size || (top.people || []).length || 1)} 人，所以人均 ${fmt(top.perCapita)}。` : '';
+  let live = '';
+  if (w.bestSolo) live += `<div>目前最佳个人店：<b>${esc(w.bestSolo.name)}</b>（${esc((w.bestSolo.people || [])[0] || '')}，人均 ${fmt(w.bestSolo.perCapita)}）</div>`;
   if (w.last && w.last.list && w.last.list.length) {
-    foot += (foot ? '<br>' : '') + '上周：' + w.last.list.slice(0, 3).map(u => `${u.pos}.「${esc(u.name)}」人均 ${fmt(u.perCapita)}`).join('　') +
-      (w.last.bestSolo ? `　最佳个人店「${esc(w.last.bestSolo.name)}」` : '');
+    live += '<div>上周结果：' + w.last.list.slice(0, 3).map(u => `${u.pos}.「${esc(u.name)}」人均 ${fmt(u.perCapita)}`).join('　') +
+      (w.last.bestSolo ? `　最佳个人店「${esc(w.last.bestSolo.name)}」` : '') + '</div>';
   }
   return `<div class="rk-hd"><span>还有 <b>${Math.floor(h / 24)} 天 ${h % 24} 小时</b> 结算（每周一 0 点）</span>
-      <span>前三名店里干过活的人每人 <b>${rw}</b> 币</span><span>最佳个人店 <b>${fmt(w.soloReward || 0)}</b> 币</span></div>
-    <div class="rk-list">${rows}</div>
-    <div class="rk-foot">${foot ? foot + '<br>' : ''}按「本周营收 ÷ 成员数」排名，挂名不干活的人也算在分母里，所以两三个人的小店、一个人的店都有机会。</div>`;
+      <span>前三名奖金：${rws.map((x, i) => `第 ${i + 1} 名每人 <b>${x}</b>`).join('，')} 币</span><span>最佳个人店 <b>${fmt(w.soloReward || 0)}</b> 币</span></div>
+    ${head}<div class="rk-list">${rows}</div>
+    <div class="rk-foot">${live}
+      <div class="rk-how"><b>怎么排：</b>每家店用「本周营收合计 ÷ 店里人数」算出<b>人均</b>，人均高的排前面；个人店按 1 人算，和合作店排同一张榜。${eg}</div>
+      <div class="rk-how"><b>人数怎么数：</b>店里登记的全部成员，挂名不干活的人也算，所以人多不一定排得高。</div>
+      <div class="rk-how"><b>奖金怎么发：</b>前三名店里本周做过单的人<b>每人各得一份</b>（不是全店平分），第 4 名起没有。另外，个人店里人均最高的拿「最佳个人店」奖，可以和名次奖叠加。本周营收合计满 ${fmt(w.minEarn || 0)} 才上榜。</div>
+    </div>`;
 }
 const COOP_EMPTY = '<div class="coop-empty"><b>还没有合作餐厅</b><span>打开打单机，点右边的「合作餐厅」建店，再点在线玩家的名字邀请；对方在聊天栏点 [接受] 就加入了。没装模组的人可以用 /coop。</span></div>';
 function renderCoops() {
