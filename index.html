@@ -373,12 +373,9 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 .rk-row .rw{color:var(--amber);font-size:11.5px;margin-left:6px}
 .rk-foot{margin-top:12px;font-size:12.5px;color:var(--ink2);line-height:1.8}
 .rk-foot b{color:var(--ink)}
-.rk-th{display:grid;grid-template-columns:34px minmax(0,1fr) 130px 70px 100px;gap:10px;padding:0 12px 6px;font-size:11.5px;color:var(--ink3)}
+.rk-th{display:grid;grid-template-columns:34px minmax(0,1fr) 130px 70px 120px;gap:10px;padding:0 12px 6px;font-size:11.5px;color:var(--ink3)}
 .rk-th span:nth-child(3),.rk-th span:nth-child(4),.rk-th span:nth-child(5){text-align:right}
-.rk-row{grid-template-columns:34px minmax(0,1fr) 130px 70px 100px !important}
-.rk-row .nm em{font-style:normal;font-size:11px;margin-left:6px;padding:1px 7px;border-radius:8px;background:var(--fill);color:var(--ink2)}
-.rk-row .nm em.team{background:rgba(120,140,255,.16)}
-.rk-row .nm em.solo{background:rgba(255,170,60,.18)}
+.rk-row{grid-template-columns:34px minmax(0,1fr) 130px 70px 120px !important}
 .rk-row .calc{text-align:right;color:var(--ink3);font-size:12px;font-variant-numeric:tabular-nums}
 .rk-row .calc i{font-style:normal;margin:0 2px}
 .rk-row .aw{text-align:right;font-size:12px;color:var(--ink3)}
@@ -512,7 +509,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <div class="tbl-wrap"><table class="tbl" id="restTable"></table></div>
       </div>
       <div class="card mt" id="rankCard">
-        <h3>本周人气榜<span class="r">本周营收 ÷ 店里人数 = 人均 · 人均高的排前面</span></h3>
+        <h3>本周人气榜<span class="r">本周营收 ÷ 店里人数 = 人均 · 第一名拿奖金</span></h3>
         <div id="coopRank"></div>
       </div>
       <div class="card mt" id="coopCard">
@@ -548,11 +545,11 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
       <h3>深夜食堂 5.0 beta4<span class="ver">2026-11-01</span><span class="r">这一版更新了什么</span></h3>
       <h4>合作餐厅 · 鼓励小店，也照顾一个人玩的</h4>
       <ul>
-        <li>上一版公告里写的<b>规模税、每周人气榜、最佳个人店</b>，这一版正式生效（下面 beta3 那段有详细规则）</li>
+        <li>上一版公告里写的<b>规模税、每周人气榜</b>，这一版正式生效（下面 beta3 那段有详细规则）</li>
         <li>规模税 2 人起按人数收：2 人 4%、3 人 8%、4 人 11%、5 人 17%、6 人 21%、7 人 25%、8 人 30%。一起做的单每人到手约是个人店的 110% / 106% / 102% / 95% / 91% / 86% / 80%，<b>4 人以内比自己开店多</b></li>
         <li>合作加成固定 +15%；一家店最多并 3 台打单机；7 天没参与订单的成员会在界面里标出来</li>
         <li><b>11-01 晚补充：</b>老店并了 3 台以上打单机的，不再按台数额外加规模税（原来每多 1 台 +5%）。规模税现在只看人数，最高就是 8 人店的 30%</li>
-        <li>每周一 0 点人气榜结算：前三名店里干过活的人各得 300 / 200 / 100 币；「最佳个人店」每周 200 币</li>
+        <li>每周一 0 点人气榜结算：只奖第一名的店，国库出 1000 币，店里干过活的人平分（11-02 起，取代之前的前三名奖金和最佳个人店）</li>
         <li><b>11-02 补充：</b>人气榜奖金改成<b>从夜市国库出</b>（就是大家交的传送税、领地税、成交税、规模税）。国库不够时奖金按比例少发，所以多交税、多营业，国库越满奖金越足；每一笔支出都能在「餐厅与经济 → 资金」新加的<b>「国库流水」</b>卡里看到：近 14 天每天进多少出多少、近 7 天钱从哪来到哪去、最近 20 笔明细</li>
         <li>任务书「餐厅经营」里的「合作餐厅」「一起开店」两个引导任务这次也装上了</li>
       </ul>
@@ -591,8 +588,8 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li>合作店的成员和各自分到多少，在「餐厅与经济」页的「合作餐厅」卡里能看到</li>
         <li>任务书「餐厅经营」一章里加了<b>「合作餐厅」「一起开店」</b>两个可选任务，跟着做一遍就会玩了（不做也不影响主线）</li>
         <li><b>人越多税越高</b>：2 人起按人数交规模税，占这单综合所得（含加成）的 2 人 4%、3 人 8%、4 人 11%、5 人 17%、6 人 21%、7 人 25%、8 人 30%（只扣币不扣营收，进国库）。算下来大家一起做的单每人到手约是个人店的 110% / 106% / 102% / 95% / 91% / 86% / 80%，4 人以内比个人店多，5 人起比个人店少；一家店最多并 3 台打单机。7 天没参与过订单的成员会在界面里标出来，店长决定去留</li>
-        <li><b>每周人气榜</b>：所有餐厅按「本周营收 ÷ 成员数」排名，每周一 0 点结算，前三名店里干过活的人各得 300 / 200 / 100 币。「餐厅与经济 → 餐厅」能看实时榜，游戏里点打单机「合作餐厅 → 人气榜」或 /coop rank</li>
-        <li><b>一个人开店也很好</b>：不收规模税、人均就是自己的营收，人气榜还单独评「最佳个人店」，每周 200 币</li>
+        <li><b>每周人气榜</b>：所有餐厅按「本周营收 ÷ 成员数」排名，每周一 0 点结算，只奖第一名的店：国库出 1000 币，店里干过活的人平分（11-02 起改，之前写的前三名奖金和最佳个人店已取消）。「餐厅与经济 → 餐厅」能看实时榜，游戏里点打单机「合作餐厅 → 人气榜」或 /coop rank</li>
+        <li><b>一个人开店也很好</b>：不收规模税，人均就是自己的营收，在人气榜上和合作店一视同仁（个人店就是 1 个人的店）</li>
       </ul>
       <h4>夜市上新 · 三个新柜台</h4>
       <ul>
@@ -1129,41 +1126,40 @@ function coopCardsHtml(cs, emptyHtml) {
   }).join('') + '</div>' +
   '<div class="coop-how"><b>怎么分钱：</b>一单的钱由做这单的人平分（送餐、打包，以及接单前 10 分钟到上菜之间在店里动过灶台的成员）。两人以上一起做的单 +15%，但 2 人起按人数交规模税（2 人 4%、3 人 8%、4 人 11%、5 人 17%、6 人 21%，只扣币，进国库）。算下来每人到手约是个人店的 110% / 106% / 102% / 95% / 91%：4 人以内比个人店多，5 人起比个人店少。分到的钱算进各自的累计营收，星级还是各算各的。</div>';
 }
-// ---------- 本周人气榜（合作餐厅 1.1.0）：按「本周营收 ÷ 成员数」排，个人店另评最佳个人店 ----------
+// ---------- 本周人气榜（合作餐厅 1.1.2）：按「本周营收 ÷ 店里人数」排，只奖第一名，个人店合作店一视同仁 ----------
 function coopRankHtml(w) {
   if (!w) return '';
   const h = Math.floor((w.msLeft || 0) / 3600000);
-  const rws = w.rewards || [];
+  const prize = w.prize != null ? w.prize : ((w.rewards || [])[0] || 0);
   const list = w.list || [];
   const medal = ['🥇', '🥈', '🥉'];
+  const sizeOf = u => u.size || (u.people || []).length || 1;
   const rows = list.length ? list.map(u => {
-    const solo = u.type === 'solo';
-    const n = solo ? 1 : (u.size || (u.people || []).length || 1);
-    const rew = rws[u.pos - 1];
+    const n = sizeOf(u);
+    const aw = u.pos === 1 && prize ? `奖金 <b>${fmt(prize)}</b> 币 ÷ ${(u.people || []).length || n} 人` : '<span class="dim">无奖金</span>';
     return `<div class="rk-row ${u.pos <= 3 ? 'top' : ''}">
       <span class="pos">${medal[u.pos - 1] || u.pos}</span>
-      <span class="nm"><b>${esc(u.name)}</b><em class="${solo ? 'solo' : 'team'}">${solo ? '个人店' : '合作店'}</em><small>${esc((u.people || []).join('、'))}</small></span>
+      <span class="nm"><b>${esc(u.name)}</b><small>${esc((u.people || []).join('、'))}</small></span>
       <span class="calc">${fmt(u.total)} <i>÷</i> ${n} 人</span>
       <span class="pc">${fmt(u.perCapita)}</span>
-      <span class="aw">${rew ? '每人 <b>+' + rew + '</b> 币' : '<span class="dim">无奖金</span>'}</span>
+      <span class="aw">${aw}</span>
     </div>`;
   }).join('') : `<div class="coop-empty"><b>本周还没有店上榜</b><span>本周营收合计满 ${fmt(w.minEarn || 0)} 才会上榜</span></div>`;
-  const head = list.length ? `<div class="rk-th"><span></span><span>店</span><span>本周营收 ÷ 店里人数</span><span>人均</span><span>名次奖金</span></div>` : '';
+  const head = list.length ? `<div class="rk-th"><span></span><span>店</span><span>本周营收 ÷ 店里人数</span><span>人均</span><span>奖金</span></div>` : '';
   const top = list[0];
-  const eg = top ? `比如第一名「${esc(top.name)}」：本周营收 ${fmt(top.total)}，店里 ${top.type === 'solo' ? 1 : (top.size || (top.people || []).length || 1)} 人，所以人均 ${fmt(top.perCapita)}。` : '';
+  const eg = top ? `比如第一名「${esc(top.name)}」：本周营收 ${fmt(top.total)}，店里 ${sizeOf(top)} 人，所以人均 ${fmt(top.perCapita)}。` : '';
   let live = '';
-  if (w.bestSolo) live += `<div>目前最佳个人店：<b>${esc(w.bestSolo.name)}</b>（${esc((w.bestSolo.people || [])[0] || '')}，人均 ${fmt(w.bestSolo.perCapita)}）</div>`;
   if (w.last && w.last.list && w.last.list.length) {
-    live += '<div>上周结果：' + w.last.list.slice(0, 3).map(u => `${u.pos}.「${esc(u.name)}」人均 ${fmt(u.perCapita)}`).join('　') +
-      (w.last.bestSolo ? `　最佳个人店「${esc(w.last.bestSolo.name)}」` : '') + '</div>';
+    const t = w.last.list[0];
+    live += `<div>上周第一：「${esc(t.name)}」人均 ${fmt(t.perCapita)}${t.reward ? '，每人拿到 ' + fmt(t.reward) + ' 币' : ''}</div>`;
   }
   return `<div class="rk-hd"><span>还有 <b>${Math.floor(h / 24)} 天 ${h % 24} 小时</b> 结算（每周一 0 点）</span>
-      <span>前三名奖金：${rws.map((x, i) => `第 ${i + 1} 名每人 <b>${x}</b>`).join('，')} 币</span><span>最佳个人店 <b>${fmt(w.soloReward || 0)}</b> 币</span></div>
+      <span>只奖第一名：国库出 <b>${fmt(prize)}</b> 币，店里干过活的人平分</span></div>
     ${head}<div class="rk-list">${rows}</div>
     <div class="rk-foot">${live}
-      <div class="rk-how"><b>怎么排：</b>每家店用「本周营收合计 ÷ 店里人数」算出<b>人均</b>，人均高的排前面；个人店按 1 人算，和合作店排同一张榜。${eg}</div>
+      <div class="rk-how"><b>怎么排：</b>每家店用「本周营收合计 ÷ 店里人数」算出<b>人均</b>，人均高的排前面。个人店就是 1 个人的店，和合作店排同一张榜、一视同仁。${eg}</div>
       <div class="rk-how"><b>人数怎么数：</b>店里登记的全部成员，挂名不干活的人也算，所以人多不一定排得高。</div>
-      <div class="rk-how"><b>奖金怎么发：</b>前三名店里本周做过单的人<b>每人各得一份</b>（不是全店平分），第 4 名起没有。另外，个人店里人均最高的拿「最佳个人店」奖，可以和名次奖叠加。本周营收合计满 ${fmt(w.minEarn || 0)} 才上榜。</div>
+      <div class="rk-how"><b>奖金怎么发：</b>只有第一名的店有奖，奖金 ${fmt(prize)} 币从夜市国库出，由这家店本周做过单的人平分（国库不够就有多少发多少）。本周营收合计满 ${fmt(w.minEarn || 0)} 才上榜。</div>
     </div>`;
 }
 const COOP_EMPTY = '<div class="coop-empty"><b>还没有合作餐厅</b><span>打开打单机，点右边的「合作餐厅」建店，再点在线玩家的名字邀请；对方在聊天栏点 [接受] 就加入了。没装模组的人可以用 /coop。</span></div>';
