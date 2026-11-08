@@ -202,7 +202,7 @@ footer{color:var(--ink3);font-size:12px;text-align:center;margin-top:36px}
 .subnav button:not(.on):hover{background:var(--fill)}
 [data-sub].hide{display:none!important}
 
-/* ---------- 餐厅与经济 ---------- */
+/* ---------- 开店与经济 ---------- */
 /* 11-08 beta5：酒馆独立子模块（面板 / 网页同一套） */
 .tv-sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:4px 0 2px}
 .tv-sum .ti{padding:14px 16px}
@@ -426,7 +426,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
       <button class="act" data-t="home">今天</button>
       <button data-t="rank">排行榜</button>
       <button data-t="prog">大家的进度</button>
-      <button data-t="eco">餐厅与经济</button>
+      <button data-t="eco">开店与经济</button>
       <button data-t="news">更新公告</button>
       <button data-t="ysm">上传皮肤</button>
     </nav>
@@ -602,7 +602,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li>品质越高越值钱：普通 ×1、优质 ×1.6、精酿 ×2.4、典藏 ×3.2；鸡尾酒按三瓶酒基里最低的那瓶算</li>
         <li>1–5 星：升星看端出过多少位达到品质的客人（普通以上 20 位 → 优质 60 → 精酿 120 → 典藏 200），再花一笔币。星级越高客人越多，还会解锁口味单、鸡尾酒单、「随你调」</li>
         <li>4 星以后一个人会忙不过来，可以请朋友帮忙：<code>/tavern helper add 名字</code>，帮工端的酒钱归帮工</li>
-        <li>任务书主线分组里新增<b>「深夜酒馆」</b>教学章（30 个任务，紧跟「餐厅经营」），从种葡萄一步一步教到五星，不挡主线的灯；这个网页「餐厅与经济 → 酒馆」里能看到每家酒馆</li>
+        <li>任务书主线分组里新增<b>「深夜酒馆」</b>教学章（30 个任务，紧跟「餐厅经营」），从种葡萄一步一步教到五星，不挡主线的灯；这个网页「开店与经济 → 酒馆」里能看到每家酒馆</li>
       </ul>
       <h4>酒馆的特色玩法</h4>
       <ul>
@@ -648,7 +648,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li>合作加成固定 +15%；一家店最多并 3 台打单机；7 天没参与订单的成员会在界面里标出来</li>
         <li><b>11-01 晚补充：</b>老店并了 3 台以上打单机的，不再按台数额外加规模税（原来每多 1 台 +5%）。规模税现在只看人数，最高就是 8 人店的 30%</li>
         <li>每周一 0 点人气榜结算：只奖第一名的店，国库出 1000 币，店里干过活的人平分（11-02 起，取代之前的前三名奖金和最佳个人店）</li>
-        <li><b>11-02 补充：</b>人气榜奖金改成<b>从夜市国库出</b>（就是大家交的传送税、领地税、成交税、规模税）。国库不够时奖金按比例少发，所以多交税、多营业，国库越满奖金越足；每一笔支出都能在「餐厅与经济 → 资金」新加的<b>「国库流水」</b>卡里看到：近 14 天每天进多少出多少、近 7 天钱从哪来到哪去、最近 20 笔明细</li>
+        <li><b>11-02 补充：</b>人气榜奖金改成<b>从夜市国库出</b>（就是大家交的传送税、领地税、成交税、规模税）。国库不够时奖金按比例少发，所以多交税、多营业，国库越满奖金越足；每一笔支出都能在「开店与经济 → 资金」新加的<b>「国库流水」</b>卡里看到：近 14 天每天进多少出多少、近 7 天钱从哪来到哪去、最近 20 笔明细</li>
         <li>任务书「餐厅经营」里的「合作餐厅」「一起开店」两个引导任务这次也装上了</li>
       </ul>
       <h4>夜市 · 新增「税务」页</h4>
@@ -657,7 +657,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li><b>传送税</b>：用 <code>/tpa</code>（被传送的人付）、<code>/home</code>、<code>/warp</code>、<code>/spawn</code>、<code>/back</code> 传送时按次收几个币；<code>/rtp</code> 随机传送单独收。先扣身上的币，不够再扣银行，都不够这次就传不过去</li>
         <li><b>领地税</b>：FTB 圈地超过免税块数后，多出来的每块每天收几个币，每天 0 点（现实时间）由队长交，先扣银行。没交够会记欠税，欠税期间不能再圈新地，在「税务」页点「补交欠税」就好</li>
         <li>具体收多少以「税务」页显示的为准，服主会按大家的收入调；税全部进国库</li>
-        <li>这个网页「餐厅与经济」页的「国库与税收」卡多了<b>纳税榜</b>，鼠标停在名字上能看每种税各交了多少</li>
+        <li>这个网页「开店与经济」页的「国库与税收」卡多了<b>纳税榜</b>，鼠标停在名字上能看每种税各交了多少</li>
       </ul>
       <h4>界面</h4>
       <ul>
@@ -683,10 +683,10 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li>分到的钱照样算进你自己的累计营收，任务进度不受影响；餐厅星级还是看你自己的打单机</li>
         <li>退出或解散后打单机回到个人店，星级、营收、店名都不丢；你不在线时分到的钱，上线自动补发</li>
         <li>没装这个模组也能进服，用命令：<code>/coop</code> <code>/coop invite 名字</code> <code>/coop accept</code> <code>/coop leave</code></li>
-        <li>合作店的成员和各自分到多少，在「餐厅与经济」页的「合作餐厅」卡里能看到</li>
+        <li>合作店的成员和各自分到多少，在「开店与经济」页的「合作餐厅」卡里能看到</li>
         <li>任务书「餐厅经营」一章里加了<b>「合作餐厅」「一起开店」</b>两个可选任务，跟着做一遍就会玩了（不做也不影响主线）</li>
         <li><b>人越多税越高</b>：2 人起按人数交规模税，占这单综合所得（含加成）的 2 人 4%、3 人 8%、4 人 11%、5 人 17%、6 人 21%、7 人 25%、8 人 30%（只扣币不扣营收，进国库）。算下来大家一起做的单每人到手约是个人店的 110% / 106% / 102% / 95% / 91% / 86% / 80%，4 人以内比个人店多，5 人起比个人店少；一家店最多并 3 台打单机。7 天没参与过订单的成员会在界面里标出来，店长决定去留</li>
-        <li><b>每周人气榜</b>：所有餐厅按「本周营收 ÷ 成员数」排名，每周一 0 点结算，只奖第一名的店：国库出 1000 币，店里干过活的人平分（11-02 起改，之前写的前三名奖金和最佳个人店已取消）。「餐厅与经济 → 餐厅」能看实时榜，游戏里点打单机「合作餐厅 → 人气榜」或 /coop rank</li>
+        <li><b>每周人气榜</b>：所有餐厅按「本周营收 ÷ 成员数」排名，每周一 0 点结算，只奖第一名的店：国库出 1000 币，店里干过活的人平分（11-02 起改，之前写的前三名奖金和最佳个人店已取消）。「开店与经济 → 餐厅」能看实时榜，游戏里点打单机「合作餐厅 → 人气榜」或 /coop rank</li>
         <li><b>一个人开店也很好</b>：不收规模税，人均就是自己的营收，在人气榜上和合作店一视同仁（个人店就是 1 个人的店）</li>
       </ul>
       <h4>夜市上新 · 三个新柜台</h4>
@@ -805,7 +805,7 @@ const BOARDS = [
 ];
 const ava = (n, size) => `<div class="ava" style="width:${size}px;height:${size}px">${esc(n[0].toUpperCase())}<img src="https://mc-heads.net/avatar/${encodeURIComponent(n)}/${size}" alt="" onerror="this.remove()" onload="this.parentNode.firstChild.textContent=''"></div>`;
 
-// ---------- 餐厅与经济（行情面板） ----------
+// ---------- 开店与经济（行情面板） ----------
 const PALETTE = ['#d4691f', '#5470b0', '#2c9a59', '#7a62b8', '#cc4632', '#3f8fa0', '#b0577f', '#8a8f3a'];
 const COUNTERS = {leisure:'休闲柜台',t1:'工坊柜台',t2:'物流柜台',t3:'智控柜台',craft:'手作与摆件',redstone:'红石与电脑',tools:'工具柜台',arms:'军械柜台',ammo:'弹药与配件',bags:'背包柜台'};
 const starHtml = lv => Array.from({length: 8}, (_, i) => i < lv ? '<b>★</b>' : '★').join('');
@@ -1310,7 +1310,7 @@ function tavernCardsHtml(ts) {
   '<div class="coop-how"><b>怎么玩：</b>客人坐下头顶会冒出想喝的酒和最低品质，把酒潜行右键摆在他面前（鸡尾酒倒进他面前的空酒杯），他喝完付钱给端酒的人，也算进累计营收。品质越高越值钱：普通 ×1、优质 ×1.6、精酿 ×2.4、典藏 ×3.2，鸡尾酒按三瓶酒基里最低的那瓶算。升星看端出过多少位达到品质的客人，再花一笔币。暗处的酒柜是酒窖，酒越存越值钱；满月夜客人多、小费翻倍；2 星起夜里会来熟客，听他们讲故事；店里的扑克桌能换筹码、Mino 桌能押币；店主标了价的酒，别的玩家潜行右键酒柜就能买。</div>';
 }
 function renderTaverns() {
-  // 11-08 beta5：酒馆独立成「餐厅与经济 → 酒馆」子模块，常驻显示。
+  // 11-08 beta5：酒馆独立成「开店与经济 → 酒馆」子模块，常驻显示。
   // 服务器还没开服 / 数据没同步时 taverns 是 null，不能再把整张卡藏起来（看着像没更新）。
   const box = $('taverns');
   if (!box) return;
@@ -1669,7 +1669,7 @@ function applyTheme(t) {
 }
 applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
 $('themeBtn').onclick = () => { applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); if (D) render(); };
-// 餐厅与经济的小页签
+// 开店与经济的小页签
 document.querySelectorAll('[data-subnav]').forEach(nav => {
   const tab = nav.closest('.tab'), key = 'shenyeSiteSub_' + nav.dataset.subnav;
   const pick = s => {
