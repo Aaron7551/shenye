@@ -203,6 +203,17 @@ footer{color:var(--ink3);font-size:12px;text-align:center;margin-top:36px}
 [data-sub].hide{display:none!important}
 
 /* ---------- 餐厅与经济 ---------- */
+/* 11-08 beta5：酒馆独立子模块（面板 / 网页同一套） */
+.tv-sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:4px 0 2px}
+.tv-sum .ti{padding:14px 16px}
+.tv-sum .ti .v{font-size:21px}
+.tv-sum .ti .sub{display:block;font-size:11.5px;color:var(--ink3);margin-top:3px}
+.tv-tag{display:inline-block;font-size:11.5px;padding:3px 10px;border-radius:99px;background:rgba(255,190,90,.14);color:var(--ac,#f0b35a);font-weight:700;margin-left:8px;vertical-align:middle}
+.tv-how{font-size:13px;color:var(--ink2);line-height:1.95}
+.tv-how b{color:var(--ink)}
+.tv-how code{background:var(--fill);padding:1px 6px;border-radius:6px;font-size:12px}
+.tv-how ul{margin:6px 0 0;padding-left:20px}
+@media (max-width:640px){.tv-sum{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .up{color:var(--red)}.dn{color:var(--jade)}.flat{color:var(--ink3)}
 .chg{font-variant-numeric:tabular-nums;white-space:nowrap}
 .ticker{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;margin-bottom:8px}
@@ -458,6 +469,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
     <div class="subnav glass" data-subnav="eco">
       <button class="on" data-s="mkt">行情</button>
       <button data-s="rest">餐厅</button>
+      <button data-s="tavern">酒馆</button>
       <button data-s="money">资金</button>
       <button data-s="shop">夜市成交</button>
     </div>
@@ -523,11 +535,37 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <h3>合作餐厅<span class="r" id="coopInfo"></span></h3>
         <div id="coops"></div>
       </div>
+      <div class="card mt"><h3>今日营收<span class="r">从今天 0 点算</span></h3><div id="todayBars"></div></div>
+    </div>
+
+    <div data-sub="tavern">
+      <div class="card">
+        <div class="card-row">
+          <h3>深夜酒馆<span class="tv-tag">5.0 beta5 新增</span><span class="r" id="tavernInfo"></span></h3>
+        </div>
+        <div class="tv-sum">
+          <div class="ti" id="tvCountBox"><span class="k">已开酒馆</span><b class="v" id="tvCount">—</b><span class="sub">放下招牌就开张</span></div>
+          <div class="ti" id="tvOpenBox"><span class="k">正在营业</span><b class="v" id="tvOpen">—</b><span class="sub">空手右键招牌开门</span></div>
+          <div class="ti"><span class="k">累计营收</span><b class="v" id="tvRevenue">—</b><span class="sub">所有酒馆加起来</span></div>
+          <div class="ti"><span class="k">今日营收</span><b class="v" id="tvToday">—</b><span class="sub">从今天 0 点算</span></div>
+        </div>
+      </div>
       <div class="card mt" id="tavernCard">
-        <h3>深夜酒馆<span class="r" id="tavernInfo"></span></h3>
+        <h3>各家酒馆<span class="r">按累计营收排 · 只显示店名 / 店主 / 数字，不公开坐标</span></h3>
         <div id="taverns"></div>
       </div>
-      <div class="card mt"><h3>今日营收<span class="r">从今天 0 点算</span></h3><div id="todayBars"></div></div>
+      <div class="card mt">
+        <h3>怎么开一家酒馆<span class="r">5.0 beta5 玩法速览</span></h3>
+        <div class="tv-how">
+          <ul>
+            <li>工作台中间一列竖着摆<b>灯笼 + 告示牌 + 森罗空瓶子</b>，做出「酒馆招牌」，放下就开张，一个人一家。</li>
+            <li>招牌周围 16 格是店面：森罗<b>高脚凳 / 沙发</b>当座位，<b>酒柜 / 酒架</b>里摆的酒就是酒单。<b>空手右键招牌</b>开门 / 打烊，<b>潜行右键</b>看状态和升星还差什么。</li>
+            <li>客人坐下会冒出想喝的酒和最低品质，把对的酒<b>潜行右键摆在他面前</b>；喝完钱给端酒的人，也算进累计营收。夜里客人来得更快、小费更多。</li>
+            <li>暗处的酒柜是酒窖，酒越陈越值钱；满月夜满座、2 星起夜里来熟客；店里的扑克桌能换筹码、Mino 桌能押币，<code>/tavern price</code> 标价的酒别的玩家能买。</li>
+            <li>开到 4 星、调过鸡尾酒、认下一位熟客，就能在教学章点亮<b>第八盏灯</b>「酒馆」，拿到第八块记忆碎片。完整改动看「更新公告 → 5.0 beta5」。</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <div data-sub="money">
@@ -564,7 +602,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li>品质越高越值钱：普通 ×1、优质 ×1.6、精酿 ×2.4、典藏 ×3.2；鸡尾酒按三瓶酒基里最低的那瓶算</li>
         <li>1–5 星：升星看端出过多少位达到品质的客人（普通以上 20 位 → 优质 60 → 精酿 120 → 典藏 200），再花一笔币。星级越高客人越多，还会解锁口味单、鸡尾酒单、「随你调」</li>
         <li>4 星以后一个人会忙不过来，可以请朋友帮忙：<code>/tavern helper add 名字</code>，帮工端的酒钱归帮工</li>
-        <li>任务书主线分组里新增<b>「深夜酒馆」</b>教学章（30 个任务，紧跟「餐厅经营」），从种葡萄一步一步教到五星，不挡主线的灯；这个网页「餐厅与经济 → 餐厅」里能看到每家酒馆</li>
+        <li>任务书主线分组里新增<b>「深夜酒馆」</b>教学章（30 个任务，紧跟「餐厅经营」），从种葡萄一步一步教到五星，不挡主线的灯；这个网页「餐厅与经济 → 酒馆」里能看到每家酒馆</li>
       </ul>
       <h4>酒馆的特色玩法</h4>
       <ul>
@@ -1272,11 +1310,25 @@ function tavernCardsHtml(ts) {
   '<div class="coop-how"><b>怎么玩：</b>客人坐下头顶会冒出想喝的酒和最低品质，把酒潜行右键摆在他面前（鸡尾酒倒进他面前的空酒杯），他喝完付钱给端酒的人，也算进累计营收。品质越高越值钱：普通 ×1、优质 ×1.6、精酿 ×2.4、典藏 ×3.2，鸡尾酒按三瓶酒基里最低的那瓶算。升星看端出过多少位达到品质的客人，再花一笔币。暗处的酒柜是酒窖，酒越存越值钱；满月夜客人多、小费翻倍；2 星起夜里会来熟客，听他们讲故事；店里的扑克桌能换筹码、Mino 桌能押币；店主标了价的酒，别的玩家潜行右键酒柜就能买。</div>';
 }
 function renderTaverns() {
-  const ts = D.taverns;
-  if (!ts) { $('tavernCard').style.display = 'none'; return; }
-  $('tavernCard').style.display = '';
-  $('tavernInfo').textContent = ts.length ? ts.length + ' 家 · 合计营收 ' + fmt(ts.reduce((a, t) => a + (t.revenue || 0), 0)) : '';
-  $('taverns').innerHTML = tavernCardsHtml(ts);
+  // 11-08 beta5：酒馆独立成「餐厅与经济 → 酒馆」子模块，常驻显示。
+  // 服务器还没开服 / 数据没同步时 taverns 是 null，不能再把整张卡藏起来（看着像没更新）。
+  const box = $('taverns');
+  if (!box) return;
+  const raw = D && D.taverns;
+  const has = Array.isArray(raw);
+  const ts = has ? raw.filter(t => t && t.placed !== false) : [];
+  const sum = f => ts.reduce((a, t) => a + (Number(f(t)) || 0), 0);
+  const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  const todayRev = sum(t => (!t.today || t.today === today) ? (t.todayRevenue || 0) : 0);
+  const put = (id, v) => { const e = $(id); if (e) e.textContent = has ? v : '—'; };
+  put('tvCount', fmt(ts.length));
+  put('tvOpen', fmt(ts.filter(t => t.open).length));
+  put('tvRevenue', fmt(sum(t => t.revenue || 0)));
+  put('tvToday', fmt(todayRev));
+  const info = $('tavernInfo');
+  if (info) info.textContent = has ? (ts.length ? ts.length + ' 家 · 合计营收 ' + fmt(sum(t => t.revenue || 0)) : '还没有酒馆') : '等服务器上传酒馆数据';
+  box.innerHTML = has ? tavernCardsHtml(ts)
+    : '<div class="coop-empty"><b>等服务器上传酒馆数据</b><span>开一次服，等面板同步后这里会列出每家酒馆的星级、营收、酒单和今日数据。想先玩的话看下面「怎么开一家酒馆」；完整改动在「更新公告 → 5.0 beta5」。</span></div>';
 }
 const COOP_EMPTY = '<div class="coop-empty"><b>还没有合作餐厅</b><span>打开打单机，点右边的「合作餐厅」建店，再点在线玩家的名字邀请；对方在聊天栏点 [接受] 就加入了。没装模组的人可以用 /coop。</span></div>';
 function renderCoops() {
@@ -1628,6 +1680,7 @@ document.querySelectorAll('[data-subnav]').forEach(nav => {
       if (on) { x.style.animation = 'none'; void x.offsetWidth; x.style.animation = 'rise .45s var(--ease) both'; }
     });
     try { localStorage.setItem(key, s); } catch (e) {}
+    if (nav.dataset.subnav === 'eco' && s === 'tavern') { try { renderTaverns(); } catch (e) {} }
   };
   nav.querySelectorAll('button').forEach(b => b.onclick = () => pick(b.dataset.s));
   let s0 = null; try { s0 = localStorage.getItem(key); } catch (e) {}
