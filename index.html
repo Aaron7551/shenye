@@ -390,6 +390,13 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 .coop-empty b{font-size:16px;color:var(--ink)}
 .coop-empty span{max-width:520px}
 @media (max-width:640px){.coop-grid{grid-template-columns:1fr}.coop-m{grid-template-columns:12px minmax(0,1fr) 40px 80px}.coop-m .ord{display:none}.coop-nums b{font-size:20px}.coop-nums{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.tv-extra{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}.tv-extra span{font-size:12px;padding:2px 8px;border-radius:10px;background:rgba(255,190,90,.12);color:var(--ac, #f0b35a)}
+.tv-menu{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
+.tv-drink{font-size:12px;padding:3px 8px;border-radius:999px;background:var(--fill2);white-space:nowrap}
+.tv-drink i{font-style:normal;margin-left:4px;opacity:.65}
+.tv-drink.q5 i,.tv-drink.q6 i{color:var(--amber);opacity:1}
+.tv-star{color:var(--amber);letter-spacing:1px}
 </style>
 <script>document.documentElement.classList.add('boot');setTimeout(function(){document.documentElement.classList.remove('boot')},2500);try{var _t=localStorage.getItem('shenyeTheme');if(!_t)_t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
 </head>
@@ -425,9 +432,9 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <div class="who" id="hmWho"></div>
       </div>
       <div class="card news-bar" data-goto="news">
-        <span class="tag">5.0 beta4</span>
-        <div class="t">夜市新增「税务」页，合作餐厅新规则上线</div>
-        <div class="d">传送税、领地税、纳税榜；规模税和每周人气榜正式生效；自由市场一屏能看 16 个摊位。</div>
+        <span class="tag">5.0 beta5</span>
+        <div class="t">深夜酒馆开张：用森罗的酒开一家自己的酒馆</div>
+        <div class="d">放一块酒馆招牌就开店；酒窖陈酿、满月满座夜、8 位熟客的故事、筹码台和 Mino 牌局、玩家点单和委托板。</div>
         <div class="go">看更新公告 <i>→</i></div>
       </div>
     </div>
@@ -516,6 +523,10 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <h3>合作餐厅<span class="r" id="coopInfo"></span></h3>
         <div id="coops"></div>
       </div>
+      <div class="card mt" id="tavernCard">
+        <h3>深夜酒馆<span class="r" id="tavernInfo"></span></h3>
+        <div id="taverns"></div>
+      </div>
       <div class="card mt"><h3>今日营收<span class="r">从今天 0 点算</span></h3><div id="todayBars"></div></div>
     </div>
 
@@ -542,6 +553,55 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 
   <section class="tab" id="t-news">
     <div class="card news">
+      <h3>深夜食堂 5.0 beta5<span class="ver">2026-11-08</span><span class="r">这一版更新了什么</span></h3>
+      <h4>新增 · 深夜酒馆</h4>
+      <ul>
+        <li>用森罗物语：酒馆酿的酒开一家自己的酒馆。做一块<b>「酒馆招牌」</b>（工作台中间一列竖着摆：灯笼、告示牌、森罗空瓶子），放下就开张，一个人一家</li>
+        <li>招牌周围 16 格就是店里：森罗的<b>高脚凳、沙发</b>是座位；森罗的<b>酒柜、酒窖柜、酒架、瓶架</b>里摆了什么酒，酒单上就有什么，不用开任何界面</li>
+        <li><b>空手右键招牌</b>开门 / 打烊，<b>潜行右键</b>看店里的状态、酒单和升星还差什么。白天晚上都能开，夜里客人来得快一半，小费多 10%</li>
+        <li>客人坐下后头顶会冒出想喝的酒、最低品质和耐心条（6 分钟）。把对的酒<b>潜行右键摆在他面前的桌上</b>；点鸡尾酒的，在他面前放个空酒杯，摇好雪克杯倒进去</li>
+        <li>客人拿起来喝，钱直接给<b>端酒的人</b>，也算进你的累计营收。端错、品质不够他不会碰，收回来换一瓶就行；有的客人喝完还会再点一杯</li>
+        <li>品质越高越值钱：普通 ×1、优质 ×1.6、精酿 ×2.4、典藏 ×3.2；鸡尾酒按三瓶酒基里最低的那瓶算</li>
+        <li>1–5 星：升星看端出过多少位达到品质的客人（普通以上 20 位 → 优质 60 → 精酿 120 → 典藏 200），再花一笔币。星级越高客人越多，还会解锁口味单、鸡尾酒单、「随你调」</li>
+        <li>4 星以后一个人会忙不过来，可以请朋友帮忙：<code>/tavern helper add 名字</code>，帮工端的酒钱归帮工</li>
+        <li>任务书主线分组里新增<b>「深夜酒馆」</b>教学章（30 个任务，紧跟「餐厅经营」），从种葡萄一步一步教到五星，不挡主线的灯；这个网页「餐厅与经济 → 餐厅」里能看到每家酒馆</li>
+      </ul>
+      <h4>酒馆的特色玩法</h4>
+      <ul>
+        <li><b>酒窖陈酿</b>：店里头顶有遮挡、够暗的酒柜 / 酒架就是酒窖，酒每过一个游戏日窖藏 +1 天，每天贵 7%（最多 7 天）；典藏窖藏满 7 天成了<b>「珍藏」</b>，再贵 20%。3 星起有客人专点窖藏的酒</li>
+        <li><b>满座夜</b>：游戏里满月的那一夜，客人来得快一倍、多坐 2 位、小费 +50%。3 星起夜里还会来<b>旅团</b>，全都招待好领队另给赏钱</li>
+        <li><b>驻唱</b>：有人在店里用沉浸乐器演奏时，客人耐心掉得慢、小费 +15%，演奏的人每杯分 10%</li>
+        <li><b>熟客</b>：2 星起夜里偶尔会来 8 位熟客（名字前有 ★），各有爱喝的口味。端对一次好感 +1，攒够解锁一章故事，在聊天栏里点选项回他；最后一章送纪念物和头衔。<code>/tavern regulars</code> 看进度</li>
+        <li><b>情报</b>：客人喝满意了偶尔塞给你一张探险地图（宝藏、试炼密室、林地府邸……）</li>
+        <li><b>远方旅人</b>：4 星起，酒单里有次元酒窖的异界酒，就会有旅人专门来点，价格高</li>
+        <li><b>筹码台</b>：开门时潜行 + 空手右键店里的扑克桌换筹码（白 1 · 红 5 · 蓝 10 · 绿 25 · 黑 100），散场按面值兑回，抽 5% 进国库。筹码从夜市下架了，只能在酒馆换</li>
+        <li><b>Mino 牌局</b>：酒馆里的 Mino++ 桌可以押币，开局前押，赢的人拿彩池（抽 5%），没打完全退。熟客好感够了会坐到 Mino 桌边等你，押多少他跟多少（最多 100）</li>
+        <li><b>玩家点单</b>：店主拿着酒输入 <code>/tavern price 币数</code> 标价，别的玩家营业时潜行 + 空手右键酒柜就能买，钱进店主账上。两个人 5 分钟内在同一家店买过酒，一起得到「干杯」</li>
+        <li><b>委托板</b>：做一块「酒馆委托板」放在店里，2 星起每天贴 3 条委托，谁都能接，交够东西拿币，店主分一成</li>
+      </ul>
+      <h4>第八盏灯 · 终章</h4>
+      <ul>
+        <li>主线从七盏灯变成<b>八盏灯</b>：酒馆开到 4 星、调出过鸡尾酒、认下一位熟客，再交一点酒和币，就能在「深夜酒馆」一章点亮<b>第八盏灯</b>，想起第八段往事「街角的酒馆」。归乡宴要集齐<b>八块记忆碎片</b></li>
+        <li><b>累计营收</b>多了一档 <b>20000</b>（第八块碎片要这个），终章的要求从 25000 提到 <b>35000</b>。前七盏灯已经点完的，补上酒馆这一盏就行，不用重来</li>
+        <li>归乡宴多了一步<b>「压箱底的那瓶」</b>：让一瓶典藏的酒在酒馆的酒窖里放满 7 天成为珍藏，端给客人。做法在「深夜酒馆」一章里学</li>
+      </ul>
+      <h4>任务减负 · 主线长度不变</h4>
+      <ul>
+        <li><b>前七盏灯要交的东西少了一半到四分之三</b>：数量都对齐到这一章已经做过、打过的量，不用为了交灯重刷 Boss、刷几百个材料。比如第一盏灯面粉 96→32、米饭 64→16；第二盏灯荧石块、石英块 64→16、烈焰棒 48→16；第五盏灯紫颂果 256→64、下界之星 2→1；第六盏灯的灾变锭和风暴精华和打 Boss 时拿到的一样多</li>
+        <li><b>第四章不再要姜饼人</b>：天境的姜饼人只在 12 月、1 月的节日礼物里有，平时拿不到，卡住了人。「云上的果子」去掉了它，第四盏灯换成 32 个蓝莓</li>
+        <li><b>已经交了一部分的不会亏</b>：交够新数量的，点开任务就算完成</li>
+        <li>深夜酒馆一章：<b>旅团</b>不用再先等满月；<b>Mino 赢局、玩家买卖、干杯</b>这三个要别人配合或者要押注的改成可选；熟客的故事门槛从 1/3/5/8/12 降到 <b>1/2/4/6/9</b>，见过的熟客来得更勤</li>
+        <li>酒窖小提示：在地图里把酒馆那块区块强制加载，你在线做别的事时酒也照样陈</li>
+      </ul>
+      <h4>怎么更新</h4>
+      <ul>
+        <li>第一次装或者想省事：导入 <b>「深夜食堂 5.0 beta5.zip」</b></li>
+        <li>已经装了 beta1 – beta4：把 <b>「深夜食堂 5.0 beta5 更新包.zip」</b>里 mods 文件夹的 jar 全部复制进去，同名的覆盖；mods 里旧的夜市、合作餐厅如果版本号不一样，先删掉旧的</li>
+        <li>第八块记忆碎片是新物品：更新包里的 <code>kubejs</code> 文件夹要复制到游戏目录（mods 文件夹旁边），同名覆盖；用完整的 beta5.zip 的话已经带好了</li>
+        <li>这次新加了酒馆模组 <code>shenye_tavern-1.1.0.jar</code>，没装的进不了服务器。装好的标志：创造模式物品栏「功能方块」里有「酒馆招牌」，或者能做出来</li>
+      </ul>
+    </div>
+    <div class="card news" style="margin-top:14px">
       <h3>深夜食堂 5.0 beta4<span class="ver">2026-11-01</span><span class="r">这一版更新了什么</span></h3>
       <h4>合作餐厅 · 鼓励小店，也照顾一个人玩的</h4>
       <ul>
@@ -664,8 +724,8 @@ function ago(t) {
   if (s < 86400) return Math.round(s / 3600) + ' 小时前';
   return Math.round(s / 86400) + ' 天前';
 }
-const LAMPS = ['炊烟', '炉火', '林中', '云上', '尽头', '灾变', '群星'];
-const EARN_MS = [100, 1000, 3000, 5000, 7500, 10000, 15000, 25000];
+const LAMPS = ['炊烟', '炉火', '林中', '云上', '尽头', '灾变', '群星', '酒馆'];
+const EARN_MS = [100, 1000, 3000, 5000, 7500, 10000, 15000, 20000, 35000];
 let D = null, cat = 'all';
 try { cat = localStorage.getItem('shenyeCat') || 'all'; } catch (e) {}
 
@@ -680,10 +740,10 @@ const BOARDS = [
   {c: 'biz', t: '外卖单数', nick: '金牌骑手', v: p => p.rest && p.rest.delivery, f: v => fmt(v) + ' 单'},
   {c: 'biz', t: '到店客人', nick: '人气老板', v: p => p.rest && p.rest.walkIn, f: v => fmt(v) + ' 位'},
   {c: 'biz', t: '商店消费', nick: '剁手党', v: p => p.spent, f: fmt},
-  {c: 'prog', t: '主线进度', nick: '点灯人', v: p => lampN(p) + (p.feast ? 1 : 0) + (p.bill ? 1 : 0) + (p.home ? 1 : 0), f: v => v <= 7 ? v + ' 盏灯' : (['终章', '结清账单', '已归乡'][v - 8] || v)},
+  {c: 'prog', t: '主线进度', nick: '点灯人', v: p => lampN(p) + (p.feast ? 1 : 0) + (p.bill ? 1 : 0) + (p.home ? 1 : 0), f: v => v <= 8 ? v + ' 盏灯' : (['终章', '结清账单', '已归乡'][v - 9] || v)},
   {c: 'prog', t: 'Boss 见证', nick: '屠龙者', v: p => (p.bosses || []).length, f: v => v + ' 个'},
   {c: 'prog', t: '成就积分', nick: '成就猎人', v: p => p.adv && p.adv.pts, f: v => v + ' 分'},
-  {c: 'prog', t: '记忆碎片', nick: '拾忆者', v: p => p.mem, f: v => v + ' / 7'},
+  {c: 'prog', t: '记忆碎片', nick: '拾忆者', v: p => p.mem, f: v => v + ' / 8'},
   {c: 'fight', t: '击杀生物', nick: '战神', v: p => S(p, 'mobKills'), f: fmt},
   {c: 'fight', t: '造成伤害', nick: '输出担当', v: p => S(p, 'dmgDealt'), f: v => fmt(v / 10) + ' ♥'},
   {c: 'fight', t: '承受伤害', nick: '人肉沙包', v: p => S(p, 'dmgTaken'), f: v => fmt(v / 10) + ' ♥'},
@@ -1162,6 +1222,62 @@ function coopRankHtml(w) {
       <div class="rk-how"><b>奖金怎么发：</b>只有第一名的店有奖，奖金 ${fmt(prize)} 币从夜市国库出，由这家店本周做过单的人平分（国库不够就有多少发多少）。本周营收合计满 ${fmt(w.minEarn || 0)} 才上榜。</div>
     </div>`;
 }
+// ---------- 深夜酒馆（shenye_tavern 1.0.0，11-08 加）：每家酒馆一张卡，面板和玩家网页同一份代码 ----------
+const TAVERN_Q = ['', '难以下咽', '劣质', '普通', '优质', '精酿', '典藏'];
+const TAVERN_EMPTY = '<div class="coop-empty"><b>还没有酒馆</b><span>做一块「酒馆招牌」（灯笼 + 告示牌 + 森罗空瓶子竖着摆）放下就开张：周围 16 格的森罗吧凳 / 沙发是座位，酒柜 / 酒架里摆的酒就是酒单。空手右键招牌开门，客人点什么就把酒潜行摆在他面前。</span></div>';
+function tavernExtraHtml(t) {
+  const x = t.extra || t, bits = [];
+  const aged = t.aged || 0, tre = t.treasures || 0;
+  if (aged) bits.push('窖藏中 ' + fmt(aged) + ' 瓶' + (tre ? '（珍藏 ' + fmt(tre) + '）' : ''));
+  if (x.treasuresSold) bits.push('卖出珍藏 ' + fmt(x.treasuresSold));
+  if (x.regularVisits) bits.push('熟客来过 ' + fmt(x.regularVisits) + ' 次');
+  if (x.tours) bits.push('旅团 ' + fmt(x.tours));
+  if (x.otherworldSold) bits.push('异界酒 ' + fmt(x.otherworldSold) + ' 杯');
+  if (x.playerSales) bits.push('卖给玩家 ' + fmt(x.playerSales) + ' 瓶');
+  if (x.commissions) bits.push('委托 ' + fmt(x.commissions) + ' 单');
+  if (x.minoGames) bits.push('Mino 赌局 ' + fmt(x.minoGames) + ' 局');
+  if (t.music) bits.push('♪ 有人驻唱');
+  return bits.length ? '<div class="tv-extra">' + bits.map(b => '<span>' + esc(b) + '</span>').join('') + '</div>' : '';
+}
+function tavernCardsHtml(ts) {
+  if (!ts || !ts.length) return TAVERN_EMPTY;
+  const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  return '<div class="coop-grid">' + ts.slice().sort((a, b) => (b.revenue || 0) - (a.revenue || 0)).map(t => {
+    const st = Math.max(1, Math.min(5, t.star || 1));
+    const fresh = !t.today || t.today === today;
+    const tg = fresh ? (t.todayGuests || 0) : 0, td = fresh ? (t.todayDrinks || 0) : 0, tr = fresh ? (t.todayRevenue || 0) : 0;
+    const vint = Array.isArray(t.vintageKinds) ? t.vintageKinds.length : (t.vintage || 0);
+    let menu = [];
+    if (Array.isArray(t.menu)) menu = t.menu.map(m => [m.n, m.q]);
+    else if (t.menu) menu = Object.keys(t.menu).map(k => [k, t.menu[k]]);
+    const menuHtml = menu.length ? menu.map(m => `<span class="tv-drink q${m[1]}">${esc(m[0])}<i>${TAVERN_Q[m[1]] || ''}</i></span>`).join('') : '<span class="dim">酒柜里还没摆酒</span>';
+    return `<div class="coop">
+      <div class="coop-hd">
+        <span class="logo">${esc((t.name || '酒')[0])}</span>
+        <div style="min-width:0;flex:1"><div class="nm">${esc(t.name || '（没起名）')}</div>
+          <div class="meta">店主 ${esc(t.ownerName || '—')} · <span class="tv-star">${'★'.repeat(st)}${'☆'.repeat(5 - st)}</span> · ${t.open ? '<b class="ac">营业中</b>' : '打烊'}${t.inside ? ' · 在店 ' + t.inside + ' 位' : ''}</div></div>
+      </div>
+      <div class="coop-nums">
+        <div><span>累计营收</span><b>${fmt(t.revenue || 0)}</b></div>
+        <div title="客人在等待时间内拿到对的酒、喝完付了钱才算；续杯不重复算"><span>合格招待</span><b>${fmt(t.guests || 0)}</b><small>来过 ${fmt(t.visitors || 0)} · 等走 ${fmt(t.walkouts || 0)}</small></div>
+        <div><span>今天</span><b class="ac">${fmt(tr)}</b><small>${fmt(tg)} 位 · ${fmt(td)} 杯</small></div>
+        <div><span>鸡尾酒</span><b>${fmt(t.cocktails || 0)}</b><small>典藏酒 ${vint} 种</small></div>
+      </div>
+      ${tavernExtraHtml(t)}
+      <div class="coop-lbl"><span>酒单</span><span>店里摆着的最高品质</span></div>
+      <div class="tv-menu">${menuHtml}</div>
+      ${t.next && st < 5 ? `<div class="coop-how"><b>升 ${st + 1} 星还差：</b>${esc(t.next)}</div>` : ''}
+    </div>`;
+  }).join('') + '</div>' +
+  '<div class="coop-how"><b>怎么玩：</b>客人坐下头顶会冒出想喝的酒和最低品质，把酒潜行右键摆在他面前（鸡尾酒倒进他面前的空酒杯），他喝完付钱给端酒的人，也算进累计营收。品质越高越值钱：普通 ×1、优质 ×1.6、精酿 ×2.4、典藏 ×3.2，鸡尾酒按三瓶酒基里最低的那瓶算。升星看端出过多少位达到品质的客人，再花一笔币。暗处的酒柜是酒窖，酒越存越值钱；满月夜客人多、小费翻倍；2 星起夜里会来熟客，听他们讲故事；店里的扑克桌能换筹码、Mino 桌能押币；店主标了价的酒，别的玩家潜行右键酒柜就能买。</div>';
+}
+function renderTaverns() {
+  const ts = D.taverns;
+  if (!ts) { $('tavernCard').style.display = 'none'; return; }
+  $('tavernCard').style.display = '';
+  $('tavernInfo').textContent = ts.length ? ts.length + ' 家 · 合计营收 ' + fmt(ts.reduce((a, t) => a + (t.revenue || 0), 0)) : '';
+  $('taverns').innerHTML = tavernCardsHtml(ts);
+}
 const COOP_EMPTY = '<div class="coop-empty"><b>还没有合作餐厅</b><span>打开打单机，点右边的「合作餐厅」建店，再点在线玩家的名字邀请；对方在聊天栏点 [接受] 就加入了。没装模组的人可以用 /coop。</span></div>';
 function renderCoops() {
   const cs = D.coops;
@@ -1174,6 +1290,7 @@ function renderCoops() {
 
 function renderRest() {
   renderCoops();
+  renderTaverns();
   const rs = (D.restaurants || []).slice();
   const tot = rs.reduce((a, r) => a + (r.profit || 0), 0);
   $('restInfo').textContent = rs.length ? rs.length + ' 家 · 合计营收 ' + fmt(tot) : '';
@@ -1400,16 +1517,16 @@ function renderPlayers() {
   if (!ps.length) { $('players').innerHTML = '<div class="card empty">还没有玩家数据</div>'; return; }
   $('players').innerHTML = ps.map(p => {
     const earn = p.earn || 0, nextMs = EARN_MS.find(v => v > earn);
-    const ticks = EARN_MS.map(v => `<s class="${earn >= v ? 'ok' : ''}" style="left:calc(${v / 250}% - 1px)"></s>`).join('');
+    const ticks = EARN_MS.map(v => `<s class="${earn >= v ? 'ok' : ''}" style="left:calc(${v / 350}% - 1px)"></s>`).join('');
     let mems = '';
-    for (let i = 1; i <= 7; i++) {
+    for (let i = 1; i <= 8; i++) {
       const pend = (p.memPending || []).includes(i), lit = p.lamps && p.lamps[i - 1];
       mems += `<span class="mem ${pend ? 'pend' : lit ? 'has' : ''}" title="记忆碎片 ${i}${pend ? '：营收还不够，暂时没发' : ''}"></span>`;
     }
     const n = lampN(p);
     const stage = p.home ? '<span style="color:var(--violet)">已经回到零号星</span>'
-      : p.bill ? '结清了账单，就差亲手把归乡宴交给阿零' : p.feast ? '七盏灯全亮，在做终章'
-      : n ? `已点亮 ${n} 盏灯，下一盏：${LAMPS[n] || '终章'}` : (p.otcFirst ? '餐厅开张了，在点第一盏灯' : '刚到深夜食堂');
+      : p.bill ? '结清了账单，就差亲手把归乡宴交给阿零' : p.feast ? '八盏灯全亮，在做终章'
+      : n ? `已点亮 ${n} 盏灯，下一盏：${(i => i >= 0 ? LAMPS[i] : '终章')((p.lamps || []).findIndex(l => !l))}` : (p.otcFirst ? '餐厅开张了，在点第一盏灯' : '刚到深夜食堂');
     let stars = ''; for (let i = 1; i <= 8; i++) stars += i <= (p.star || 0) ? '<b>★</b>' : '★';
     return `<div class="card pc">
       <div class="hd">${ava(p.name, 46)}<div style="min-width:0">
@@ -1419,9 +1536,9 @@ function renderPlayers() {
         <div class="k">进度</div><div>${stage}</div>
         <div class="k">餐厅</div><div><span class="stars">${stars}</span> <span class="dim">${p.star || 0} 星</span></div>
         ${coopRow(p)}
-        <div class="k">累计营收</div><div><b>${fmt(earn)}</b> <span class="dim">/ 25,000${nextMs ? ' · 下一档 ' + fmt(nextMs) : ' · 满了'}</span><div class="prog"><i style="width:${Math.min(100, earn / 250)}%"></i>${ticks}</div></div>
-        <div class="k">七盏灯</div><div class="lamps">${LAMPS.map((t, i) => `<span class="lamp ${p.lamps && p.lamps[i] ? 'lit' : ''}" title="第${i + 1}盏灯 · ${t}"></span>`).join('')}</div>
-        <div class="k">记忆碎片</div><div class="mems">${mems}<span class="dim" style="margin-left:8px">${p.mem || 0} / 7</span></div>
+        <div class="k">累计营收</div><div><b>${fmt(earn)}</b> <span class="dim">/ 35,000${nextMs ? ' · 下一档 ' + fmt(nextMs) : ' · 满了'}</span><div class="prog"><i style="width:${Math.min(100, earn / 350)}%"></i>${ticks}</div></div>
+        <div class="k">八盏灯</div><div class="lamps">${LAMPS.map((t, i) => `<span class="lamp ${p.lamps && p.lamps[i] ? 'lit' : ''}" title="第${i + 1}盏灯 · ${t}"></span>`).join('')}</div>
+        <div class="k">记忆碎片</div><div class="mems">${mems}<span class="dim" style="margin-left:8px">${p.mem || 0} / 8</span></div>
         <div class="k">Boss</div><div>${(p.bosses || []).length ? `<b style="color:var(--amber2)">${p.bosses.length}</b> <span class="dim">/ ${D.bossTotal || 25} · ${p.bosses.slice(-4).map(esc).join('、')}</span>` : '<span class="dim">还没有</span>'}</div>
         <div class="k">成就</div><div>${p.adv ? `${p.adv.n} 个 · <b style="color:var(--amber2)">${p.adv.pts}</b> 分` : '—'}</div>
         <div class="k">在线</div><div>${dur(p.onlineTotal)} <span class="dim">· 今天 ${dur(p.onlineToday)}</span></div>
