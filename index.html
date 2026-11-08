@@ -444,7 +444,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <div class="who" id="hmWho"></div>
       </div>
       <div class="card news-bar" data-goto="news">
-        <span class="tag">5.0 beta5</span>
+        <span class="tag">5.0 beta6</span>
         <div class="t">深夜酒馆开张：用森罗的酒开一家自己的酒馆</div>
         <div class="d">放一块酒馆招牌就开店；酒窖陈酿、满月满座夜、8 位熟客的故事、筹码台和 Mino 牌局、玩家点单和委托板。</div>
         <div class="go">看更新公告 <i>→</i></div>
@@ -512,7 +512,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
           <svg class="trend" id="earnChart" viewBox="0 0 800 190" preserveAspectRatio="none"></svg>
           <div class="legend" id="earnLegend"></div>
         </div>
-        <div class="card"><h3>玩家累计营收<span class="r">主线看这个</span></h3><div id="earnBars"></div></div>
+        <div class="card"><h3>玩家餐厅营收<span class="r">主线看这个 · 酒馆营收另算</span></h3><div id="earnBars"></div></div>
       </div>
     </div>
 
@@ -542,7 +542,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
     <div data-sub="tavern">
       <div class="card">
         <div class="card-row">
-          <h3>深夜酒馆<span class="tv-tag">5.0 beta5 新增</span><span class="r" id="tavernInfo"></span></h3>
+          <h3>深夜酒馆<span class="tv-tag">5.0 beta5 新增 · beta6 酒馆营收单独算</span><span class="r" id="tavernInfo"></span></h3>
         </div>
         <div class="tv-sum">
           <div class="ti" id="tvCountBox"><span class="k">已开酒馆</span><b class="v" id="tvCount">—</b><span class="sub">放下招牌就开张</span></div>
@@ -556,14 +556,14 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <div id="taverns"></div>
       </div>
       <div class="card mt">
-        <h3>怎么开一家酒馆<span class="r">5.0 beta5 玩法速览</span></h3>
+        <h3>怎么开一家酒馆<span class="r">5.0 beta6 玩法速览</span></h3>
         <div class="tv-how">
           <ul>
             <li>工作台中间一列竖着摆<b>灯笼 + 告示牌 + 森罗空瓶子</b>，做出「酒馆招牌」，放下就开张，一个人一家。</li>
             <li>招牌周围 16 格是店面：森罗<b>高脚凳 / 沙发</b>当座位，<b>酒柜 / 酒架</b>里摆的酒就是酒单。<b>空手右键招牌</b>开门 / 打烊，<b>潜行右键</b>看状态和升星还差什么。</li>
-            <li>客人坐下会冒出想喝的酒和最低品质，把对的酒<b>潜行右键摆在他面前</b>；喝完钱给端酒的人，也算进累计营收。夜里客人来得更快、小费更多。</li>
+            <li>客人坐下会冒出想喝的酒和最低品质，把对的酒<b>潜行右键摆在他面前</b>；喝完钱给端酒的人，算进<b>酒馆营收</b>（和餐厅营收分开）。夜里客人来得更快、小费更多。</li>
             <li>暗处的酒柜是酒窖，酒越陈越值钱；满月夜满座、2 星起夜里来熟客；店里的扑克桌能换筹码、Mino 桌能押币，<code>/tavern price</code> 标价的酒别的玩家能买。</li>
-            <li>开到 4 星、调过鸡尾酒、认下一位熟客，就能在教学章点亮<b>第八盏灯</b>「酒馆」，拿到第八块记忆碎片。完整改动看「更新公告 → 5.0 beta5」。</li>
+            <li>开到 4 星、调过鸡尾酒、认下一位熟客、酒馆营收到 5000，就能点亮酒馆的灯。熟客偶尔会压低声音说起<b>一颗没有名字的星</b>——那是酒馆主线的终点。完整改动看「更新公告 → 5.0 beta6」。</li>
           </ul>
         </div>
       </div>
@@ -592,18 +592,38 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 
   <section class="tab" id="t-news">
     <div class="card news">
-      <h3>深夜食堂 5.0 beta5<span class="ver">2026-11-08</span><span class="r">这一版更新了什么</span></h3>
+      <h3>深夜食堂 5.0 beta6<span class="ver">2026-11-08</span><span class="r">合并了 beta5 · 还在 beta4 的直接装这个</span></h3>
+      <h4>新增 · 地底</h4>
+      <ul>
+        <li>新模组 <b>Alex's Caves</b>（带前置 Citadel）和<b>「森罗物语 · 洞穴厨房」</b>（带前置 Kaleidoscope Lib）：地底多了磁力、原始、毒液、深渊、幽暗、糖果六种洞穴；原始洞穴的恐龙肉、三叶虾、远古蕨能做成虾饺、恐龙丸子汤、琥珀茶等 50 多道菜</li>
+        <li>洞穴很少见，而且<b>只在新生成的地方出现</b>，出生点附近大概没有。任务会带你一步步做出能指路的洞穴地图</li>
+        <li>主线新增<b>「间章 · 地底」</b>，紧跟第一章，点亮第二盏灯「地底」，想起往事「刻满名字的隧道」</li>
+      </ul>
+      <h4>九盏灯 · 两条主线</h4>
+      <ul>
+        <li>主线现在是<b>九盏灯</b>：炊烟、地底、炉火、林中、云上、尽头、灾变、群星、酒馆。后面的灯顺延一个编号，任务本身没变；已经走到第二章以后的，回头补上地底这一盏就行。归乡宴要带齐<b>九块记忆碎片</b></li>
+        <li><b>营收分开了</b>：酒馆收的钱只算<b>酒馆营收</b>，不再算进餐厅的累计营收。餐厅营收照旧管各盏灯的碎片和归乡宴；酒馆营收有自己的四档 1000 / 5000 / 12000 / 25000，<code>/tavern earn</code> 随时查</li>
+        <li>酒馆主线有了终点<b>「未命名的星」</b>，放在终章「归乡宴」旁边。要九盏灯都亮了、酒馆 5 星、端出过珍藏、听完一位熟客的故事、听全传闻、酒馆营收 25000；不需要先交归乡宴，两条路可以一起走</li>
+        <li><b>传闻</b>：熟客和点异界酒的远方旅人喝得满意了，偶尔会压低声音说一句关于那颗星的事。一共 12 条，酒馆营收越高他们说得越多，<code>/tavern rumors</code> 翻看听过的</li>
+        <li>那颗星的地形和这边很不一样：山更高、海更大、有长长的河。海边以后会有钓场，现在先空着</li>
+      </ul>
+      <h4>网页</h4>
+      <ul>
+        <li>玩家卡：「九盏灯」「记忆碎片 / 9」；「累计营收」改叫<b>餐厅营收</b>，另加<b>酒馆营收</b>一栏，排行榜也多了一项</li>
+        <li>不在线的玩家，灯和碎片现在也能看到真实进度了（以前第八盏一直显示「读不到」）</li>
+      </ul>
+      <h4 style="margin-top:22px">以下是 beta5 的内容</h4>
       <h4>新增 · 深夜酒馆</h4>
       <ul>
         <li>用森罗物语：酒馆酿的酒开一家自己的酒馆。做一块<b>「酒馆招牌」</b>（工作台中间一列竖着摆：灯笼、告示牌、森罗空瓶子），放下就开张，一个人一家</li>
         <li>招牌周围 16 格就是店里：森罗的<b>高脚凳、沙发</b>是座位；森罗的<b>酒柜、酒窖柜、酒架、瓶架</b>里摆了什么酒，酒单上就有什么，不用开任何界面</li>
         <li><b>空手右键招牌</b>开门 / 打烊，<b>潜行右键</b>看店里的状态、酒单和升星还差什么。白天晚上都能开，夜里客人来得快一半，小费多 10%</li>
         <li>客人坐下后头顶会冒出想喝的酒、最低品质和耐心条（6 分钟）。把对的酒<b>潜行右键摆在他面前的桌上</b>；点鸡尾酒的，在他面前放个空酒杯，摇好雪克杯倒进去</li>
-        <li>客人拿起来喝，钱直接给<b>端酒的人</b>，也算进你的累计营收。端错、品质不够他不会碰，收回来换一瓶就行；有的客人喝完还会再点一杯</li>
+        <li>客人拿起来喝，钱直接给<b>端酒的人</b>，算进你的酒馆营收（beta6 起和餐厅营收分开）。端错、品质不够他不会碰，收回来换一瓶就行；有的客人喝完还会再点一杯</li>
         <li>品质越高越值钱：普通 ×1、优质 ×1.6、精酿 ×2.4、典藏 ×3.2；鸡尾酒按三瓶酒基里最低的那瓶算</li>
         <li>1–5 星：升星看端出过多少位达到品质的客人（普通以上 20 位 → 优质 60 → 精酿 120 → 典藏 200），再花一笔币。星级越高客人越多，还会解锁口味单、鸡尾酒单、「随你调」</li>
         <li>4 星以后一个人会忙不过来，可以请朋友帮忙：<code>/tavern helper add 名字</code>，帮工端的酒钱归帮工</li>
-        <li>任务书主线分组里新增<b>「深夜酒馆」</b>教学章（30 个任务，紧跟「餐厅经营」），从种葡萄一步一步教到五星，不挡主线的灯；这个网页「开店与经济 → 酒馆」里能看到每家酒馆</li>
+        <li>任务书主线分组里新增<b>「深夜酒馆」</b>一章（紧跟「餐厅经营」），从种葡萄一步一步教到五星；这个网页「开店与经济 → 酒馆」里能看到每家酒馆</li>
       </ul>
       <h4>酒馆的特色玩法</h4>
       <ul>
@@ -618,15 +638,15 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li><b>玩家点单</b>：店主拿着酒输入 <code>/tavern price 币数</code> 标价，别的玩家营业时潜行 + 空手右键酒柜就能买，钱进店主账上。两个人 5 分钟内在同一家店买过酒，一起得到「干杯」</li>
         <li><b>委托板</b>：做一块「酒馆委托板」放在店里，2 星起每天贴 3 条委托，谁都能接，交够东西拿币，店主分一成</li>
       </ul>
-      <h4>第八盏灯 · 终章</h4>
+      <h4>酒馆的灯 · 终章</h4>
       <ul>
-        <li>主线从七盏灯变成<b>八盏灯</b>：酒馆开到 4 星、调出过鸡尾酒、认下一位熟客，再交一点酒和币，就能在「深夜酒馆」一章点亮<b>第八盏灯</b>，想起第八段往事「街角的酒馆」。归乡宴要集齐<b>八块记忆碎片</b></li>
-        <li><b>累计营收</b>多了一档 <b>20000</b>（第八块碎片要这个），终章的要求从 25000 提到 <b>35000</b>。前七盏灯已经点完的，补上酒馆这一盏就行，不用重来</li>
+        <li>酒馆开到 4 星、调出过鸡尾酒、认下一位熟客，再交一点酒和币，就能在「深夜酒馆」一章点亮<b>酒馆的灯</b>，想起往事「街角的酒馆」</li>
+        <li>餐厅的<b>累计营收</b>多了一档 <b>20000</b>，终章的要求从 25000 提到 <b>35000</b></li>
         <li>归乡宴多了一步<b>「压箱底的那瓶」</b>：让一瓶典藏的酒在酒馆的酒窖里放满 7 天成为珍藏，端给客人。做法在「深夜酒馆」一章里学</li>
       </ul>
       <h4>任务减负 · 主线长度不变</h4>
       <ul>
-        <li><b>前七盏灯要交的东西少了一半到四分之三</b>：数量都对齐到这一章已经做过、打过的量，不用为了交灯重刷 Boss、刷几百个材料。比如第一盏灯面粉 96→32、米饭 64→16；第二盏灯荧石块、石英块 64→16、烈焰棒 48→16；第五盏灯紫颂果 256→64、下界之星 2→1；第六盏灯的灾变锭和风暴精华和打 Boss 时拿到的一样多</li>
+        <li><b>原来七盏世界灯要交的东西少了一半到四分之三</b>：数量都对齐到这一章已经做过、打过的量，不用为了交灯重刷 Boss、刷几百个材料。比如第一盏灯面粉 96→32、米饭 64→16；第二盏灯荧石块、石英块 64→16、烈焰棒 48→16；第五盏灯紫颂果 256→64、下界之星 2→1；第六盏灯的灾变锭和风暴精华和打 Boss 时拿到的一样多</li>
         <li><b>第四章不再要姜饼人</b>：天境的姜饼人只在 12 月、1 月的节日礼物里有，平时拿不到，卡住了人。「云上的果子」去掉了它，第四盏灯换成 32 个蓝莓</li>
         <li><b>已经交了一部分的不会亏</b>：交够新数量的，点开任务就算完成</li>
         <li>深夜酒馆一章：<b>旅团</b>不用再先等满月；<b>Mino 赢局、玩家买卖、干杯</b>这三个要别人配合或者要押注的改成可选；熟客的故事门槛从 1/3/5/8/12 降到 <b>1/2/4/6/9</b>，见过的熟客来得更勤</li>
@@ -634,10 +654,10 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
       </ul>
       <h4>怎么更新</h4>
       <ul>
-        <li>第一次装或者想省事：导入 <b>「深夜食堂 5.0 beta5.zip」</b></li>
-        <li>已经装了 beta1 – beta4：把 <b>「深夜食堂 5.0 beta5 更新包.zip」</b>里 mods 文件夹的 jar 全部复制进去，同名的覆盖；mods 里旧的夜市、合作餐厅如果版本号不一样，先删掉旧的</li>
-        <li>第八块记忆碎片是新物品：更新包里的 <code>kubejs</code> 文件夹要复制到游戏目录（mods 文件夹旁边），同名覆盖；用完整的 beta5.zip 的话已经带好了</li>
-        <li>这次新加了酒馆模组 <code>shenye_tavern-1.1.0.jar</code>，没装的进不了服务器。装好的标志：创造模式物品栏「功能方块」里有「酒馆招牌」，或者能做出来</li>
+        <li>第一次装或者想省事：把 <b>「深夜食堂 5.0 beta6.mrpack」</b>拖进官方 PCL2 / HMCL / Prism（PCL2 CE 在中国大陆禁用了整合包安装，见「客户端安装说明」）</li>
+        <li>已经装了 beta1 – beta5：把 <b>「深夜食堂 5.0 beta6 更新包.zip」</b>里 mods 文件夹的 jar 全部复制进去，同名的覆盖；mods 里旧版本号的夜市、合作餐厅、深夜酒馆先删掉</li>
+        <li>更新包里的 <code>kubejs</code> 文件夹要复制到游戏目录（mods 文件夹旁边），同名覆盖：记忆碎片 8、9 和星图坐标是新物品，没有它进服会报错</li>
+        <li>这次新加了 Alex's Caves、Citadel、Kaleidoscope Lib、洞穴厨房 4 个模组，深夜酒馆升到 1.2.0，客户端包大了约 80 MB</li>
       </ul>
     </div>
     <div class="card news" style="margin-top:14px">
@@ -763,7 +783,9 @@ function ago(t) {
   if (s < 86400) return Math.round(s / 3600) + ' 小时前';
   return Math.round(s / 86400) + ' 天前';
 }
-const LAMPS = ['炊烟', '炉火', '林中', '云上', '尽头', '灾变', '群星', '酒馆'];
+const LAMPS = ['炊烟', '地底', '炉火', '林中', '云上', '尽头', '灾变', '群星', '酒馆'];
+const LAMP_MEM = [1, 9, 2, 3, 4, 5, 6, 7, 8];   // beta6：每盏灯对应的记忆碎片编号
+const TAVERN_MS = [1000, 5000, 12000, 25000];
 const EARN_MS = [100, 1000, 3000, 5000, 7500, 10000, 15000, 20000, 35000];
 let D = null, cat = 'all';
 try { cat = localStorage.getItem('shenyeCat') || 'all'; } catch (e) {}
@@ -772,17 +794,18 @@ const S = (p, k) => p.stats && p.stats[k] != null ? p.stats[k] : null;
 const lampN = p => (p.lamps || []).filter(Boolean).length;
 const CATS = [['all', '全部'], ['biz', '经营'], ['prog', '进度'], ['fight', '战斗'], ['move', '探索'], ['life', '生活'], ['time', '在线']];
 const BOARDS = [
-  {c: 'biz', t: '累计营收', nick: '深夜食堂之星', v: p => p.earn, f: fmt},
+  {c: 'biz', t: '餐厅营收', nick: '深夜食堂之星', v: p => p.earn, f: fmt},
   {c: 'biz', t: '今日营收', nick: '今日店长', v: p => p.todayEarn, f: v => '+' + fmt(v)},
   {c: 'biz', t: '餐厅星级', nick: '米其林', v: p => p.star, f: v => v + ' 星'},
   {c: 'biz', t: '接单数', nick: '接单狂魔', v: p => p.rest && p.rest.accepted, f: v => fmt(v) + ' 单'},
   {c: 'biz', t: '外卖单数', nick: '金牌骑手', v: p => p.rest && p.rest.delivery, f: v => fmt(v) + ' 单'},
   {c: 'biz', t: '到店客人', nick: '人气老板', v: p => p.rest && p.rest.walkIn, f: v => fmt(v) + ' 位'},
   {c: 'biz', t: '商店消费', nick: '剁手党', v: p => p.spent, f: fmt},
-  {c: 'prog', t: '主线进度', nick: '点灯人', v: p => lampN(p) + (p.feast ? 1 : 0) + (p.bill ? 1 : 0) + (p.home ? 1 : 0), f: v => v <= 8 ? v + ' 盏灯' : (['终章', '结清账单', '已归乡'][v - 9] || v)},
+  {c: 'prog', t: '主线进度', nick: '点灯人', v: p => lampN(p) + (p.feast ? 1 : 0) + (p.bill ? 1 : 0) + (p.home ? 1 : 0), f: v => v <= 9 ? v + ' 盏灯' : (['终章', '结清账单', '已归乡'][v - 10] || v)},
   {c: 'prog', t: 'Boss 见证', nick: '屠龙者', v: p => (p.bosses || []).length, f: v => v + ' 个'},
   {c: 'prog', t: '成就积分', nick: '成就猎人', v: p => p.adv && p.adv.pts, f: v => v + ' 分'},
-  {c: 'prog', t: '记忆碎片', nick: '拾忆者', v: p => p.mem, f: v => v + ' / 8'},
+  {c: 'prog', t: '记忆碎片', nick: '拾忆者', v: p => p.mem, f: v => v + ' / 9'},
+  {c: 'biz', t: '酒馆营收', nick: '街角的老板', v: p => p.tavernEarn || 0, f: fmt},
   {c: 'fight', t: '击杀生物', nick: '战神', v: p => S(p, 'mobKills'), f: fmt},
   {c: 'fight', t: '造成伤害', nick: '输出担当', v: p => S(p, 'dmgDealt'), f: v => fmt(v / 10) + ' ♥'},
   {c: 'fight', t: '承受伤害', nick: '人肉沙包', v: p => S(p, 'dmgTaken'), f: v => fmt(v / 10) + ' ♥'},
@@ -1572,18 +1595,20 @@ function renderPlayers() {
     const earn = p.earn || 0, nextMs = EARN_MS.find(v => v > earn);
     const ticks = EARN_MS.map(v => `<s class="${earn >= v ? 'ok' : ''}" style="left:calc(${v / 350}% - 1px)"></s>`).join('');
     let mems = '';
-    for (let i = 1; i <= 8; i++) {
-      const pend = (p.memPending || []).includes(i), lit = p.lamps && p.lamps[i - 1];
-      mems += `<span class="mem ${pend ? 'pend' : lit ? 'has' : ''}" title="记忆碎片 ${i}${pend ? '：营收还不够，暂时没发' : ''}"></span>`;
-    }
+    LAMPS.forEach((t, j) => {
+      const i = LAMP_MEM[j], pend = (p.memPending || []).includes(i), lit = p.lamps && p.lamps[j];
+      mems += `<span class="mem ${pend ? 'pend' : lit ? 'has' : ''}" title="记忆碎片 · ${t}${pend ? '：营收还不够，暂时没发' : ''}"></span>`;
+    });
+    const te = p.tavernEarn || 0, tNext = TAVERN_MS.find(v => v > te);
+    const tticks = TAVERN_MS.map(v => `<s class="${te >= v ? 'ok' : ''}" style="left:calc(${v / 250}% - 1px)"></s>`).join('');
     const unknownLamps = LAMPS.filter((t, i) => { const l = (p.lamps || [])[i]; return l == null || l === undefined; }).length;
     const lampsHtml = LAMPS.map((t, i) => {
       const l = (p.lamps || [])[i], unk = (l == null || l === undefined);
-      return `<span class="lamp ${l === true ? 'lit' : unk ? 'unk' : ''}" title="第${i + 1}盏灯 · ${t}${unk ? '（读不到：数据还没同步到 beta5）' : l === true ? '（已点亮）' : '（未点亮）'}"></span>`;
+      return `<span class="lamp ${l === true ? 'lit' : unk ? 'unk' : ''}" title="第${i + 1}盏灯 · ${t}${unk ? '（读不到：这位玩家的数据还没同步）' : l === true ? '（已点亮）' : '（未点亮）'}"></span>`;
     }).join('');
     const n = lampN(p);
     const stage = p.home ? '<span style="color:var(--violet)">已经回到零号星</span>'
-      : p.bill ? '结清了账单，就差亲手把归乡宴交给阿零' : p.feast ? (unknownLamps ? '在做终章（灯数据还没同步完）' : '八盏灯全亮，在做终章')
+      : p.bill ? '结清了账单，就差亲手把归乡宴交给阿零' : p.feast ? (unknownLamps ? '在做终章（灯数据还没同步完）' : '九盏灯全亮，在做终章' + (p.nameless ? '，也去过未命名的星' : ''))
       : n ? `已点亮 ${n} 盏灯，下一盏：${(i => i >= 0 ? LAMPS[i] : '终章')((p.lamps || []).findIndex(l => !l))}` : (p.otcFirst ? '餐厅开张了，在点第一盏灯' : '刚到深夜食堂');
     let stars = ''; for (let i = 1; i <= 8; i++) stars += i <= (p.star || 0) ? '<b>★</b>' : '★';
     return `<div class="card pc">
@@ -1594,9 +1619,10 @@ function renderPlayers() {
         <div class="k">进度</div><div>${stage}</div>
         <div class="k">餐厅</div><div><span class="stars">${stars}</span> <span class="dim">${p.star || 0} 星</span></div>
         ${coopRow(p)}
-        <div class="k">累计营收</div><div><b>${fmt(earn)}</b> <span class="dim">/ 35,000${nextMs ? ' · 下一档 ' + fmt(nextMs) : ' · 满了'}</span><div class="prog"><i style="width:${Math.min(100, earn / 350)}%"></i>${ticks}</div></div>
-        <div class="k">八盏灯</div><div class="lamps">${lampsHtml}${unknownLamps ? `<span class="dim" style="margin-left:8px;font-size:11px">${unknownLamps} 盏读不到 · 数据还是旧快照</span>` : ''}</div>
-        <div class="k">记忆碎片</div><div class="mems">${mems}<span class="dim" style="margin-left:8px">${p.mem || 0} / 8</span></div>
+        <div class="k">餐厅营收</div><div><b>${fmt(earn)}</b> <span class="dim">/ 35,000${nextMs ? ' · 下一档 ' + fmt(nextMs) : ' · 满了'}</span><div class="prog"><i style="width:${Math.min(100, earn / 350)}%"></i>${ticks}</div></div>
+        <div class="k">九盏灯</div><div class="lamps">${lampsHtml}${unknownLamps ? `<span class="dim" style="margin-left:8px;font-size:11px">${unknownLamps} 盏读不到 · 数据还是旧快照</span>` : ''}</div>
+        <div class="k">记忆碎片</div><div class="mems">${mems}<span class="dim" style="margin-left:8px">${p.mem || 0} / 9</span></div>
+        <div class="k">酒馆营收</div><div><b>${fmt(te)}</b> <span class="dim">/ 25,000${tNext ? ' · 下一档 ' + fmt(tNext) : ' · 满了'}</span><div class="prog"><i style="width:${Math.min(100, te / 250)}%"></i>${tticks}</div></div>
         <div class="k">Boss</div><div>${(p.bosses || []).length ? `<b style="color:var(--amber2)">${p.bosses.length}</b> <span class="dim">/ ${D.bossTotal || 25} · ${p.bosses.slice(-4).map(esc).join('、')}</span>` : '<span class="dim">还没有</span>'}</div>
         <div class="k">成就</div><div>${p.adv ? `${p.adv.n} 个 · <b style="color:var(--amber2)">${p.adv.pts}</b> 分` : '—'}</div>
         <div class="k">在线</div><div>${dur(p.onlineTotal)} <span class="dim">· 今天 ${dur(p.onlineToday)}</span></div>
