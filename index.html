@@ -160,6 +160,7 @@ h1{margin:0;font-size:17px;font-weight:800;letter-spacing:2px;line-height:1.25}
 .lamps{display:flex;gap:6px}
 .lamp{width:15px;height:19px;border-radius:7px/9px;background:var(--fill2)}
 .lamp.lit{background:radial-gradient(circle at 50% 40%,#ffe3b5,var(--amber) 62%,#a2471a);box-shadow:0 0 10px rgba(var(--amber-rgb),.5)}
+.lamp.unk{background:repeating-linear-gradient(45deg,var(--fill2) 0 3px,transparent 3px 6px)}
 .mems{display:flex;gap:5px;align-items:center}
 .mem{width:12px;height:12px;transform:rotate(45deg);border-radius:3px;background:var(--fill2)}
 .mem.has{background:var(--ink)}
@@ -1575,9 +1576,14 @@ function renderPlayers() {
       const pend = (p.memPending || []).includes(i), lit = p.lamps && p.lamps[i - 1];
       mems += `<span class="mem ${pend ? 'pend' : lit ? 'has' : ''}" title="记忆碎片 ${i}${pend ? '：营收还不够，暂时没发' : ''}"></span>`;
     }
+    const unknownLamps = LAMPS.filter((t, i) => { const l = (p.lamps || [])[i]; return l == null || l === undefined; }).length;
+    const lampsHtml = LAMPS.map((t, i) => {
+      const l = (p.lamps || [])[i], unk = (l == null || l === undefined);
+      return `<span class="lamp ${l === true ? 'lit' : unk ? 'unk' : ''}" title="第${i + 1}盏灯 · ${t}${unk ? '（读不到：数据还没同步到 beta5）' : l === true ? '（已点亮）' : '（未点亮）'}"></span>`;
+    }).join('');
     const n = lampN(p);
     const stage = p.home ? '<span style="color:var(--violet)">已经回到零号星</span>'
-      : p.bill ? '结清了账单，就差亲手把归乡宴交给阿零' : p.feast ? '八盏灯全亮，在做终章'
+      : p.bill ? '结清了账单，就差亲手把归乡宴交给阿零' : p.feast ? (unknownLamps ? '在做终章（灯数据还没同步完）' : '八盏灯全亮，在做终章')
       : n ? `已点亮 ${n} 盏灯，下一盏：${(i => i >= 0 ? LAMPS[i] : '终章')((p.lamps || []).findIndex(l => !l))}` : (p.otcFirst ? '餐厅开张了，在点第一盏灯' : '刚到深夜食堂');
     let stars = ''; for (let i = 1; i <= 8; i++) stars += i <= (p.star || 0) ? '<b>★</b>' : '★';
     return `<div class="card pc">
@@ -1589,7 +1595,7 @@ function renderPlayers() {
         <div class="k">餐厅</div><div><span class="stars">${stars}</span> <span class="dim">${p.star || 0} 星</span></div>
         ${coopRow(p)}
         <div class="k">累计营收</div><div><b>${fmt(earn)}</b> <span class="dim">/ 35,000${nextMs ? ' · 下一档 ' + fmt(nextMs) : ' · 满了'}</span><div class="prog"><i style="width:${Math.min(100, earn / 350)}%"></i>${ticks}</div></div>
-        <div class="k">八盏灯</div><div class="lamps">${LAMPS.map((t, i) => `<span class="lamp ${p.lamps && p.lamps[i] ? 'lit' : ''}" title="第${i + 1}盏灯 · ${t}"></span>`).join('')}</div>
+        <div class="k">八盏灯</div><div class="lamps">${lampsHtml}${unknownLamps ? `<span class="dim" style="margin-left:8px;font-size:11px">${unknownLamps} 盏读不到 · 数据还是旧快照</span>` : ''}</div>
         <div class="k">记忆碎片</div><div class="mems">${mems}<span class="dim" style="margin-left:8px">${p.mem || 0} / 8</span></div>
         <div class="k">Boss</div><div>${(p.bosses || []).length ? `<b style="color:var(--amber2)">${p.bosses.length}</b> <span class="dim">/ ${D.bossTotal || 25} · ${p.bosses.slice(-4).map(esc).join('、')}</span>` : '<span class="dim">还没有</span>'}</div>
         <div class="k">成就</div><div>${p.adv ? `${p.adv.n} 个 · <b style="color:var(--amber2)">${p.adv.pts}</b> 分` : '—'}</div>
