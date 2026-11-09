@@ -496,7 +496,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
             </div>
           </div>
           <div class="chart-box">
-            <svg id="econChart" viewBox="0 0 820 260" preserveAspectRatio="none"></svg>
+            <svg id="econChart" viewBox="0 0 820 260"></svg>
             <div class="chart-tip" id="chartTip"></div>
           </div>
           <div class="chart-ft" id="chartFt"></div>
@@ -509,7 +509,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
       <div class="grid two mt">
         <div class="card">
           <h3>营收增长<span class="r">近 7 天，每小时一个点</span></h3>
-          <svg class="trend" id="earnChart" viewBox="0 0 800 190" preserveAspectRatio="none"></svg>
+          <svg class="trend" id="earnChart" viewBox="0 0 800 190"></svg>
           <div class="legend" id="earnLegend"></div>
         </div>
         <div class="card"><h3>玩家餐厅营收<span class="r">主线看这个 · 酒馆营收另算</span></h3><div id="earnBars"></div></div>
@@ -907,6 +907,15 @@ function ecMA(cdl, n) {
   });
 }
 
+// 图表坐标系与实际像素 1:1：固定 viewBox 配 100% 宽会把曲线横向拉伸（看着压扁）。
+// 每次绘制前按容器真实宽高重设 viewBox，绘制函数统一用返回的 W/H。
+function fitSvg(svg, defW, defH) {
+  const r = svg.getBoundingClientRect();
+  const W = Math.max(240, Math.round(r.width) || defW);
+  const H = Math.max(48, Math.round(r.height) || defH);
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  return {W: W, H: H};
+}
 function sparkSvg(vals, color) {
   if (vals.length < 2) return '';
   const W = 240, H = 36, pad = 2, n = vals.length;
@@ -918,7 +927,7 @@ function sparkSvg(vals, color) {
   });
   const area = d + ' L' + (W - pad) + ' ' + (H - pad) + ' L' + pad + ' ' + (H - pad) + ' Z';
   const gid = 'sg' + color.replace('#', '');
-  return `<svg class="spark" viewBox="0 0 240 36" preserveAspectRatio="none"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity=".28"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></linearGradient></defs><path d="${area}" fill="url(#${gid})"/><path d="${d}" fill="none" stroke="${color}" stroke-width="1.4" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
+  return `<svg class="spark" viewBox="0 0 240 36"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity=".28"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></linearGradient></defs><path d="${area}" fill="url(#${gid})"/><path d="${d}" fill="none" stroke="${color}" stroke-width="1.4" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
 }
 function hbars(rows, f, color) {
   if (!rows.length) return '<div class="empty">还没有数据</div>';
@@ -928,14 +937,14 @@ function hbars(rows, f, color) {
 function renderEarnTrend() {
   const svg = $('earnChart');
   if (!svg) return;
+  const {W, H} = fitSvg(svg, 800, 190), P = {l: 46, r: 12, t: 10, b: 22};
   const pts = D.earn || [];
   const names = [...new Set(pts.flatMap(p => Object.keys(p.e || {})))];
   if (pts.length < 2 || !names.length) {
-    svg.innerHTML = '<text x="400" y="95" text-anchor="middle" fill="#6b7385" font-size="13">有人开店赚钱以后，每小时记一个点</text>';
+    svg.innerHTML = `<text x="${W/2}" y="${H/2}" text-anchor="middle" fill="#6b7385" font-size="13">有人开店赚钱以后，每小时记一个点</text>`;
     $('earnLegend').innerHTML = '';
     return;
   }
-  const W = 800, H = 190, P = {l: 46, r: 12, t: 10, b: 22};
   const maxV = Math.max(100, ...pts.flatMap(p => Object.values(p.e || {})));
   const t0 = pts[0].t, t1 = pts[pts.length - 1].t;
   const x = t => P.l + (t - t0) / Math.max(1, t1 - t0) * (W - P.l - P.r);
@@ -1014,12 +1023,12 @@ function drawEconChart() {
 /* ---- 主走势图：K 线 ---- */
 function drawEconK() {
   const svg = $('econChart'); if (!svg) return;
-  const W = 820, H = 260, P = {l: 58, r: 14, t: 16, b: 26};
+  const {W, H} = fitSvg(svg, 820, 256), P = {l: 58, r: 14, t: 16, b: 26};
   const hist = econHist(), meta = ECON_S[ECON_K];
   const e = D.economy || {};
   const fallback = ECON_K === 'e' ? e.totalEarn : ECON_K === 'c' ? e.coinsHeld : e.shopTotal;
   if (hist.length < 4) {
-    svg.innerHTML = '<text x="410" y="128" text-anchor="middle" fill="#6b7385" font-size="13">等面板下一次同步，这里就有走势了</text>';
+    svg.innerHTML = `<text x="${W/2}" y="${H/2}" text-anchor="middle" fill="#6b7385" font-size="13">等面板下一次同步，这里就有走势了</text>`;
     $('chartRange').textContent = '';
     $('quoteVal').textContent = fmt(fallback);
     $('quoteVal').style.color = '';
@@ -1115,12 +1124,13 @@ function drawEconK() {
 
 function drawEconT() {
   const svg = $('econChart'); if (!svg) return;
+  const {W, H} = fitSvg(svg, 820, 256), P = {l: 58, r: 14, t: 16, b: 26};
   const hist = econHist(), meta = ECON_S[ECON_K], vals = econVals(ECON_K);
   const e = D.economy || {};
   const fallback = ECON_K === 'e' ? e.totalEarn : ECON_K === 'c' ? e.coinsHeld : e.shopTotal;
   $('chartRange').textContent = hist.length > 1 ? '近 24 小时 · ' + hist.length + ' 个点' : '';
   if (hist.length < 2) {
-    svg.innerHTML = '<text x="410" y="128" text-anchor="middle" fill="#6b7385" font-size="13">等面板下一次同步，这里就有走势了</text>';
+    svg.innerHTML = `<text x="${W/2}" y="${H/2}" text-anchor="middle" fill="#6b7385" font-size="13">等面板下一次同步，这里就有走势了</text>`;
     $('quoteVal').textContent = fmt(fallback);
     $('quoteVal').style.color = '';
     $('quoteChg').innerHTML = '<span class="chg flat">还没有 24 小时数据</span>';
@@ -1128,7 +1138,6 @@ function drawEconT() {
     ECON_PTS = [];
     return;
   }
-  const W = 820, H = 260, P = {l: 58, r: 14, t: 16, b: 26};
   const mn0 = Math.min.apply(null, vals), mx0 = Math.max.apply(null, vals);
   const flat = mx0 === mn0;
   const gapv = flat ? Math.max(1, Math.abs(mx0) * 0.06) : (mx0 - mn0);
@@ -1187,7 +1196,8 @@ function ecoWire(svg) {
     if (!arr || !arr.length) return;
     const r = svg.getBoundingClientRect();
     if (!r.width) return;
-    const xv = (ev.clientX - r.left) / r.width * 820;
+    const vb = svg.viewBox.baseVal, W = vb.width || 820, H = vb.height || 256;
+    const xv = (ev.clientX - r.left) / r.width * W;
     let bi = 0, bd = 1e9;
     for (let i = 0; i < arr.length; i++) {
       const d = Math.abs(arr[i].x - xv);
@@ -1202,12 +1212,12 @@ function ecoWire(svg) {
     if (isK) {
       const c = p.c;
       tip.innerHTML = hmof(c.t0) + '–' + hmof(c.t1) + ' · 开 <b>' + fmt(c.o) + '</b> 高 <b>' + fmt(c.h) + '</b> 低 <b>' + fmt(c.l) + '</b> 收 <b>' + fmt(c.c) + '</b>';
-      tip.style.left = (p.x / 820 * 100) + '%';
-      tip.style.top = (p.yc / 260 * 100) + '%';
+      tip.style.left = (p.x / W * 100) + '%';
+      tip.style.top = (p.yc / H * 100) + '%';
     } else {
       tip.innerHTML = hmof(p.t) + ' · <b>' + fmt(p.v) + '</b>';
-      tip.style.left = (p.x / 820 * 100) + '%';
-      tip.style.top = (p.y / 260 * 100) + '%';
+      tip.style.left = (p.x / W * 100) + '%';
+      tip.style.top = (p.y / H * 100) + '%';
     }
     tip.style.opacity = '1';
   });
@@ -1858,6 +1868,12 @@ let YSM_UPLOAD = '';
     btn.disabled = false;
   };
 })();
+
+let siteFitT;
+window.addEventListener('resize', () => {
+  clearTimeout(siteFitT);
+  siteFitT = setTimeout(() => { if (D) { drawEconChart(); renderEarnTrend(); } }, 120);
+});
 
 load();
 setInterval(load, 120000);
