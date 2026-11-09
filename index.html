@@ -230,7 +230,17 @@ footer{color:var(--ink3);font-size:12px;text-align:center;margin-top:36px}
 #taverns .coop-how{background:none;border:0;border-radius:0;padding:14px 0 0;border-top:1px solid var(--line)}
 #taverns .coop-m{border-radius:0}
 #taverns .coop-m:hover{background:var(--fill)}
-@media (max-width:640px){#taverns .coop-nums > div{border-left:0;padding:0}#taverns .coop-nums{gap:12px}}
+@media (max-width:640px){
+  #taverns .coop-nums > div{border-left:0;padding:0}
+  #taverns .coop-nums{gap:12px}
+  .tv-hd .r{margin-left:0}
+  #tavernCard h3{flex-wrap:wrap}
+  #tavernCard h3 .r{margin-left:0;white-space:normal;line-height:1.5}
+  #taverns .coop-hd .meta{white-space:normal;line-height:1.5}
+  #taverns .coop-lbl{flex-wrap:wrap;gap:4px}
+  #taverns .coop-m .who{flex-wrap:wrap;white-space:normal}
+  #taverns .coop-m .got{white-space:nowrap;font-size:12px}
+}
 .up{color:var(--red)}.dn{color:var(--jade)}.flat{color:var(--ink3)}
 .chg{font-variant-numeric:tabular-nums;white-space:nowrap}
 .ticker{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;margin-bottom:8px}
