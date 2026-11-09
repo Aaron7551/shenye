@@ -813,7 +813,8 @@ const fmt = n => n == null || isNaN(n) ? '—' : Math.round(n).toLocaleString('z
 const fmt1 = n => n == null || isNaN(n) ? '—' : (Math.round(n * 10) / 10).toLocaleString('zh-CN');
 const km = cm => cm >= 100000 ? (cm / 100000).toFixed(cm >= 1e7 ? 0 : 1) + ' km' : Math.round(cm / 100) + ' m';
 // 维度中文名：面板那边有一整张表，玩家网页只需要认得常去的几个，认不出就把命名空间削掉
-const DIMS = {'minecraft:overworld': '主世界', 'minecraft:the_nether': '下界', 'minecraft:the_end': '末地'};
+const DIMS = {'minecraft:overworld': '主世界', 'minecraft:the_nether': '下界', 'minecraft:the_end': '末地',
+  'shenye:zero': '零号星', 'shenye:nameless': '山河星', 'shenye:canghai': '沧海星'};
 const dimName = id => DIMS[id] || String(id || '').replace(/^.*:/, '');
 function dur(ms) {
   if (ms == null || ms < 0) return '—';
