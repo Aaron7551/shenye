@@ -911,8 +911,8 @@ function ecMA(cdl, n) {
 // 每次绘制前按容器真实宽高重设 viewBox，绘制函数统一用返回的 W/H。
 function fitSvg(svg, defW, defH) {
   const r = svg.getBoundingClientRect();
-  const W = Math.max(240, Math.round(r.width) || defW);
-  const H = Math.max(48, Math.round(r.height) || defH);
+  const W = Math.round(r.width) || defW;
+  const H = Math.round(r.height) || defH;
   svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
   return {W: W, H: H};
 }
