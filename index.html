@@ -215,6 +215,22 @@ footer{color:var(--ink3);font-size:12px;text-align:center;margin-top:36px}
 .tv-how code{background:var(--fill);padding:1px 6px;border-radius:6px;font-size:12px}
 .tv-how ul{margin:6px 0 0;padding-left:20px}
 @media (max-width:640px){.tv-sum{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* 11-09：酒馆页跟行情页对齐——KPI 卡直铺，内容卡里不再一层层套卡 */
+.tv-hd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:2px 4px 12px}
+.tv-hd h3{margin:0;font-size:15px;font-weight:700;display:flex;gap:10px;align-items:baseline}
+.tv-hd .r{margin-left:auto;font-size:12.5px;font-weight:400;color:var(--ink3)}
+#taverns .coop-grid{grid-template-columns:1fr;gap:0}
+#taverns .coop{background:none;border:0;box-shadow:none;border-radius:0;padding:20px 0 18px;border-top:1px solid var(--line)}
+#taverns .coop:first-child{border-top:0;padding-top:2px}
+#taverns .coop-nums{margin-top:14px;gap:0}
+#taverns .coop-nums > div{background:none;border:0;box-shadow:none;border-radius:0;padding:0 16px;border-left:1px solid var(--line)}
+#taverns .coop-nums > div:first-child{border-left:0;padding-left:0}
+#taverns .coop-nums b{font-size:22px}
+#taverns .coop-lbl{margin:16px 0 8px}
+#taverns .coop-how{background:none;border:0;border-radius:0;padding:14px 0 0;border-top:1px solid var(--line)}
+#taverns .coop-m{border-radius:0}
+#taverns .coop-m:hover{background:var(--fill)}
+@media (max-width:640px){#taverns .coop-nums > div{border-left:0;padding:0}#taverns .coop-nums{gap:12px}}
 .up{color:var(--red)}.dn{color:var(--jade)}.flat{color:var(--ink3)}
 .chg{font-variant-numeric:tabular-nums;white-space:nowrap}
 .ticker{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;margin-bottom:8px}
