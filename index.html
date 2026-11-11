@@ -453,9 +453,9 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <div class="who" id="hmWho"></div>
       </div>
       <div class="card news-bar" data-goto="news">
-        <span class="tag">5.0 beta6</span>
-        <div class="t">沧海星：一颗被海淹没的星</div>
-        <div class="d">水下是原来的山谷和森林，泡着货轮、厂房和科考站。摸出锈蚀的零件，晚上找酒馆的打捞商老锚修成科技物品。酒馆也能几个人合开了。所有人都要装 beta6 更新包。</div>
+        <span class="tag">酒馆 1.3.3 · 待安装</span>
+        <div class="t">酒客终于不转风扇头了</div>
+        <div class="d">修复 NPC 转头、重启后来客、修零件多发奖励、Mino 押金和上酒提示。补丁已准备，等待管理员停服安装；安装时玩家也要换 1.3.3 酒馆 jar，具体时间以管理员通知为准。</div>
         <div class="go">看更新公告 <i>→</i></div>
       </div>
     </div>
@@ -600,6 +600,24 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 
   <section class="tab" id="t-news">
     <div class="card news">
+      <h3>深夜酒馆 1.3.3 修复补丁<span class="ver">2026-11-11</span><span class="r">待管理员安装 · 需要客户端补丁</span></h3>
+      <p>这是酒馆修复补丁，不改变价格、任务或整合包大版本。补丁已准备，<b>尚未安装到正式服</b>，生效时间以管理员通知为准。正式安装时，所有玩家也需要更新酒馆 jar。</p>
+      <h4>1. 深夜酒馆（v1.3.3）修复内容</h4>
+      <ul>
+        <li><b>NPC 转头</b>：修复头部角度逐帧累积、像风扇一样旋转，以及看人时反复回正的问题；保留喝酒、等待和离场动作。</li>
+        <li><b>重启后来客</b>：修复酒馆显示营业中，却因首次扫描失效而不再来客的问题。</li>
+        <li><b>修零件奖励</b>：背包只能装下一部分时，只掉落剩余奖励，不再多发完整一份。</li>
+        <li><b>Mino 押金</b>：拆桌、拆招牌、区块卸载或正常关服时退回未结算押金；已经保存的押金重启后转待发退款，不算营收。</li>
+        <li><b>上酒原因提示</b>：修复摆得太远、非店员端酒等提示常常不触发的问题。</li>
+      </ul>
+      <h4>2. 客户端更新方式（管理员通知安装时再操作）</h4>
+      <ul>
+        <li><b>老玩家</b>：关闭游戏，把当前实例 mods 中旧的 <code>shenye_tavern-*.jar</code> 移出备份，再放入「深夜酒馆1.3.3_客户端补丁.zip」中的 <code>mods/shenye_tavern-1.3.3.jar</code>，确保只剩一份深夜酒馆。不要删除森罗酒馆或下单了。</li>
+        <li><b>新玩家</b>：安装原整合包后，也按上面步骤加本补丁。无需清理存档、按键或重新下载整个整合包。</li>
+        <li>下面“深夜鱼市只改服务器、客户端不用更新”仅指鱼市自身；不代表这份酒馆显示修复也不用更新客户端。</li>
+      </ul>
+    </div>
+    <div class="card news" style="margin-top:14px">
       <h3>深夜食堂 5.1 · 深夜鱼市<span class="ver">2026-11-11</span><span class="r">新玩法 · 只改服务器 · 客户端不用更新</span></h3>
       <p>本次更新新增「深夜鱼市」钓鱼玩法，只改了服务器：<b>客户端不用更新</b>，继续用 5.0 正式版进服即可。</p>
       <h4>深夜鱼市（新玩法）</h4>
