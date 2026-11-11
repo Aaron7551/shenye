@@ -395,6 +395,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 .rk-foot{margin-top:12px;font-size:12.5px;color:var(--ink2);line-height:1.8}
 .rk-foot b{color:var(--ink)}
 .rk-th{display:grid;grid-template-columns:34px minmax(0,1fr) 130px 70px 120px;gap:10px;padding:0 12px 6px;font-size:11.5px;color:var(--ink3)}
+@media(min-width:641px){.rk-row.rk-no-prize,.rk-th.rk-no-prize{grid-template-columns:34px minmax(0,1fr) 130px 70px !important}}
 .rk-th span:nth-child(3),.rk-th span:nth-child(4),.rk-th span:nth-child(5){text-align:right}
 .rk-row{grid-template-columns:34px minmax(0,1fr) 130px 70px 120px !important}
 .rk-row .calc{text-align:right;color:var(--ink3);font-size:12px;font-variant-numeric:tabular-nums}
@@ -418,6 +419,42 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 .tv-drink i{font-style:normal;margin-left:4px;opacity:.65}
 .tv-drink.q5 i,.tv-drink.q6 i{color:var(--amber);opacity:1}
 .tv-star{color:var(--amber);letter-spacing:1px}
+
+/* 深夜鱼市 */
+.fish-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:6px 16px;margin:4px 0 14px}
+.fish-head h2{font-size:21px;margin:0}
+.fish-note,.fish-meta,.fish-table small{color:var(--ink3);font-size:12px;font-weight:400}
+.fish-grid,.fish-split{grid-template-columns:repeat(2,minmax(0,1fr))}
+.fish-grid .card{min-width:0}
+.fish-wide{grid-column:1/-1}
+.fish-list{list-style:none;margin:0;padding:0}
+.fish-scroll{max-height:25rem;overflow-y:auto}
+.fish-row{display:flex;align-items:baseline;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.fish-row:last-child{border-bottom:0}
+.fish-main,.fish-table td{min-width:0;overflow-wrap:anywhere}
+.fish-meta{display:block;margin-top:3px;line-height:1.55}
+.fish-value{margin-left:auto;flex:none;text-align:right;font-variant-numeric:tabular-nums}
+.fish-rank{min-width:1.5em;color:var(--ink3);text-align:center;font-variant-numeric:tabular-nums}
+.fish-rank.prize,.fish-stars,.fish-prize{color:var(--amber2)}
+.fish-tide{padding:12px 14px;border-radius:14px;background:var(--fill);overflow-wrap:anywhere}
+.fish-empty-hotspots{margin-top:12px}
+.fish-next{margin:8px 0 0}
+.fish-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px}
+.fish-table th,.fish-table td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.fish-table th{color:var(--ink3);font-weight:500}
+.fish-table th:first-child{width:42%}
+.fish-table th:last-child{width:5.4em}
+.fish-table th:last-child,.fish-table td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.fish-table tbody tr:last-child td{border-bottom:0}
+.fish-table small{display:block;margin-top:3px}
+.fish-split h4{margin:0;font-size:13px}
+.fish-hotspot[hidden]{display:none}
+@media (max-width:760px){
+  .fish-grid,.fish-split{grid-template-columns:minmax(0,1fr);gap:12px}
+  .fish-head h2{font-size:19px}
+  .fish-table th,.fish-table td{padding-left:3px;padding-right:3px}
+}
+
 </style>
 <script>document.documentElement.classList.add('boot');setTimeout(function(){document.documentElement.classList.remove('boot')},2500);try{var _t=localStorage.getItem('shenyeTheme');if(!_t)_t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
 </head>
@@ -435,6 +472,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
     <nav class="tabs">
       <button class="act" data-t="home">今天</button>
       <button data-t="rank">排行榜</button>
+      <button data-t="fish">鱼市</button>
       <button data-t="prog">大家的进度</button>
       <button data-t="eco">开店与经济</button>
       <button data-t="news">更新公告</button>
@@ -455,7 +493,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
       <div class="card news-bar" data-goto="news">
         <span class="tag">5.1 · 深夜鱼市</span>
         <div class="t">钓鱼大更新：附魔、变异、秘闻鱼</div>
-        <div class="d">钓具与祭坛附魔、25 种变异、钓鱼等级和图鉴、特殊钓点、沧海星和山河星 16 种新鱼、6 条秘闻鱼；同时并入深夜酒馆 1.3.3 修复。要更新客户端。</div>
+        <div class="d">新的鱼市界面、钓具与祭坛附魔、25 种变异、等级和图鉴、特殊钓点、星球鱼、秘闻鱼和支线任务「夜钓」；同时并入深夜酒馆 1.3.3 修复。要更新客户端。</div>
         <div class="go">看更新公告 <i>→</i></div>
       </div>
     </div>
@@ -538,7 +576,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <div class="tbl-wrap"><table class="tbl" id="restTable"></table></div>
       </div>
       <div class="card mt" id="rankCard">
-        <h3>本周人气榜<span class="r">本周营收 ÷ 店里人数 = 人均 · 第一名拿奖金</span></h3>
+        <h3>本周人气榜<span class="r">本周营收 ÷ 店里人数 = 人均</span></h3>
         <div id="coopRank"></div>
       </div>
       <div class="card mt" id="coopCard">
@@ -598,17 +636,27 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
     </div>
   </section>
 
+  <section class="tab" id="t-fish" aria-labelledby="fishTitle">
+    <div class="fish-head">
+      <h2 id="fishTitle">深夜鱼市</h2>
+      <span id="fishUpdated" class="fish-note"></span>
+    </div>
+    <div id="fishContent"><div class="card empty">正在读取鱼市数据…</div></div>
+  </section>
+
   <section class="tab" id="t-news">
     <div class="card news">
       <h3>深夜食堂 5.1 · 深夜鱼市<span class="ver">2026-11-11</span><span class="r">钓鱼大更新 · 含酒馆 1.3.3 · 要更新客户端</span></h3>
-      <p>本次更新带来全新的「深夜鱼市」钓鱼玩法（参考 FISH!）：钓具附魔、25 种变异、钓鱼等级与图鉴、特殊钓点、秘闻鱼，以及沧海星、山河星的 16 种专属鱼。本版同时并入「深夜酒馆 1.3.3」修复。新增了物品，<b>所有玩家都需要更新客户端后再进入服务器</b>。</p>
+      <p>本次更新带来全新的「深夜鱼市」钓鱼玩法（参考 FISH!）：独立的鱼市界面、钓具附魔、25 种变异、钓鱼等级与图鉴、特殊钓点、秘闻鱼、沧海星与山河星的 16 种专属鱼，以及支线任务「夜钓」。本版同时并入「深夜酒馆 1.3.3」修复。新增了物品，<b>所有玩家都需要更新客户端后再进入服务器</b>。</p>
       <h4>深夜鱼市</h4>
       <ul>
         <li><b>鱼市印章</b>：用 Tide 钓竿亲手钓上来的鱼会盖上鱼市印章，带品相（1–5 星）、体型、变异和钓手名字；收线小游戏打出「完美」，品相额外 +1 星。</li>
-        <li><b>卖鱼</b>：输入 <code>/fish</code> 打开鱼市，把鱼放进收购台（Shift+点击最快），点「卖出」，钱直接存进夜市银行。<code>/fish sell</code> 卖手上的鱼，<code>/fish price</code> 看手上这条值多少。</li>
+        <li><b>鱼市界面</b>：点生存背包左上角、夜市旁边的鱼图标，或输入 <code>/fish</code>。左侧 8 个页签（卖鱼、每日委托、我的渔获、图鉴、祭坛、钓点活动、全服纪录、本周渔王）。</li>
+        <li><b>卖鱼</b>：在「卖鱼」页点选背包里的鱼，点「卖出选中」或「全部卖出」，钱直接存进夜市银行。<code>/fish sell</code> 卖手上的鱼，<code>/fish price</code> 看手上这条值多少，<code>/fish classic</code> 打开旧的箱子收购台。</li>
+        <li><b>上钩提示卡</b>：每钓上一条鱼，右上角弹出一张卡片，显示鱼名、变异、星级、长度和鉴定价。</li>
         <li><b>价格</b>：稀有度 × 体型 × 品相 × 变异 × 行情。同一种鱼全服卖得越多越便宜（最低 6 折，慢慢回升）；每天前 3000 币全价收（钓鱼等级每升一级多 100），超出部分 5 折；鱼市收购税 5% 进国库。</li>
         <li><b>每日委托</b>：每天 3 个，交上指定的鱼拿奖励，新加坡时间 0 点换新。</li>
-        <li><b>全服纪录与本周渔王</b>：每种鱼最长的一条记进全服纪录；每周比亲手钓到的最值钱的一条，前三名奖金 1000 / 500 / 250 币，从国库出。</li>
+        <li><b>全服纪录与本周渔王</b>：每种鱼最长的一条记进全服纪录；每周按亲手钓到的最高单条鉴定价排名。餐厅人气榜和本周渔王保留排名，5.1 起取消奖金和渔王前三任务奖励。</li>
       </ul>
       <h4>钓具与祭坛附魔</h4>
       <ul>
@@ -645,6 +693,11 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li><b>秘闻鱼</b>：6 条只在特定条件下才会上钩的鱼（沉船守望者、潮汐信使、云中仙鲤、镜湖之影、老河神、归途鲸），价值是普通鱼的 5 倍，线索在图鉴里，全服第一条会记下名字。</li>
         <li><b>沧海星钓零件</b>：在沧海星钓鱼时有 5% 几率（完美收线 10%）顺带钓上「锈蚀的零件」，大潮和沉船附近翻倍。</li>
       </ul>
+      <h4>支线任务「夜钓 · 深夜鱼市」</h4>
+      <ul>
+        <li><b>新章节</b>：26 个任务，从第一竿、卖鱼、委托，一路教到钓具、祭坛附魔、特殊钓点、星球鱼和秘闻鱼，奖励经验、便当、鱼饵和遗物碎片。</li>
+        <li>山河星章节的「雾海的钓场」任务开放。</li>
+      </ul>
       <h4>深夜酒馆（v1.3.3）修复内容</h4>
       <ul>
         <li><b>NPC 转头</b>：修复头部像风扇一样不停旋转、看人时反复回正抖动的问题。</li>
@@ -653,6 +706,8 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li><b>Mino 押金</b>：拆桌、拆招牌、区块卸载或正常关服时退回未结算的押金。</li>
         <li><b>上酒提示</b>：修复「不是店员」「距离太远」等原因提示经常不出现的问题。</li>
       </ul>
+      <h4>夜市税务显示</h4>
+      <ul><li>银行按服务器配置显示转账税。强加载税分行显示免税块数和超出后的每块日费。</li><li>修复单人存档打开夜市时缺少强加载区块数导致的断线。</li></ul>
       <h4>客户端更新方式</h4>
       <ul>
         <li><b>老玩家</b>：打开「深夜食堂 5.0 正式版 打包版.zip」内的新启动器 PCL-Living-Fork，选中已有版本 → 版本设置 → 整合包更新 → 选择「深夜食堂 5.1.mrpack」（原有存档及按键设置均会保留）。不想换启动器的，用「深夜食堂 5.1 更新包.zip」按里面的「怎么装.txt」手动更新。</li>
@@ -1387,21 +1442,23 @@ function coopRankHtml(w) {
   if (!w) return '';
   const h = Math.floor((w.msLeft || 0) / 3600000);
   const prize = w.prize != null ? w.prize : ((w.rewards || [])[0] || 0);
+  const hasPrize = prize > 0;
+  const rowMode = hasPrize ? "" : " rk-no-prize";
   const list = w.list || [];
   const medal = ['🥇', '🥈', '🥉'];
   const sizeOf = u => u.size || (u.people || []).length || 1;
   const rows = list.length ? list.map(u => {
     const n = sizeOf(u);
     const aw = u.pos === 1 && prize ? `奖金 <b>${fmt(prize)}</b> 币 ÷ ${(u.people || []).length || n} 人` : '<span class="dim">无奖金</span>';
-    return `<div class="rk-row ${u.pos <= 3 ? 'top' : ''}">
+    return `<div class="rk-row${rowMode} ${u.pos <= 3 ? 'top' : ''}">
       <span class="pos">${medal[u.pos - 1] || u.pos}</span>
       <span class="nm"><b>${esc(u.name)}</b><small>${esc((u.people || []).join('、'))}</small></span>
       <span class="calc">${fmt(u.total)} <i>÷</i> ${n} 人</span>
       <span class="pc">${fmt(u.perCapita)}</span>
-      <span class="aw">${aw}</span>
+      ${hasPrize ? `<span class="aw">${aw}</span>` : ""}
     </div>`;
   }).join('') : `<div class="coop-empty"><b>本周还没有店上榜</b><span>本周营收合计满 ${fmt(w.minEarn || 0)} 才会上榜</span></div>`;
-  const head = list.length ? `<div class="rk-th"><span></span><span>店</span><span>本周营收 ÷ 店里人数</span><span>人均</span><span>奖金</span></div>` : '';
+  const head = list.length ? `<div class="rk-th${rowMode}"><span></span><span>店</span><span>本周营收 ÷ 店里人数</span><span>人均</span>${hasPrize ? "<span>奖金</span>" : ""}</div>` : '';
   const top = list[0];
   const eg = top ? `比如第一名「${esc(top.name)}」：本周营收 ${fmt(top.total)}，店里 ${sizeOf(top)} 人，所以人均 ${fmt(top.perCapita)}。` : '';
   let live = '';
@@ -1410,12 +1467,12 @@ function coopRankHtml(w) {
     live += `<div>上周第一：「${esc(t.name)}」人均 ${fmt(t.perCapita)}${t.reward ? '，每人拿到 ' + fmt(t.reward) + ' 币' : ''}</div>`;
   }
   return `<div class="rk-hd"><span>还有 <b>${Math.floor(h / 24)} 天 ${h % 24} 小时</b> 结算（每周一 0 点）</span>
-      <span>只奖第一名：国库出 <b>${fmt(prize)}</b> 币，店里干过活的人平分</span></div>
+      ${hasPrize ? `<span>只奖第一名：国库出 <b>${fmt(prize)}</b> 币，店里干过活的人平分</span>` : ""}</div>
     ${head}<div class="rk-list">${rows}</div>
     <div class="rk-foot">${live}
       <div class="rk-how"><b>怎么排：</b>每家店用「本周营收合计 ÷ 店里人数」算出<b>人均</b>，人均高的排前面。个人店就是 1 个人的店，和合作店排同一张榜、一视同仁。${eg}</div>
       <div class="rk-how"><b>人数怎么数：</b>店里登记的全部成员，挂名不干活的人也算，所以人多不一定排得高。</div>
-      <div class="rk-how"><b>奖金怎么发：</b>只有第一名的店有奖，奖金 ${fmt(prize)} 币从夜市国库出，由这家店本周做过单的人平分（国库不够就有多少发多少）。本周营收合计满 ${fmt(w.minEarn || 0)} 才上榜。</div>
+      <div class="rk-how"><b>上榜门槛：</b>本周营收合计满 ${fmt(w.minEarn || 0)} 才上榜。${hasPrize ? "国库不足时，奖金按实际余额发放。" : ""}</div>
     </div>`;
 }
 // ---------- 深夜酒馆（shenye_tavern 1.0.0，11-08 加）：每家酒馆一张卡，面板和玩家网页同一份代码 ----------
@@ -1834,12 +1891,161 @@ function renderHome(live) {
   $('hmWho').innerHTML = live && on.length ? on.map(p => `<span>${ava(p.name, 24)}${esc(p.name)}</span>`).join('')
     : `<span style="padding-left:13px">${live ? '现在没人，进来坐坐？' : '更新于 ' + ago(D.updated)}</span>`;
 }
+// ---------- 深夜鱼市 ----------
+const fishDateFormat = new Intl.DateTimeFormat('zh-CN', {
+  timeZone: 'Asia/Singapore', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+});
+const fishNumber = new Intl.NumberFormat('zh-CN', {maximumFractionDigits: 2});
+const fishRarities = {common: '普通', uncommon: '少见', rare: '稀有', very_rare: '极稀有', legendary: '传说'};
+const fishFmt = n => n == null || !Number.isFinite(Number(n)) ? '—' : fishNumber.format(n);
+const fishDate = t => Number(t) > 0 ? fishDateFormat.format(Number(t)) : '';
+const fishRarity = r => esc(Object.hasOwn(fishRarities, r) ? fishRarities[r] : (r || ''));
+const fishEmpty = text => `<div class="empty">${text}</div>`;
+
+function fishCard(title, content, wide = false) {
+  return `<section class="card${wide ? ' fish-wide' : ''}"><h3>${title}</h3>${content}</section>`;
+}
+
+function fishList(rows, empty, scroll = false) {
+  return rows.length ? `<ul class="fish-list${scroll ? ' fish-scroll' : ''}">${rows.join('')}</ul>` : fishEmpty(empty);
+}
+
+function fishRankings(fish) {
+  const players = Object.entries(fish.players || {}).filter(([, p]) => p);
+  const week = players.filter(([, p]) => p.weekBest && p.weekBest.value != null)
+    .sort(([, a], [, b]) => b.weekBest.value - a.weekBest.value);
+  const level = players.filter(([, p]) => p.level != null)
+    .sort(([, a], [, b]) => b.level - a.level || (b.caught || 0) - (a.caught || 0));
+  const weeklyRows = week.map(([name, p], i) => {
+    const best = p.weekBest;
+    const stars = Math.max(0, Math.min(5, Math.trunc(Number(best.quality) || 0)));
+    const prize = (fish.weeklyPrizes || [])[i] || 0;
+    return `<li class="fish-row">
+      <span class="fish-rank${i < 3 ? ' prize' : ''}">${i + 1}</span>
+      <div class="fish-main"><b>${esc(name)}</b><span class="fish-meta">${esc(best.name)}${best.mutation ? ' · ' + esc(best.mutation) : ''}
+        ${stars ? `<span class="fish-stars" aria-label="${stars} 星">${'★'.repeat(stars)}${'☆'.repeat(5 - stars)}</span>` : ''}</span></div>
+      <div class="fish-value"><b>${fishFmt(best.value)} 币</b>${prize > 0 ? `<span class="fish-meta fish-prize">奖金 ${fishFmt(prize)} 币</span>` : ''}</div>
+    </li>`;
+  });
+  const levelRows = level.map(([name, p], i) => `<li class="fish-row">
+    <span class="fish-rank">${i + 1}</span>
+    <div class="fish-main"><b>${esc(name)}</b><span class="fish-meta">累计钓到 ${fishFmt(p.caught)} 条</span></div>
+    <b class="fish-value">Lv. ${fishFmt(p.level)}</b>
+  </li>`);
+  const settle = Number(fish.t) + Number(fish.msToSettle);
+  const deadline = fish.msToSettle != null && Number(fish.msToSettle) >= 0
+    ? `<span data-fish-until="${settle}">—</span>` : '结算时间待更新';
+  return {
+    weekly: fishCard('本周渔王', `<div class="fish-note">${esc(fish.week)}${fish.week ? ' · ' : ''}${deadline}</div>${fishList(weeklyRows, '本周还没有渔获上榜', true)}`),
+    level: fishCard('钓鱼等级榜', fishList(levelRows, '暂无钓鱼等级', true))
+  };
+}
+
+function fishWaters(fish) {
+  const hours = (fish.canghaiTideHours || []).map(h => String(h).padStart(2, '0') + ':00');
+  const schedule = hours.length
+    ? '每天 ' + esc(hours.join('、')) + '（新加坡时间）' + (fish.canghaiTideMinutes != null ? ' · 持续 ' + fishFmt(fish.canghaiTideMinutes) + ' 分钟' : '')
+    : '大潮时间待更新';
+  const tide = fish.canghaiTide == null ? '状态待更新' : (fish.canghaiTide ? '快照时进行中' : '快照时未在大潮');
+  const hotspots = (fish.hotspots || []).filter(p => p && p.secondsLeft != null && p.secondsLeft > 0).map(p => {
+    const until = Number(fish.t) + Number(p.secondsLeft) * 1000;
+    return `<li class="fish-row fish-hotspot" data-fish-hotspot>
+      <div class="fish-main"><b>${esc(p.name)}</b><span class="fish-meta">${esc(p.effect)}</span>
+        <span class="fish-meta">${esc(p.dim)} · X ${fishFmt(p.x)} / Z ${fishFmt(p.z)}</span></div>
+      <b class="fish-value" data-fish-until="${until}">—</b>
+    </li>`;
+  });
+  const next = Number(fish.t) + Number(fish.nextHotspotSeconds) * 1000;
+  const nextText = fish.nextHotspotSeconds != null && Number(fish.nextHotspotSeconds) >= 0
+    ? `<span data-fish-until="${next}" data-fish-next>—</span>` : '出现时间未定';
+  return fishCard('特殊钓点与大潮', `<div class="fish-tide"><b>沧海星大潮</b>
+      <span class="fish-meta">${schedule} · ${tide}</span></div>
+    ${hotspots.length ? fishList(hotspots, '') : ''}
+    <div class="fish-empty-hotspots fish-note" id="fishNoHotspots">当前没有特殊钓点</div>
+    <p class="fish-note fish-next">下一处钓点 · ${nextText}</p>`);
+}
+
+function updateFishTimers() {
+  const section = $('t-fish');
+  if (!section.classList.contains('act')) return;
+  const now = Date.now();
+  section.querySelectorAll('[data-fish-until]').forEach(el => {
+    const seconds = Math.max(0, Math.ceil((Number(el.dataset.fishUntil) - now) / 1000));
+    const hotspot = el.closest('[data-fish-hotspot]');
+    if (hotspot) hotspot.hidden = seconds === 0;
+    if (!seconds) {
+      el.textContent = hotspot || el.hasAttribute('data-fish-next') ? '等待新快照' : '结算时间已到';
+      return;
+    }
+    const days = Math.floor(seconds / 86400), hours = Math.floor(seconds / 3600) % 24;
+    const minutes = Math.floor(seconds / 60) % 60;
+    const left = days ? `${days} 天 ${hours} 小时` : hours ? `${hours} 小时 ${minutes} 分`
+      : `${minutes ? minutes + ' 分 ' : ''}${seconds % 60} 秒`;
+    el.textContent = hotspot ? left : el.hasAttribute('data-fish-next') ? '约 ' + left : '距结算 ' + left;
+  });
+  const empty = $('fishNoHotspots');
+  if (empty) empty.hidden = !!section.querySelector('[data-fish-hotspot]:not([hidden])');
+}
+
+function fishContent(fish) {
+  const ranking = fishRankings(fish);
+  const records = (fish.records || []).filter(Boolean).sort((a, b) => b.length - a.length);
+  const recordsTable = records.length ? `<div class="fish-scroll"><table class="fish-table" aria-label="全服最长纪录">
+    <thead><tr><th scope="col">鱼种</th><th scope="col">钓手</th><th scope="col">长度</th></tr></thead>
+    <tbody>${records.map(r => `<tr><td><b>${esc(r.name)}</b><small>${fishRarity(r.rarity)}</small></td>
+      <td>${esc(r.who || '—')}<small>${fishDate(r.t)}</small></td><td>${fishFmt(r.length)} cm</td></tr>`).join('')}</tbody>
+    </table></div>` : fishEmpty('暂无全服纪录');
+
+  const secrets = (fish.secrets || []).filter(Boolean);
+  const secretRows = secrets.map(s => s.found === true
+    ? `<li class="fish-row"><div class="fish-main"><b>${esc(s.name)}</b>
+        <span class="fish-meta">${[s.place, s.who && '发现者 ' + s.who, fishDate(s.t)].filter(Boolean).map(esc).join(' · ')}</span></div>
+        <span class="fish-value fish-note">已发现</span></li>`
+    : `<li class="fish-row"><div class="fish-main"><b>未发现</b><span class="fish-meta">${esc(s.hint || '暂无线索')}</span></div></li>`);
+
+  const planets = new Map();
+  (fish.planetFish || []).filter(Boolean).forEach(p => {
+    const place = p.place || '地点未标明';
+    if (!planets.has(place)) planets.set(place, []);
+    planets.get(place).push(p);
+  });
+  const planetGroups = Array.from(planets, ([place, entries]) => {
+    const rows = entries.map(p => `<li class="fish-row">
+      <div class="fish-main"><b>${esc(p.name)}</b><span class="fish-meta">${[fishRarity(p.rarity), esc(p.hint)].filter(Boolean).join(' · ')}</span></div>
+      <b class="fish-value">${fishFmt(p.caught)} 条</b></li>`);
+    return `<div><h4>${esc(place)}</h4>${fishList(rows, '')}</div>`;
+  });
+
+  const notable = (fish.notable || []).filter(Boolean).sort((a, b) => b.t - a.t);
+  const news = notable.map(n => `<li class="fish-row"><div class="fish-main"><b>${[n.who, n.name].filter(Boolean).map(esc).join(' · ')}</b>
+    <span class="fish-meta">${esc(n.text)}</span></div><span class="fish-value fish-note">${fishDate(n.t)}</span></li>`);
+  const discovered = secrets.filter(s => s.found === true).length;
+  const secretSummary = secrets.length ? `<div class="fish-note">已发现 ${discovered} / ${secrets.length}</div>` : '';
+  return ranking.weekly + fishWaters(fish) + ranking.level +
+    fishCard('秘闻鱼', secretSummary + fishList(secretRows, '暂无秘闻鱼线索')) +
+    fishCard('全服最长纪录', recordsTable) +
+    fishCard('最近大事', fishList(news, '暂无鱼市大事', true)) +
+    fishCard('星球鱼 · 全服累计', planetGroups.length
+      ? `<div class="grid fish-split">${planetGroups.join('')}</div>` : fishEmpty('暂无星球鱼数据'), true);
+}
+
+function showFish(fish, extra = '', tail = '', missing = '深夜鱼市未安装或还没开服') {
+  const content = $('fishContent');
+  $('fishUpdated').textContent = fish && fishDate(fish.t) ? '快照 ' + fishDate(fish.t) + '（新加坡时间）' : '';
+  content.innerHTML = fish
+    ? extra + `<div class="grid fish-grid">${fishContent(fish)}${tail}</div>`
+    : `<div class="card empty">${missing}</div>`;
+  updateFishTimers();
+}
+setInterval(updateFishTimers, 1000);
+
 function render() {
   const live = D.server && D.server.online && Date.now() - D.updated < 40 * 60000;
   const s = $('srv');
   s.className = 'pill' + (live ? ' on' : '');
   s.lastElementChild.textContent = live ? `服务器开着 · ${D.server.players} 人在线` : '服务器休息中';
   $('upd').textContent = '更新于 ' + ago(D.updated) + (live ? '' : (Date.now() - D.updated > 40 * 60000 ? '（服务器或面板没开，数据停在这里）' : ''));
+  showFish(D.fish);
   renderHome(live);
   renderOnline24();
   renderRank();
@@ -1854,7 +2060,10 @@ async function load() {
     D = await r.json();
     render();
   } catch (e) {
-    if (!D) $('upd').textContent = '数据还没上传，等服务器面板第一次同步';
+    if (!D) {
+      $('upd').textContent = '数据还没上传，等服务器面板第一次同步';
+      showFish(null, '', '', '鱼市数据还未同步');
+    }
   }
 }
 document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
@@ -1865,6 +2074,7 @@ document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
     if (on) { t.classList.remove('entering'); void t.offsetWidth; t.classList.add('entering'); clearTimeout(t._en); t._en = setTimeout(() => t.classList.remove('entering'), 1300); }
   });
   try { history.replaceState(null, '', '#' + b.dataset.t); } catch (e) {}
+  if (b.dataset.t === 'fish') updateFishTimers();
   if (b.dataset.t === 'eco' && D) { try { renderEco(); } catch (e) {} }
 });
 // 主题
