@@ -464,6 +464,11 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 .fish-claims .fish-value{color:var(--jade)}
 .fish-claims .fish-full{color:var(--ink3)}
 .fish-titles{color:var(--amber2)}
+
+.fish-collection-controls{display:inline-flex;gap:4px;padding:3px;margin:0 0 10px;border-radius:10px;background:var(--fill)}
+.fish-collection-controls button{border:0;border-radius:7px;padding:5px 12px;background:transparent;color:var(--ink2);font:inherit;font-size:13px;cursor:pointer}
+.fish-collection-controls button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 0 0 1px var(--line)}
+.fish-collection-controls button:focus-visible{outline:2px solid var(--amber2);outline-offset:2px}
 @media(max-width:560px){
   .fish-totals .card{padding:10px 8px}
   .fish-raid{padding:11px 12px}
@@ -2104,6 +2109,63 @@ function fishLevelRow(name, player, i) {
   </li>`;
 }
 
+
+const fishPerfectMin = 50;
+let fishCollectionMode = 'species';
+
+function fishLeaderboardRows(entries, compareScore, renderScore) {
+  const sorted = entries.sort((a, b) => compareScore(a, b) || a.name.localeCompare(b.name, 'en'));
+  let rank = 0;
+  return sorted.map((entry, i) => {
+    if (i === 0 || compareScore(sorted[i - 1], entry) !== 0) rank = i + 1;
+    return `<li class="fish-row"><span class="fish-rank${rank <= 3 ? ' prize' : ''}">${rank}</span>
+      <b class="fish-main">${esc(entry.name)}</b><div class="fish-value">${renderScore(entry)}</div></li>`;
+  });
+}
+
+function fishCollectionRank(players) {
+  const categories = [
+    ['species', '鱼种', '按亲手钓到的不同鱼种数排名'],
+    ['mutationKinds', '变异', '按钓到过的不同变异数排名']
+  ];
+  const buttons = categories.map(([key, label]) =>
+    `<button type="button" data-fish-collection="${key}" aria-controls="fish-rank-${key}" aria-pressed="${fishCollectionMode === key}">${label}</button>`);
+  const lists = categories.map(([key, label, description]) => {
+    const entries = players.filter(([, p]) => Number.isSafeInteger(p[key]) && p[key] > 0)
+      .map(([name, p]) => ({name, count: p[key]}));
+    const rows = fishLeaderboardRows(entries, (a, b) => b.count - a.count, entry => `<b>${fishFmt(entry.count)} 种</b>`);
+    return `<div id="fish-rank-${key}" data-fish-collection-list="${key}"${fishCollectionMode === key ? '' : ' hidden'}>
+      <div class="fish-note">${description}</div>${fishList(rows, '暂无' + label + '收藏记录', true)}</div>`;
+  });
+  return fishCard('鱼市收藏榜', `
+    <div class="fish-collection-controls" role="group" aria-label="收藏榜分类">${buttons.join('')}</div>${lists.join('')}`);
+}
+
+function fishPerfectRank(players) {
+  const entries = players.filter(([, p]) =>
+    Number.isSafeInteger(p.caught) && p.caught >= fishPerfectMin &&
+    Number.isSafeInteger(p.perfect) && p.perfect >= 0 && p.perfect <= p.caught)
+    .map(([name, p]) => ({name, caught: p.caught, perfect: p.perfect}));
+  const rows = fishLeaderboardRows(entries, (a, b) => b.perfect * a.caught - a.perfect * b.caught, entry =>
+    `<b>${fishFmt(100 * entry.perfect / entry.caught)}%</b>
+    <span class="fish-meta">${fishFmt(entry.perfect)} / ${fishFmt(entry.caught)} 条</span>`);
+  return fishCard('完美收线榜', `<div class="fish-note">累计钓满 ${fishPerfectMin} 条上榜 · 完美收线数 / 总钓获</div>
+    ${fishList(rows, '暂无达到上榜门槛的钓手', true)}`);
+}
+
+$('fishContent').addEventListener('click', event => {
+  const button = event.target.closest('[data-fish-collection]');
+  if (!button) return;
+  fishCollectionMode = button.dataset.fishCollection;
+  const content = $('fishContent');
+  content.querySelectorAll('[data-fish-collection]').forEach(control => {
+    control.setAttribute('aria-pressed', control === button ? 'true' : 'false');
+  });
+  content.querySelectorAll('[data-fish-collection-list]').forEach(list => {
+    list.hidden = list.dataset.fishCollectionList !== fishCollectionMode;
+  });
+});
+
 function fishRankings(fish) {
   const players = Object.entries(fish.players || {}).filter(([, p]) => p);
   const week = players.filter(([, p]) => p.weekBest && p.weekBest.value != null)
@@ -2127,7 +2189,9 @@ function fishRankings(fish) {
     ? `<span data-fish-until="${settle}">—</span>` : '结算时间待更新';
   return {
     weekly: fishCard('本周渔王', `<div class="fish-note">${esc(fish.week)}${fish.week ? ' · ' : ''}${deadline}</div>${fishList(weeklyRows, '本周还没有渔获上榜', true)}`),
-    level: fishCard('钓鱼等级榜', fishList(levelRows, '暂无钓鱼等级', true))
+    level: fishCard('钓鱼等级榜', fishList(levelRows, '暂无钓鱼等级', true)),
+    collection: fishCollectionRank(players),
+    perfect: fishPerfectRank(players)
   };
 }
 
@@ -2223,7 +2287,7 @@ function fishContent(fish) {
   const isToday = fishDay.format(Number(fish.t)) === today;
   return fishBoss(fish.boss) + fishWaters(fish) + fishBounties(fish.bounties, isToday) +
     fishMerchant(fish.merchant, isToday) + fishFestival(fish.festival, today) + fishMarket(fish.market) +
-    ranking.weekly + ranking.level +
+    ranking.weekly + ranking.level + ranking.collection + ranking.perfect +
     fishCard('秘闻鱼', secretSummary + fishList(secretRows, '暂无秘闻鱼线索')) +
     fishCard('全服最长纪录', recordsTable) +
     fishCard('最近大事', fishList(news, '暂无鱼市大事', true)) +
@@ -2233,10 +2297,12 @@ function fishContent(fish) {
 
 function showFish(fish, missing = '深夜鱼市未安装或还没开服') {
   const content = $('fishContent');
+  const focusedCollectionButton = content.contains(document.activeElement) && document.activeElement.hasAttribute('data-fish-collection');
   $('fishUpdated').textContent = fish && fishDate(fish.t) ? '快照 ' + fishDate(fish.t) + '（新加坡时间）' : '';
   content.innerHTML = fish
     ? fishOverview(fish) + `<div class="grid fish-grid">${fishContent(fish)}</div>`
     : `<div class="card empty">${missing}</div>`;
+  if (focusedCollectionButton) content.querySelector('[data-fish-collection][aria-pressed="true"]')?.focus({preventScroll: true});
   updateFishTimers();
 }
 setInterval(updateFishTimers, 1000);
