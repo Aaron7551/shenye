@@ -268,6 +268,9 @@ footer{color:var(--ink3);font-size:12px;text-align:center;margin-top:36px}
 .two{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
 .three{grid-template-columns:repeat(3,minmax(0,1fr))}
 .tbl-wrap{overflow-x:auto}
+.tax-rates th,.tax-rates td{padding-inline:6px}
+.tax-rates td:nth-child(-n+2){white-space:normal;overflow-wrap:anywhere}
+.tax-rates td:nth-child(n+3){white-space:nowrap}
 .tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
 .tbl th{font-size:12.5px;font-weight:600;color:var(--ink);text-align:left;padding:10px;background:var(--fill);white-space:nowrap}
 .tbl th:first-child{border-radius:12px 0 0 12px}.tbl th:last-child{border-radius:0 12px 12px 0}
@@ -1801,9 +1804,9 @@ function renderTreasury() {
     tb.innerHTML = (e.treasury == null && !tk.length) ? '<div class="empty">还没装夜市模组，或者模组还没开过服</div>'
       : '<div style="font-size:22px;font-weight:600;margin-bottom:6px">' + fmt(e.treasury || 0) +
         ' <span class="dim" style="font-size:13px;font-weight:400">币在国库</span></div>'
-        + (tk.length ? '<table class="tbl" style="width:100%"><tr><th>税种</th><th class="r">税率</th><th class="r">累计</th><th class="r">笔数</th></tr>'
+        + (tk.length ? '<div class="tbl-wrap"><table class="tbl tax-rates" aria-label="税率与累计收税"><tr><th>税种</th><th class="r">税率</th><th class="r">累计</th><th class="r">笔数</th></tr>'
           + tk.map(k => '<tr><td>' + esc(taxes[k].name || k) + '</td><td class="r">' + (taxes[k].rateText != null ? esc(taxes[k].rateText) : taxes[k].rate + '%') + '</td><td class="r">' +
-            fmt(taxes[k].total || 0) + '</td><td class="r">' + fmt(taxes[k].count || 0) + '</td></tr>').join('') + '</table>' : '')
+            fmt(taxes[k].total || 0) + '</td><td class="r">' + fmt(taxes[k].count || 0) + '</td></tr>').join('') + '</table></div>' : '')
         + taxPayersHtml(e, taxes)
         + (mk.length ? '<div class="dim" style="font-size:12px;margin-top:8px">最近：' +
           mk.slice(-5).reverse().map(m => esc(m.who || '—') + ' 买 ' + esc(m.name || '') + ' 手续费 ' + fmt(m.fee || 0)).join(' · ') + '</div>' : '');
@@ -1819,12 +1822,18 @@ function renderTreasury() {
   } catch (err) { console.warn('treasury card', err); }
 }
 
+function renderEcoCharts() {
+  if (!D || !$('econChart').getClientRects().length) return;
+  drawEconChart();
+  renderEarnTrend();
+}
+
 function renderEco() {
   if (!$('t-eco')) return;
   const ps = D.players || [];
   renderTicker();
   renderTape();
-  drawEconChart();
+  renderEcoCharts();
   renderRest();
 
   const coinRows = ps.map(p => ({n: p.name, v: (p.coins || 0) + (p.coinsEnder || 0) + (p.coinsStored || 0) + (p.coinsBank || 0), t: '身上 ' + fmt(p.coins) + ' · 末影箱 ' + fmt(p.coinsEnder) + ' · 银行 ' + fmt(p.coinsBank || 0) + ' · 存储 ' + fmt(p.coinsStored || 0)})).filter(r => r.v > 0).sort((a, b) => b.v - a.v);
@@ -1849,7 +1858,6 @@ function renderEco() {
     ? hbars(cRows, fmt) + '<div class="dim" style="font-size:12px;margin-top:8px">蓝色是科技柜台</div>'
     : '<div class="empty">还没有人买过东西</div>';
 
-  renderEarnTrend();
   renderTreasury();
 
   const log = ((D.shop && D.shop.log) || []).slice(-40).reverse();
@@ -2364,6 +2372,7 @@ document.querySelectorAll('[data-subnav]').forEach(nav => {
       if (on) { x.style.animation = 'none'; void x.offsetWidth; x.style.animation = 'rise .45s var(--ease) both'; }
     });
     try { localStorage.setItem(key, s); } catch (e) {}
+    if (nav.dataset.subnav === 'eco' && s === 'mkt') renderEcoCharts();
     if (nav.dataset.subnav === 'eco' && s === 'tavern') { try { renderTaverns(); } catch (e) {} }
   };
   nav.querySelectorAll('button').forEach(b => b.onclick = () => pick(b.dataset.s));
@@ -2436,7 +2445,7 @@ let YSM_UPLOAD = '';
 let siteFitT;
 window.addEventListener('resize', () => {
   clearTimeout(siteFitT);
-  siteFitT = setTimeout(() => { if (D) { drawEconChart(); renderEarnTrend(); } }, 120);
+  siteFitT = setTimeout(renderEcoCharts, 120);
 });
 
 load();
