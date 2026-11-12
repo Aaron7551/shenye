@@ -429,6 +429,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 .fish-note,.fish-meta,.fish-table small{color:var(--ink3);font-size:12px;font-weight:400}
 .fish-grid,.fish-split{grid-template-columns:repeat(2,minmax(0,1fr))}
 .fish-grid .card{min-width:0}
+.fish-grid[hidden],.boards[hidden]{display:none}
 .fish-wide{grid-column:1/-1}
 .fish-list{list-style:none;margin:0;padding:0}
 .fish-scroll{max-height:25rem;overflow-y:auto}
@@ -534,6 +535,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
   <section class="tab" id="t-rank">
     <div class="chips" id="cats"></div>
     <div class="grid boards" id="boards"></div>
+    <div class="grid fish-grid" id="fishRankBoards" hidden></div>
   </section>
 
   <section class="tab" id="t-prog">
@@ -1070,7 +1072,7 @@ try { cat = localStorage.getItem('shenyeCat') || 'all'; } catch (e) {}
 
 const S = (p, k) => p.stats && p.stats[k] != null ? p.stats[k] : null;
 const lampN = p => (p.lamps || []).filter(Boolean).length;
-const CATS = [['all', '全部'], ['biz', '经营'], ['prog', '进度'], ['fight', '战斗'], ['move', '探索'], ['life', '生活'], ['time', '在线']];
+const CATS = [['all', '全部'], ['biz', '经营'], ['prog', '进度'], ['fight', '战斗'], ['move', '探索'], ['life', '生活'], ['fish', '鱼市'], ['time', '在线']];
 const BOARDS = [
   {c: 'biz', t: '餐厅营收', nick: '深夜食堂之星', v: p => p.earn, f: fmt},
   {c: 'biz', t: '今日营收', nick: '今日店长', v: p => p.todayEarn, f: v => '+' + fmt(v)},
@@ -1897,6 +1899,10 @@ function wireEco() {
 function renderRank() {
   const ps = D.players || [];
   $('cats').innerHTML = CATS.map(c => `<button class="chip ${cat === c[0] ? 'act' : ''}" data-c="${c[0]}">${c[1]}</button>`).join('');
+  const fishSelected = cat === 'fish';
+  $('boards').hidden = fishSelected;
+  $('fishRankBoards').hidden = !fishSelected;
+  if (fishSelected) { drawFishLeaderboard(D.fish); return; }
   const champs = {};
   const cards = BOARDS.map(b => {
     const rows = ps.map(p => ({p, v: b.v(p)})).filter(r => r.v != null && r.v > 0).sort((a, c) => c.v - a.v);
@@ -2131,18 +2137,18 @@ function fishLeaderboardRows(entries, compareScore, renderScore) {
   });
 }
 
-function fishCollectionRank(players) {
+function fishCollectionRank(players, scope) {
   const categories = [
     ['species', '鱼种', '按亲手钓到的不同鱼种数排名'],
     ['mutationKinds', '变异', '按钓到过的不同变异数排名']
   ];
   const buttons = categories.map(([key, label]) =>
-    `<button type="button" data-fish-collection="${key}" aria-controls="fish-rank-${key}" aria-pressed="${fishCollectionMode === key}">${label}</button>`);
+    `<button type="button" data-fish-collection="${key}" aria-controls="fish-${scope}-${key}" aria-pressed="${fishCollectionMode === key}">${label}</button>`);
   const lists = categories.map(([key, label, description]) => {
     const entries = players.filter(([, p]) => Number.isSafeInteger(p[key]) && p[key] > 0)
       .map(([name, p]) => ({name, count: p[key]}));
     const rows = fishLeaderboardRows(entries, (a, b) => b.count - a.count, entry => `<b>${fishFmt(entry.count)} 种</b>`);
-    return `<div id="fish-rank-${key}" data-fish-collection-list="${key}"${fishCollectionMode === key ? '' : ' hidden'}>
+    return `<div id="fish-${scope}-${key}" data-fish-collection-list="${key}"${fishCollectionMode === key ? '' : ' hidden'}>
       <div class="fish-note">${description}</div>${fishList(rows, '暂无' + label + '收藏记录', true)}</div>`;
   });
   return fishCard('鱼市收藏榜', `
@@ -2161,20 +2167,19 @@ function fishPerfectRank(players) {
     ${fishList(rows, '暂无达到上榜门槛的钓手', true)}`);
 }
 
-$('fishContent').addEventListener('click', event => {
+document.addEventListener('click', event => {
   const button = event.target.closest('[data-fish-collection]');
   if (!button) return;
   fishCollectionMode = button.dataset.fishCollection;
-  const content = $('fishContent');
-  content.querySelectorAll('[data-fish-collection]').forEach(control => {
-    control.setAttribute('aria-pressed', control === button ? 'true' : 'false');
+  document.querySelectorAll('[data-fish-collection]').forEach(control => {
+    control.setAttribute('aria-pressed', control.dataset.fishCollection === fishCollectionMode ? 'true' : 'false');
   });
-  content.querySelectorAll('[data-fish-collection-list]').forEach(list => {
+  document.querySelectorAll('[data-fish-collection-list]').forEach(list => {
     list.hidden = list.dataset.fishCollectionList !== fishCollectionMode;
   });
 });
 
-function fishRankings(fish) {
+function fishRankings(fish, scope = 'collection') {
   const players = Object.entries(fish.players || {}).filter(([, p]) => p);
   const week = players.filter(([, p]) => p.weekBest && p.weekBest.value != null)
     .sort(([, a], [, b]) => b.weekBest.value - a.weekBest.value);
@@ -2198,9 +2203,27 @@ function fishRankings(fish) {
   return {
     weekly: fishCard('本周渔王', `<div class="fish-note">${esc(fish.week)}${fish.week ? ' · ' : ''}${deadline}</div>${fishList(weeklyRows, '本周还没有渔获上榜', true)}`),
     level: fishCard('钓鱼等级榜', fishList(levelRows, '暂无钓鱼等级', true)),
-    collection: fishCollectionRank(players),
+    collection: fishCollectionRank(players, scope),
     perfect: fishPerfectRank(players)
   };
+}
+
+
+function drawFishLeaderboard(fish) {
+  const boards = $('fishRankBoards');
+  const focused = boards.contains(document.activeElement) && document.activeElement.hasAttribute('data-fish-collection');
+  if (fish) {
+    const ranking = fishRankings(fish, 'leaderboard');
+    const caught = Object.entries(fish.players || {}).filter(([, p]) => p && p.caught > 0)
+      .map(([name, p]) => ({name, count: p.caught}));
+    const rows = fishLeaderboardRows(caught, (a, b) => b.count - a.count, entry => `<b>${fishFmt(entry.count)} 条</b>`);
+    boards.innerHTML = fishCard('鱼市累计钓获', fishList(rows, '暂无鱼市钓获', true)) +
+      ranking.level + ranking.weekly + ranking.collection + ranking.perfect;
+  } else {
+    boards.innerHTML = fishCard('深夜鱼市', fishEmpty(fish === undefined ? '正在读取鱼市数据…' : '暂无鱼市快照'), true);
+  }
+  if (focused) boards.querySelector('[data-fish-collection][aria-pressed="true"]')?.focus({preventScroll: true});
+  updateFishTimers();
 }
 
 function fishWaters(fish) {
@@ -2228,8 +2251,9 @@ function fishWaters(fish) {
 }
 
 function updateFishTimers() {
-  const section = $('t-fish');
-  if (!section.classList.contains('act')) return;
+  const fishPage = $('t-fish');
+  const section = fishPage.classList.contains('act') ? fishPage : $('fishRankBoards');
+  if (!section.getClientRects().length) return;
   const now = Date.now();
   section.querySelectorAll('[data-fish-until]').forEach(el => {
     const seconds = Math.max(0, Math.ceil((Number(el.dataset.fishUntil) - now) / 1000));
@@ -2253,7 +2277,7 @@ function updateFishTimers() {
     else if (el.hasAttribute('data-fish-countdown')) el.textContent = el.dataset.fishCountdown + left;
     else el.textContent = hotspot ? left : el.hasAttribute('data-fish-next') ? '约 ' + left : '距结算 ' + left;
   });
-  const empty = $('fishNoHotspots');
+  const empty = section.querySelector('#fishNoHotspots');
   if (empty) empty.hidden = !!section.querySelector('[data-fish-hotspot]:not([hidden])');
 }
 
@@ -2350,7 +2374,7 @@ document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
     if (on) { t.classList.remove('entering'); void t.offsetWidth; t.classList.add('entering'); clearTimeout(t._en); t._en = setTimeout(() => t.classList.remove('entering'), 1300); }
   });
   try { history.replaceState(null, '', '#' + b.dataset.t); } catch (e) {}
-  if (b.dataset.t === 'fish') updateFishTimers();
+  if (b.dataset.t === 'fish' || b.dataset.t === 'rank') updateFishTimers();
   if (b.dataset.t === 'eco' && D) { try { renderEco(); } catch (e) {} }
 });
 // 主题
