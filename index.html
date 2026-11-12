@@ -449,6 +449,25 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 .fish-table small{display:block;margin-top:3px}
 .fish-split h4{margin:0;font-size:13px}
 .fish-hotspot[hidden]{display:none}
+
+.fish-totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 18px;padding:0}
+.fish-totals .card{min-width:0;padding:13px 16px}
+.fish-totals dt{color:var(--ink3);font-size:12px}
+.fish-totals dd{margin:4px 0 0;font-size:clamp(16px,2vw,23px);font-weight:700;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.fish-raid{padding:14px 16px;border-left:3px solid var(--amber2);border-radius:0 12px 12px 0;background:var(--fill)}
+.fish-raid-head{display:flex;align-items:baseline;justify-content:space-between;gap:4px 12px;flex-wrap:wrap}
+.fish-raid progress{display:block;width:100%;height:9px;margin:10px 0;accent-color:var(--red)}
+.fish-raid [hidden]{display:none}
+.fish-history{padding:0 0 0 1.25em;margin:8px 0 0;color:var(--ink2);font-size:13px}
+.fish-history li{padding:3px 0;overflow-wrap:anywhere}
+.fish-record-label{margin:14px 0 0}
+.fish-claims .fish-value{color:var(--jade)}
+.fish-claims .fish-full{color:var(--ink3)}
+.fish-titles{color:var(--amber2)}
+@media(max-width:560px){
+  .fish-totals .card{padding:10px 8px}
+  .fish-raid{padding:11px 12px}
+}
 @media (max-width:760px){
   .fish-grid,.fish-split{grid-template-columns:minmax(0,1fr);gap:12px}
   .fish-head h2{font-size:19px}
@@ -1982,6 +2001,109 @@ function fishList(rows, empty, scroll = false) {
   return rows.length ? `<ul class="fish-list${scroll ? ' fish-scroll' : ''}">${rows.join('')}</ul>` : fishEmpty(empty);
 }
 
+
+const fishDay = new Intl.DateTimeFormat('sv-SE', {timeZone: 'Asia/Singapore', year: 'numeric', month: '2-digit', day: '2-digit'});
+
+function fishOverview(fish) {
+  const totals = [
+    ['卖鱼累计到手', fish.soldCoins, '币'], ['累计收购', fish.soldFish, '条'], ['累计收购税', fish.taxPaid, '币'],
+    ['累计断线', fish.escaped, '次'], ['鸬鹚叼回', fish.petFish, '条'], ['奖品机抽取', fish.prizePulls, '次']
+  ].filter(([, value]) => value != null);
+  if (!totals.length) return '';
+  return `<dl class="fish-totals">${totals.map(([label, value, unit]) =>
+    `<div class="card"><dt>${label}</dt><dd>${fishFmt(value)} ${unit}</dd></div>`).join('')}</dl>`;
+}
+
+function fishBoss(boss) {
+  if (!boss) return '';
+  const now = Date.now();
+  const ends = Number(boss.endsAt);
+  const next = Number(boss.nextStart);
+  const active = boss.active === true && ends > now;
+  const hasNext = next > now;
+  const nextText = hasNext
+    ? `下一场 ${fishDate(next)} · <span data-fish-until="${next}" data-fish-countdown="距开场 ">—</span>`
+    : '等待下一场快照';
+  const hours = (boss.times || []).filter(Boolean);
+  const schedule = hours.length ? '每天 ' + hours.map(esc).join('、') + '（新加坡时间）' : '';
+  const maxHp = Number(boss.maxHp);
+  const hp = Math.max(0, Math.min(maxHp, Number(boss.hp)));
+  const health = maxHp > 0 && Number.isFinite(hp)
+    ? `<progress max="${maxHp}" value="${hp}" aria-label="沧海龙王剩余血量"></progress><span class="fish-meta">血量 ${fishFmt(hp)} / ${fishFmt(maxHp)}</span>` : '';
+  const damage = Object.entries(boss.damage || {}).filter(([, value]) => Number(value) > 0)
+    .sort(([, a], [, b]) => b - a).slice(0, 5);
+  const damageRows = damage.map(([name, value], i) =>
+    `<li class="fish-row"><span class="fish-rank">${i + 1}</span><b class="fish-main">${esc(name)}</b><b class="fish-value">${fishFmt(value)} 伤害</b></li>`);
+  const recent = (boss.history || []).filter(Boolean).slice(-3).reverse();
+  const history = recent.length
+    ? `<p class="fish-note fish-record-label">最近战报</p><ol class="fish-history">${recent.map(line => `<li>${esc(line)}</li>`).join('')}</ol>` : '';
+  return fishCard('沧海龙王讨伐', `
+    <div class="fish-raid">
+      ${active ? `<div data-fish-raid-live><div class="fish-raid-head"><b>快照时正在讨伐</b>
+        <span class="fish-note" data-fish-until="${ends}" data-fish-raid-end>—</span></div>${health}</div>` : ''}
+      <div data-fish-raid-next${active ? ' hidden' : ''}><b>${nextText}</b><span class="fish-meta">${schedule}</span></div>
+    </div>
+    ${active ? `<div data-fish-raid-damage>${fishList(damageRows, '本场还没有伤害记录')}</div>` : ''}
+    <p class="fish-note fish-record-label">累计击败 ${fishFmt(boss.kills)} 场 · 未击败 ${fishFmt(boss.fails)} 场</p>${history}`);
+}
+
+function fishBounties(bounties, isToday) {
+  if (!Array.isArray(bounties)) return '';
+  if (!isToday) return fishCard('今日悬赏', fishEmpty('等待今日悬赏快照'));
+  const rows = bounties.filter(Boolean).map(bounty => {
+    const claimed = (bounty.claimed || []).filter(Boolean);
+    const slots = Number(bounty.slots);
+    const full = slots >= 0 && claimed.length >= slots;
+    const availability = slots < 0 ? '不限人数' : full ? '已领完' : `余 ${slots - claimed.length} 席`;
+    return `<li class="fish-row fish-claims"><div class="fish-main"><b>${esc(bounty.text)}</b>
+      <span class="fish-meta">${esc(bounty.reward)}</span>
+      ${claimed.length ? `<span class="fish-meta">已交 · ${claimed.map(esc).join('、')}</span>` : ''}</div>
+      <b class="fish-value${full ? ' fish-full' : ''}">${availability}</b></li>`;
+  });
+  return fishCard('今日悬赏', fishList(rows, '今天暂无悬赏'));
+}
+
+function fishMerchant(merchant, isToday) {
+  if (!merchant) return '';
+  if (!isToday) return fishCard('游商阿四', fishEmpty('等待今日游商快照'));
+  const rows = (merchant.stock || []).filter(Boolean).map(offer =>
+    `<li class="fish-row"><div class="fish-main"><b>${esc(offer.name)}</b><span class="fish-meta">${esc(offer.text)}</span></div>
+      <b class="fish-value">${fishFmt(offer.price)} 币</b></li>`);
+  return fishCard('游商阿四', `<div class="fish-tide"><b>今日到访 · ${esc(merchant.dim || '地点待更新')}</b></div>${fishList(rows, '暂无在售货品')}`);
+}
+
+function fishFestival(festival, today) {
+  if (!festival) return '';
+  const active = festival.name && festival.from <= today && today <= festival.to;
+  const current = active ? `<div class="fish-tide"><b>${esc(festival.name)}</b>
+    <span class="fish-meta">${esc(festival.from)} 至 ${esc(festival.to)}${festival.mutation ? ' · 节日变异「' + esc(festival.mutation) + '」' : ''}</span></div>` : '';
+  const next = festival.next && festival.nextFrom > today
+    ? `<p class="fish-note fish-next">下一场 · ${esc(festival.next)} · ${esc(festival.nextFrom)} 开始</p>` : '';
+  return fishCard('鱼市节日', current + next || fishEmpty('暂无已公布的节日'));
+}
+
+function fishMarket(market) {
+  const rows = (market || []).filter(m => m && m.percent != null)
+    .sort((a, b) => a.percent - b.percent).slice(0, 5)
+    .map(m => `<li class="fish-row"><b class="fish-main">${esc(m.name)}</b><b class="fish-value">${fishFmt(m.percent)}%</b></li>`);
+  return fishCard('收购行情 · 最低五种', `<div class="fish-note">当前收购价占原价的比例</div>${fishList(rows, '暂无收购行情')}`);
+}
+
+function fishLevelRow(name, player, i) {
+  const counts = [`累计钓到 ${fishFmt(player.caught)} 条`];
+  if (player.perfect != null) counts.push(`完美收线 ${fishFmt(player.perfect)} 次`);
+  if (player.dex != null) counts.push(`图鉴 ${fishFmt(player.dex)} 条`);
+  if (player.petFish > 0) counts.push(`鸬鹚 ${fishFmt(player.petFish)} 条`);
+  if (player.bossKills > 0) counts.push(`龙王战胜场 ${fishFmt(player.bossKills)}`);
+  const titles = (player.titles || []).filter(Boolean).map(esc).join('、');
+  return `<li class="fish-row">
+    <span class="fish-rank">${i + 1}</span>
+    <div class="fish-main"><b>${esc(name)}</b><span class="fish-meta">${counts.join(' · ')}</span>
+      ${titles ? `<span class="fish-meta fish-titles">${titles}</span>` : ''}</div>
+    <b class="fish-value">Lv. ${fishFmt(player.level)}</b>
+  </li>`;
+}
+
 function fishRankings(fish) {
   const players = Object.entries(fish.players || {}).filter(([, p]) => p);
   const week = players.filter(([, p]) => p.weekBest && p.weekBest.value != null)
@@ -1999,11 +2121,7 @@ function fishRankings(fish) {
       <div class="fish-value"><b>${fishFmt(best.value)} 币</b>${prize > 0 ? `<span class="fish-meta fish-prize">奖金 ${fishFmt(prize)} 币</span>` : ''}</div>
     </li>`;
   });
-  const levelRows = level.map(([name, p], i) => `<li class="fish-row">
-    <span class="fish-rank">${i + 1}</span>
-    <div class="fish-main"><b>${esc(name)}</b><span class="fish-meta">累计钓到 ${fishFmt(p.caught)} 条</span></div>
-    <b class="fish-value">Lv. ${fishFmt(p.level)}</b>
-  </li>`);
+  const levelRows = level.map(([name, p], i) => fishLevelRow(name, p, i));
   const settle = Number(fish.t) + Number(fish.msToSettle);
   const deadline = fish.msToSettle != null && Number(fish.msToSettle) >= 0
     ? `<span data-fish-until="${settle}">—</span>` : '结算时间待更新';
@@ -2046,14 +2164,22 @@ function updateFishTimers() {
     const hotspot = el.closest('[data-fish-hotspot]');
     if (hotspot) hotspot.hidden = seconds === 0;
     if (!seconds) {
-      el.textContent = hotspot || el.hasAttribute('data-fish-next') ? '等待新快照' : '结算时间已到';
+      if (el.hasAttribute('data-fish-raid-end')) {
+        section.querySelector('[data-fish-raid-live]').hidden = true;
+        section.querySelector('[data-fish-raid-damage]').hidden = true;
+        section.querySelector('[data-fish-raid-next]').hidden = false;
+      }
+      el.textContent = hotspot || el.hasAttribute('data-fish-next') || el.hasAttribute('data-fish-countdown')
+        ? '等待新快照' : '结算时间已到';
       return;
     }
     const days = Math.floor(seconds / 86400), hours = Math.floor(seconds / 3600) % 24;
     const minutes = Math.floor(seconds / 60) % 60;
     const left = days ? `${days} 天 ${hours} 小时` : hours ? `${hours} 小时 ${minutes} 分`
       : `${minutes ? minutes + ' 分 ' : ''}${seconds % 60} 秒`;
-    el.textContent = hotspot ? left : el.hasAttribute('data-fish-next') ? '约 ' + left : '距结算 ' + left;
+    if (el.hasAttribute('data-fish-raid-end')) el.textContent = '剩余 ' + left;
+    else if (el.hasAttribute('data-fish-countdown')) el.textContent = el.dataset.fishCountdown + left;
+    else el.textContent = hotspot ? left : el.hasAttribute('data-fish-next') ? '约 ' + left : '距结算 ' + left;
   });
   const empty = $('fishNoHotspots');
   if (empty) empty.hidden = !!section.querySelector('[data-fish-hotspot]:not([hidden])');
@@ -2093,7 +2219,11 @@ function fishContent(fish) {
     <span class="fish-meta">${esc(n.text)}</span></div><span class="fish-value fish-note">${fishDate(n.t)}</span></li>`);
   const discovered = secrets.filter(s => s.found === true).length;
   const secretSummary = secrets.length ? `<div class="fish-note">已发现 ${discovered} / ${secrets.length}</div>` : '';
-  return ranking.weekly + fishWaters(fish) + ranking.level +
+  const today = fishDay.format(Date.now());
+  const isToday = fishDay.format(Number(fish.t)) === today;
+  return fishBoss(fish.boss) + fishWaters(fish) + fishBounties(fish.bounties, isToday) +
+    fishMerchant(fish.merchant, isToday) + fishFestival(fish.festival, today) + fishMarket(fish.market) +
+    ranking.weekly + ranking.level +
     fishCard('秘闻鱼', secretSummary + fishList(secretRows, '暂无秘闻鱼线索')) +
     fishCard('全服最长纪录', recordsTable) +
     fishCard('最近大事', fishList(news, '暂无鱼市大事', true)) +
@@ -2101,11 +2231,11 @@ function fishContent(fish) {
       ? `<div class="grid fish-split">${planetGroups.join('')}</div>` : fishEmpty('暂无星球鱼数据'), true);
 }
 
-function showFish(fish, extra = '', tail = '', missing = '深夜鱼市未安装或还没开服') {
+function showFish(fish, missing = '深夜鱼市未安装或还没开服') {
   const content = $('fishContent');
   $('fishUpdated').textContent = fish && fishDate(fish.t) ? '快照 ' + fishDate(fish.t) + '（新加坡时间）' : '';
   content.innerHTML = fish
-    ? extra + `<div class="grid fish-grid">${fishContent(fish)}${tail}</div>`
+    ? fishOverview(fish) + `<div class="grid fish-grid">${fishContent(fish)}</div>`
     : `<div class="card empty">${missing}</div>`;
   updateFishTimers();
 }
@@ -2134,7 +2264,7 @@ async function load() {
   } catch (e) {
     if (!D) {
       $('upd').textContent = '数据还没上传，等服务器面板第一次同步';
-      showFish(null, '', '', '鱼市数据还未同步');
+      showFish(null, '鱼市数据还未同步');
     }
   }
 }
