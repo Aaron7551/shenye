@@ -1111,7 +1111,7 @@ const ava = (n, size) => `<div class="ava" style="width:${size}px;height:${size}
 
 // ---------- 开店与经济（行情面板） ----------
 const PALETTE = ['#d4691f', '#5470b0', '#2c9a59', '#7a62b8', '#cc4632', '#3f8fa0', '#b0577f', '#8a8f3a'];
-const COUNTERS = {leisure:'休闲柜台',t1:'工坊柜台',t2:'物流柜台',t3:'智控柜台',craft:'手作与摆件',redstone:'红石与电脑',tools:'工具柜台',arms:'军械柜台',ammo:'弹药与配件',bags:'背包柜台'};
+const COUNTERS = {leisure:'休闲柜台',t1:'工坊柜台',t2:'物流柜台',t3:'智控柜台',craft:'手作与摆件',redstone:'红石与电脑',tools:'工具柜台',arms:'军械柜台',ammo:'弹药与配件',bags:'背包柜台',winter:'冬日限定',collect:'宠物与收藏'};
 const starHtml = lv => Array.from({length: 8}, (_, i) => i < lv ? '<b>★</b>' : '★').join('');
 const hhmm = t => { const d = new Date(t); return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
 const hmof = t => { const d = new Date(t); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
