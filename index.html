@@ -519,9 +519,9 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <div class="who" id="hmWho"></div>
       </div>
       <div class="card news-bar" data-goto="news">
-        <span class="tag">5.1.1 · 深夜鱼市</span>
-        <div class="t">5.1.1：修复鱼市按钮看不见、动图崩溃</div>
-        <div class="d">新的鱼市界面、钓具改装与龙王竿、祭坛附魔、25 种变异、鸬鹚、悬赏板、奖品机、游商、每天两场「沧海龙王讨伐」、节日活动和称号，还有支线任务「夜钓」；夜市新增求购。5.1.1 修复了委托、悬赏等页面按钮看不见和群里发动图时崩溃的问题，要更新客户端。</div>
+        <span class="tag">5.1.2</span>
+        <div class="t">5.1.2：樱花签到与客户端启动优化</div>
+        <div class="d">签到历史按月保存，客户端加快模型加载和女仆语音解码。请更新客户端。</div>
         <div class="go">看更新公告 <i>→</i></div>
       </div>
     </div>
@@ -675,6 +675,19 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 
   <section class="tab" id="t-news">
     <div class="card news">
+      <h3>深夜食堂 5.1.2<span class="ver">2026-11-13</span><span class="r">樱花签到 · 客户端启动优化</span></h3>
+      <p>请更新客户端。此版本包含 5.1.1 的鱼市按钮和聊天动图修复。</p>
+      <h4>樱花签到</h4>
+      <ul><li>升级至 2.0.0-alpha.2。旧签到记录在玩家首次进服时迁移，历史按月保存。</li></ul>
+      <h4>客户端性能</h4>
+      <ul><li>按需加载大部分方块和物品模型，优化车万女仆语音解码。此前同机固定堆测试中，Java 到主菜单的中位数约从 87 秒降至 69 秒。</li></ul>
+      <h4>客户端更新方式</h4>
+      <ul>
+        <li><b>老玩家</b>：<a href="https://github.com/Aaron7551/shenye/releases/download/v5.1.2/Shenye-5.1.2-update.zip">下载 5.1.2 更新包</a>，按「怎么装.txt」更新。启动前确认 mods 里只有新版樱花签到。</li>
+        <li><b>新玩家</b>：在 <a href="https://github.com/Aaron7551/shenye/releases/tag/v5.1.2">5.1.2 发布页</a>下载打包版，解压后把 modpack.mrpack 拖入 PCL-Living-Fork。</li>
+      </ul>
+    </div>
+    <div class="card news" style="margin-top:14px">
       <h3>深夜食堂 5.1.1<span class="ver">2026-11-12</span><span class="r">按钮显示 · 动图崩溃 · 要更新客户端</span></h3>
       <p>本次是 5.1 的修复版：鱼市里好几个页面的按钮被卡片挡住、看不见；群里发动图时游戏可能崩溃。请所有玩家更新客户端。还没装 5.1 的玩家直接装 5.1.1 即可，已包含 5.1 的全部内容。</p>
       <h4>深夜鱼市（v1.2.1）修复</h4>
@@ -686,7 +699,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
       <ul>
         <li><b>动图崩溃</b>：修复 QQ 群里有人发动图（GIF）时，游戏中的玩家可能突然崩溃的问题。聊天图片在后台加载动图的同时，画面也在读同一份贴图表，偶尔会把方块贴图弄丢导致崩溃，与当时在做什么（比如钓鱼）无关。</li>
       </ul>
-      <h4>客户端更新方式</h4>
+      <h4>旧版安装说明（请使用上方 5.1.2）</h4>
       <ul>
         <li><b>老玩家</b>：打开「深夜食堂 5.1.1 打包版.zip」内的新启动器 PCL-Living-Fork，选中已有版本 → 版本设置 → 整合包更新 → 选择「深夜食堂 5.1.1.mrpack」（原有存档及按键设置均会保留）。不想换启动器的，用「深夜食堂 5.1.1 更新包.zip」按里面的「怎么装.txt」手动更新。</li>
         <li><b>新玩家</b>：解压「深夜食堂 5.1.1 打包版.zip」，运行内部的 PCL-Living-Fork 启动器，将「modpack.mrpack」拖入启动器即可安装。</li>
