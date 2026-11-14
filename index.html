@@ -618,7 +618,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
           <summary>查看柜台购入时间与评分口径</summary>
           <div class="ec-control-scroll" id="economyControlCounters"></div>
           <p class="ec-control-copy">可控度 = 目标时间内的商品数 ÷ 已评估商品数。每个在售条目等权，按商店一份售价计。商品回本或自动化能力另需评估。</p>
-          <p class="ec-control-copy">购入时间 = 商品售价 ÷ 典型在线收入。取至少在线 3 小时且有经营进账的玩家中位数，最低 5 人。收入取约 7 日的餐厅、酒馆营收与鱼市卖鱼、委托入账。签到、转账、余额及零散奖励不计入。在线时间含其他玩法，营收未逐笔扣税。短于 7 日时显示实际覆盖时长。</p>
+          <p class="ec-control-copy">购入时间 = 商品售价 ÷ 典型在线收入。取至少在线 3 小时且有经营进账的玩家中位数，最低 5 人。收入取约 7 日的餐厅、酒馆营收与鱼市卖鱼、委托入账。签到、转账、余额及零散奖励不计入。在线时间含其他玩法，营收未逐笔扣税。短于 7 日时显示实际覆盖时长。其他渠道缺基线时展示餐厅口径。</p>
           <p class="ec-control-copy">科技采用 2–5 小时的历史观察区间。其他柜台区间是暂定参数，附表列出当前范围。</p>
         </details>
       </section>
@@ -1948,6 +1948,7 @@ function renderEconomyControl(data) {
     return;
   }
   const {score, income, inside, cheap, costly, assessed, total} = data;
+  const sources = {combined:'餐厅 / 酒馆 / 鱼市', restaurant:'仅餐厅，其他收入基线待补', 'restaurant-includes-tavern':'餐厅（含酒馆），鱼市基线待补'};
   const windowDays = (income.hours / 24).toFixed(1).replace(/\.0$/, '');
   body.className = 'ec-control-main';
   body.innerHTML = `
@@ -1957,7 +1958,7 @@ function renderEconomyControl(data) {
     </div>
     <div>
       <div class="ec-control-rate">${numbers(Math.round(income.rate))} 币 / 在线小时</div>
-      <div class="ec-control-copy">过去 ${windowDays} 日 · ${numbers(income.samples)} 名有经营收入的玩家 · 中间一半 ${numbers(Math.round(income.p25))}–${numbers(Math.round(income.p75))} 币/小时</div>
+      <div class="ec-control-copy">过去 ${windowDays} 日 · ${numbers(income.samples)} 名有经营收入的玩家 · 中间一半 ${numbers(Math.round(income.p25))}–${numbers(Math.round(income.p75))} 币/小时 · ${sources[income.basis] || sources.combined}</div>
       <div class="ec-control-meter" aria-hidden="true">${[inside, cheap, costly].map(n => '<i style="width:' + n / assessed * 100 + '%"></i>').join('')}</div>
       <div class="ec-control-copy ec-control-counts"><span>达标 <b>${numbers(inside)}</b></span><span>低于目标 <b>${numbers(cheap)}</b></span><span>高于目标 <b>${numbers(costly)}</b></span></div>
     </div>`;
