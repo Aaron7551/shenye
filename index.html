@@ -124,6 +124,12 @@ h1{margin:0;font-size:17px;font-weight:800;letter-spacing:2px;line-height:1.25}
 .news-bar .go{margin-top:auto;font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:6px}
 .news-bar .go i{transition:transform .3s var(--spring);font-style:normal}
 .news-bar:hover .go i{transform:translateX(5px)}
+.home-transport dl{margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.home-transport dl div{min-width:0;border:1px solid var(--line);border-radius:12px;padding:10px}
+.home-transport dt,.home-transport p{color:var(--ink2);font-size:13px}
+.home-transport dd{margin:3px 0 0;font-weight:750;overflow-wrap:anywhere}
+.home-transport p{margin:10px 0 0}
+@media(max-width:600px){.home-transport dl{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* ---------- 排行行 ---------- */
 .row{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:8px;align-items:center;padding:5px 0;font-size:13px}
@@ -554,6 +560,10 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <div class="d">签到历史按月保存，客户端加快模型加载和女仆语音解码。请更新客户端。</div>
         <div class="go">看更新公告 <i>→</i></div>
       </div>
+    </div>
+    <div class="card home-transport" style="margin-bottom:14px">
+      <h3>公共交通建设<span id="homeTransportStage" class="r"></span></h3>
+      <div id="homeTransport">等待同步项目数据</div>
     </div>
     <div class="card">
       <h3>近 24 小时谁在线<span class="r" id="tlInfo"></span></h3>
@@ -2447,6 +2457,21 @@ function showFish(fish, missing = '深夜鱼市未安装或还没开服') {
 }
 setInterval(updateFishTimers, 1000);
 
+function renderHomeTransport(project) {
+  if (!project) return;
+  const spent = project.materials + project.labor;
+  const remaining = project.granted - spent - project.refunded;
+  $('homeTransportStage').textContent = project.stage;
+  const stats = [
+    ['预算上限', project.budget ? fmt(project.budget) + ' 币' : '待登记'],
+    ['已拨款', fmt(project.granted) + ' 币'],
+    ['已确认支出', fmt(spent) + ' 币'],
+    ['拨款余额', fmt(remaining) + ' 币']
+  ];
+  $('homeTransport').innerHTML = '<dl>' + stats.map(([label, value]) =>
+    '<div><dt>' + label + '</dt><dd>' + esc(value) + '</dd></div>').join('') + '</dl>'
+    + '<p>材料 ' + fmt(project.materials) + ' 币 · 人工 ' + fmt(project.labor) + ' 币 · 已退回 ' + fmt(project.refunded) + ' 币</p>';
+}
 function render() {
   const live = D.server && D.server.online && Date.now() - D.updated < 40 * 60000;
   const s = $('srv');
@@ -2455,6 +2480,7 @@ function render() {
   $('upd').textContent = '更新于 ' + ago(D.updated) + (live ? '' : (Date.now() - D.updated > 40 * 60000 ? '（服务器或面板没开，数据停在这里）' : ''));
   showFish(D.fish);
   renderHome(live);
+  renderHomeTransport(D.publicTransport);
   renderOnline24();
   renderRank();
   renderPlayers();
