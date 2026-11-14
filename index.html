@@ -483,6 +483,36 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
   .fish-table th,.fish-table td{padding-left:3px;padding-right:3px}
 }
 
+/* 物价与持币 */
+.inflation{margin:0 0 16px;padding:20px 22px}
+.inflation h3{margin:0}
+.inflation-head{display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+.inflation-time,.inflation-note{color:var(--ink2);font-size:12px}
+.inflation-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.25fr) minmax(0,1.2fr);gap:18px}
+.inflation-stat{min-width:0;border-left:1px solid var(--line2);padding-left:18px}
+.inflation-stat:first-child{border:0;padding-left:0}
+.inflation-label{display:block;font-weight:650}
+.inflation-value{display:block;font-family:var(--num,var(--sans));font-size:clamp(22px,2.5vw,32px);font-weight:730;line-height:1.25;font-variant-numeric:tabular-nums;margin:5px 0}
+.inflation-value[data-tone="steady"]{color:var(--jade)}
+.inflation-value[data-tone="watch"]{color:var(--amber2)}
+.inflation-value[data-tone="high"]{color:var(--red)}
+.inflation-value[data-tone="falling"]{color:var(--sky)}
+.inflation svg{width:100%;height:52px;display:block;margin-top:6px;color:var(--sky)}
+.inflation-details{border-top:1px solid var(--line2);margin-top:16px;padding-top:10px}
+.inflation-details summary{cursor:pointer;width:fit-content;font-size:12px;font-weight:650}
+.inflation-details p{margin:8px 0}
+.inflation-flow{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.inflation-flow th,.inflation-flow td{text-align:right;padding:6px 5px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.inflation-flow th:first-child,.inflation-flow td:first-child{text-align:left}
+@media(max-width:900px){
+  .inflation-grid{grid-template-columns:1fr 1fr;gap:14px}
+  .inflation-stat:last-child{grid-column:1/-1;border-left:0;border-top:1px solid var(--line2);padding:12px 0 0}
+}
+@media(max-width:490px){
+  .inflation{padding:16px 12px}
+  .inflation-stat{padding-left:12px}
+  .inflation-flow th,.inflation-flow td{padding:5px 2px}
+}
 </style>
 <script>document.documentElement.classList.add('boot');setTimeout(function(){document.documentElement.classList.remove('boot')},2500);try{var _t=localStorage.getItem('shenyeTheme');if(!_t)_t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
 </head>
@@ -552,6 +582,20 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
     </div>
 
     <div data-sub="mkt">
+      <section class="card inflation" aria-labelledby="inflationTitle">
+        <div class="inflation-head">
+          <h3 id="inflationTitle">通胀监测</h3>
+          <span class="inflation-time" id="inflationTime"></span>
+        </div>
+        <div id="inflationBody" class="inflation-note">等待经济快照</div>
+        <details class="inflation-details">
+          <summary>查看资金流水与计算口径</summary>
+          <div id="inflationFlows"></div>
+          <p class="inflation-note">成交物价比较最近 7 天与此前 7 天。以物品 ID 和成交名称配对，每款每期至少两笔，先取单价中位数，再对各款的价格比取几何平均。要求至少五款可比商品、每期至少三组独立交易双方，以及两个窗口流水覆盖完整。</p>
+          <p class="inflation-note">持币变化 = 当前登记持币 ÷ 约 24 小时前的登记持币 − 1。包括银行、背包、末影箱与已记录的容器，不含国库。离线与容器使用最近扫描值。观察线为 +5%，高压线为 +10%，下降线为 −5%。</p>
+          <p class="inflation-note">官方成交销毁货币，税费和鱼市服务费进入国库，国库拨付重新进入流通。流水按服务器日历汇总，今日为截至快照的部分数据。</p>
+        </details>
+      </section>
       <div class="ticker" id="econTicker"></div>
       <div class="note">综合指数是自己捏的：累计营收 5 : 流通币 3 : 商店成交 2 加权，起点 1000，只用来一眼看冷热；涨用红、跌用绿。</div>
       <div class="grid eco-main">
@@ -1843,8 +1887,59 @@ function renderEcoCharts() {
   renderEarnTrend();
 }
 
+function renderInflation(data) {
+  const main = $('inflationBody');
+  $('inflationTime').textContent = data ? '数据截至 ' + new Date(data.asOf).toLocaleString('zh-CN', {
+    timeZone: 'Asia/Singapore', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false
+  }) : '';
+  const pending = !data || !data.price || !data.money;
+  main.className = pending ? 'inflation-note' : 'inflation-grid';
+  if (pending) {
+    main.textContent = '等待面板生成经济快照';
+    $('inflationFlows').textContent = '';
+    return;
+  }
+  const {price, money, flows} = data;
+  const number = value => Number.isFinite(value) ? fmt(value) : '—';
+  const pct = value => Number.isFinite(value) ? (value >= 0.05 ? '+' : '') + (Math.abs(value) < 0.05 ? '0.0' : value.toFixed(1)) + '%' : '样本不足';
+  const pressure = {steady: '短线平稳', watch: '持币偏快', high: '持币快速增长', falling: '持币明显下降', insufficient: '暂无同口径基线'};
+  const points = (money.trend || []).filter(p => Number.isFinite(p[0]) && Number.isFinite(p[1]));
+  let chart = '';
+  if (points.length > 1) {
+    const lo = Math.min(...points.map(p => p[1]));
+    const span = Math.max(1, Math.max(...points.map(p => p[1])) - lo);
+    const left = data.asOf - 86400000;
+    let path = '';
+    let last = 0;
+    for (const [t, coins] of points) {
+      path += (t - last > 2700000 ? 'M' : 'L') + ((t - left) / 86400000 * 314 + 3).toFixed(1) + ',' + (48 - (coins - lo) / span * 44).toFixed(1);
+      last = t;
+    }
+    chart = '<svg viewBox="0 0 320 52" preserveAspectRatio="none" role="img" aria-label="近 24 小时登记持币走势"><path fill="none" stroke="currentColor" vector-effect="non-scaling-stroke" stroke-width="2" d="' + path + '"/></svg>';
+  }
+  const rows = flows || [];
+  const completed = rows.slice(0, -1);
+  const net = completed.length && completed.every(row => [row.official, row.tax, row.service, row.returned].every(Number.isFinite))
+    ? completed.reduce((sum, row) => sum + row.official + row.tax + row.service - row.returned, 0) : null;
+  main.innerHTML = `
+    <div class="inflation-stat"><span class="inflation-label">玩家成交物价 · 7 日环比</span>
+      <strong class="inflation-value">${pct(price.change)}</strong>
+      <div class="inflation-note">本期 ${number(price.current)} 笔 · 前期 ${number(price.previous)} 笔 · 可比 ${number(price.matched)} 款</div>
+      <div class="inflation-note">${price.fullCoverage ? '两个窗口流水已覆盖' : '成交留存未覆盖两个完整窗口'}</div></div>
+    <div class="inflation-stat"><span class="inflation-label">登记持币 · 约 24 小时</span>
+      <strong class="inflation-value" data-tone="${esc(money.pressure)}">${Number.isFinite(money.change) ? pct(money.change) : '暂无基线'}</strong>
+      <div class="inflation-note">${pressure[money.pressure] || pressure.insufficient} · ${number(money.held)} 币</div>${chart}</div>
+    <div class="inflation-stat"><span class="inflation-label">已记录净回收 · 前 6 个整日</span>
+      <strong class="inflation-value">${number(net)}${Number.isFinite(net) ? ' 币' : ''}</strong>
+      <div class="inflation-note">官方销毁 + 国库收入 − 国库拨付</div></div>`;
+  $('inflationFlows').innerHTML = `<table class="inflation-flow" aria-label="每日币回收与拨付">
+    <thead><tr><th scope="col">日期</th><th scope="col">官方销毁</th><th scope="col">国库税费</th><th scope="col">鱼市服务</th><th scope="col">国库拨付</th></tr></thead>
+    <tbody>${rows.map(row => `<tr><th scope="row">${esc(row.date.slice(5))}</th><td>${number(row.official)}</td><td>${number(row.tax)}</td><td>${number(row.service)}</td><td>${number(row.returned)}</td></tr>`).join('')}</tbody></table>`;
+}
+
 function renderEco() {
   if (!$('t-eco')) return;
+  renderInflation(D.inflation);
   const ps = D.players || [];
   renderTicker();
   renderTape();
