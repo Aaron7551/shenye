@@ -129,7 +129,10 @@ h1{margin:0;font-size:17px;font-weight:800;letter-spacing:2px;line-height:1.25}
 .home-transport dt,.home-transport p{color:var(--ink2);font-size:13px}
 .home-transport dd{margin:3px 0 0;font-weight:750;overflow-wrap:anywhere}
 .home-transport p{margin:10px 0 0}
+.home-transport .transport-info{grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,1fr);margin-bottom:10px}
+.home-transport .transport-info dd{white-space:pre-line}
 @media(max-width:600px){.home-transport dl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.home-transport .transport-info{grid-template-columns:1fr}}
 
 /* ---------- 排行行 ---------- */
 .row{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:8px;align-items:center;padding:5px 0;font-size:13px}
@@ -2468,8 +2471,11 @@ function renderHomeTransport(project) {
     ['已确认支出', fmt(spent) + ' 币'],
     ['拨款余额', fmt(remaining) + ' 币']
   ];
-  $('homeTransport').innerHTML = '<dl>' + stats.map(([label, value]) =>
-    '<div><dt>' + label + '</dt><dd>' + esc(value) + '</dd></div>').join('') + '</dl>'
+  const info = [['负责人', project.owner], ['路线', project.route], ['验收人', project.inspector]];
+  const fields = pairs => pairs.map(([label, value]) =>
+    '<div><dt>' + label + '</dt><dd>' + esc(value || '待登记') + '</dd></div>').join('');
+  $('homeTransport').innerHTML = '<dl class="transport-info">' + fields(info) + '</dl>'
+    + '<dl>' + fields(stats) + '</dl>'
     + '<p>材料 ' + fmt(project.materials) + ' 币 · 人工 ' + fmt(project.labor) + ' 币 · 已退回 ' + fmt(project.refunded) + ' 币</p>';
 }
 function render() {
