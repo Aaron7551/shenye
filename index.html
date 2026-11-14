@@ -513,6 +513,32 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
   .inflation-stat{padding-left:12px}
   .inflation-flow th,.inflation-flow td{padding:5px 2px}
 }
+/* 经济可控度 */
+.economy-control{margin:0 0 16px;background:linear-gradient(135deg,var(--glass-strong),var(--glass));min-width:0}
+.economy-control h3{margin:0}
+.ec-control-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:15px}
+.ec-control-time,.ec-control-copy{font-size:12px;color:var(--ink2)}
+.ec-control-main{display:grid;grid-template-columns:minmax(152px,.72fr) minmax(0,1.28fr);gap:22px;align-items:center}
+.ec-control-score{font-family:var(--num,var(--sans));font-size:clamp(40px,6vw,66px);font-weight:750;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ec-control-rate{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.ec-control-meter{display:flex;height:9px;background:var(--fill2);border-radius:10px;overflow:hidden;margin:9px 0 7px}
+.ec-control-meter i:nth-child(1){background:var(--jade)}
+.ec-control-meter i:nth-child(2){background:var(--sky)}
+.ec-control-meter i:nth-child(3){background:var(--amber)}
+.ec-control-counts{display:flex;gap:5px 16px;flex-wrap:wrap}
+.ec-control-counts b{color:var(--ink);font-variant-numeric:tabular-nums}
+.ec-control-details{border-top:1px solid var(--line2);margin-top:16px;padding-top:10px}
+.ec-control-details summary{font-size:12px;font-weight:650;cursor:pointer;width:fit-content}
+.ec-control-details p{margin:8px 0}
+.ec-control-scroll{overflow-x:auto;margin-top:8px}
+.ec-control-table{font-size:12px;font-variant-numeric:tabular-nums;border-collapse:collapse;width:100%;min-width:430px}
+.ec-control-table th,.ec-control-table td{text-align:right;white-space:nowrap;padding:6px;border-bottom:1px solid var(--line)}
+.ec-control-table th:first-child,.ec-control-table td:first-child{text-align:left}
+.ec-control-table .above{font-weight:700;color:var(--amber2)}
+@media(max-width:525px){
+  .economy-control{padding:15px 13px}
+  .ec-control-main{grid-template-columns:1fr;gap:13px}
+}
 </style>
 <script>document.documentElement.classList.add('boot');setTimeout(function(){document.documentElement.classList.remove('boot')},2500);try{var _t=localStorage.getItem('shenyeTheme');if(!_t)_t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
 </head>
@@ -582,6 +608,20 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
     </div>
 
     <div data-sub="mkt">
+      <section class="card economy-control" aria-labelledby="economyControlTitle">
+        <div class="ec-control-head">
+          <h3 id="economyControlTitle">经济可控度</h3>
+          <span class="ec-control-time" id="economyControlTime"></span>
+        </div>
+        <div id="economyControlBody" class="ec-control-copy">等待价格和收入快照</div>
+        <details class="ec-control-details">
+          <summary>查看柜台购入时间与评分口径</summary>
+          <div class="ec-control-scroll" id="economyControlCounters"></div>
+          <p class="ec-control-copy">可控度 = 目标时间内的商品数 ÷ 已评估商品数。每个在售条目等权，按商店一份售价计。商品回本或自动化能力另需评估。</p>
+          <p class="ec-control-copy">购入时间 = 商品售价 ÷ 典型在线收入。取至少在线 3 小时且有经营进账的玩家中位数，最低 5 人。收入取约 7 日的餐厅、酒馆营收与鱼市卖鱼、委托入账。签到、转账、余额及零散奖励不计入。在线时间含其他玩法，营收未逐笔扣税。短于 7 日时显示实际覆盖时长。</p>
+          <p class="ec-control-copy">科技采用 2–5 小时的历史观察区间。其他柜台区间是暂定参数，附表列出当前范围。</p>
+        </details>
+      </section>
       <section class="card inflation" aria-labelledby="inflationTitle">
         <div class="inflation-head">
           <h3 id="inflationTitle">通胀监测</h3>
@@ -1887,6 +1927,51 @@ function renderEcoCharts() {
   renderEarnTrend();
 }
 
+function renderEconomyControl(data) {
+  const body = $('economyControlBody');
+  const counters = $('economyControlCounters');
+  $('economyControlTime').textContent = data && data.asOf ? '数据截至 ' + new Date(data.asOf).toLocaleString('zh-CN', {
+    timeZone:'Asia/Singapore', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false
+  }) : '';
+  const numbers = value => Number.isFinite(value) ? fmt(value) : '—';
+  const duration = hours => {
+    if (!Number.isFinite(hours)) return '—';
+    if (hours === 0) return '0 分钟';
+    if (hours < 1) return Math.max(1, Math.round(hours * 60)) + ' 分钟';
+    return hours.toFixed(1).replace(/\.0$/, '') + ' 小时';
+  };
+  if (!data || !Number.isFinite(data.score)) {
+    const reasons = {catalog:'等待当前生效的官方价表', sample:'可用收入样本不足 5 人', income:'等待覆盖至少三天的同口径收入流水'};
+    body.className = 'ec-control-copy';
+    body.textContent = reasons[data && data.reason] || '等待价格和收入快照';
+    counters.textContent = '';
+    return;
+  }
+  const {score, income, inside, cheap, costly, assessed, total} = data;
+  const windowDays = (income.hours / 24).toFixed(1).replace(/\.0$/, '');
+  body.className = 'ec-control-main';
+  body.innerHTML = `
+    <div>
+      <div class="ec-control-score">${score.toFixed(1)}%</div>
+      <div class="ec-control-copy">${numbers(inside)} / ${numbers(assessed)} 项定价在目标内${total > assessed ? ' · ' + numbers(total - assessed) + ' 项待设目标' : ''}</div>
+    </div>
+    <div>
+      <div class="ec-control-rate">${numbers(Math.round(income.rate))} 币 / 在线小时</div>
+      <div class="ec-control-copy">过去 ${windowDays} 日 · ${numbers(income.samples)} 名有经营收入的玩家 · 中间一半 ${numbers(Math.round(income.p25))}–${numbers(Math.round(income.p75))} 币/小时</div>
+      <div class="ec-control-meter" aria-hidden="true">${[inside, cheap, costly].map(n => '<i style="width:' + n / assessed * 100 + '%"></i>').join('')}</div>
+      <div class="ec-control-copy ec-control-counts"><span>达标 <b>${numbers(inside)}</b></span><span>低于目标 <b>${numbers(cheap)}</b></span><span>高于目标 <b>${numbers(costly)}</b></span></div>
+    </div>`;
+  counters.innerHTML = `<table class="ec-control-table" aria-label="各柜台商品的预计购入时间">
+    <thead><tr><th scope="col">柜台</th><th scope="col">目标</th><th scope="col">中位价</th><th scope="col">购入耗时</th><th scope="col">达标</th></tr></thead>
+    <tbody>${data.counters.map(row => {
+      const target = row.target;
+      const above = target && row.hours50 > target[1];
+      const interval = target ? (target[0] ? duration(target[0]) + '–' + duration(target[1]) : '≤ ' + duration(target[1])) : '待定';
+      return `<tr><th scope="row">${esc(row.name)}</th><td>${interval}</td><td>${numbers(row.price50)} 币</td>
+        <td class="${above ? 'above' : ''}">${duration(row.hours50)}</td><td>${target ? numbers(row.inside) + ' / ' + numbers(row.items) : '—'}</td></tr>`;
+    }).join('')}</tbody></table>`;
+}
+
 function renderInflation(data) {
   const main = $('inflationBody');
   $('inflationTime').textContent = data ? '数据截至 ' + new Date(data.asOf).toLocaleString('zh-CN', {
@@ -1939,6 +2024,7 @@ function renderInflation(data) {
 
 function renderEco() {
   if (!$('t-eco')) return;
+  renderEconomyControl(D.economyControl);
   renderInflation(D.inflation);
   const ps = D.players || [];
   renderTicker();
