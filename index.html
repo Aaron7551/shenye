@@ -2510,6 +2510,16 @@ function renderMapTab() {
   info.textContent = m.up === true ? '实时 · 可拖拽缩放' : '服务器休息中，看的是上次存下的存档';
   if (box.dataset.on === url) return;
   box.dataset.on = url;
+  // 地图是 http 的：https 页面直接嵌 iframe 会被浏览器当混合内容拦掉，改成新标签页打开
+  if (location.protocol === 'https:' && /^http:\/\//i.test(url)) {
+    box.innerHTML = '<div class="map-load">'
+      + '<b>深夜食堂 3D 地图</b>'
+      + '<span>主世界 · 下界 · 末地 · 沧海星 · 山河星，能拖拽旋转、滚轮缩放。</span>'
+      + '<a class="map-go" href="' + esc(url) + '/" target="_blank" rel="noopener">打开地图 ↗</a>'
+      + '<span class="map-fine">地图走的是 http，浏览器不允许 https 页面把它直接嵌在这里，所以用新标签页打开。</span>'
+      + '</div>';
+    return;
+  }
   box.innerHTML = '<div class="map-frame"><iframe src="' + esc(url) + '/" title="深夜食堂服务器地图" loading="lazy" referrerpolicy="no-referrer"></iframe></div>'
     + '<div class="map-tip">拖拽旋转、滚轮缩放，右上角点图层能切维度（主世界 / 下界 / 末地 / 沧海星 / 山河星）。'
     + '<a href="' + esc(url) + '/" target="_blank" rel="noopener">全屏打开 ↗</a></div>';
