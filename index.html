@@ -2513,7 +2513,7 @@ function renderMapTab() {
   if (box.dataset.on === url) return;
   box.dataset.on = url;
   // 地图若是 http 地址，https 页面上 iframe 会被当混合内容拦掉，只能给个入口
-  if (location.protocol === 'https:' && /^http:///////i.test(url)) {
+  if (location.protocol === 'https:' && /^http:\/\//i.test(url)) {
     box.innerHTML = '<div class="map-load"><a class="map-go" href="' + esc(url) + '/" target="_blank" rel="noopener">打开地图 ↗</a></div>';
     return;
   }
