@@ -2554,6 +2554,7 @@ document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
   try { history.replaceState(null, '', '#' + b.dataset.t); } catch (e) {}
   if (b.dataset.t === 'fish' || b.dataset.t === 'rank') updateFishTimers();
   if (b.dataset.t === 'eco' && D) { try { renderEco(); } catch (e) {} }
+  if (b.dataset.t === 'map') { try { renderMapTab(); } catch (e) {} }
 });
 // 主题
 function applyTheme(t) {
