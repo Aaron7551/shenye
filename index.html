@@ -101,6 +101,14 @@ h1{margin:0;font-size:17px;font-weight:800;letter-spacing:2px;line-height:1.25}
 .grid{display:grid;gap:18px}
 .boards{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
 .mt{margin-top:18px}
+/* ---------- 服务器地图 ---------- */
+.map-frame{position:relative;width:100%;height:min(74vh,780px);min-height:420px;border-radius:20px;overflow:hidden;background:var(--fill);border:1px solid var(--line)}
+.map-frame iframe{width:100%;height:100%;display:block;border:0;background:#0e1016}
+.map-load{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:300px;text-align:center;color:var(--ink2);font-size:14px;line-height:1.95}
+.map-load b{font-size:16px;color:var(--ink)}
+.map-tip{margin-top:12px;font-size:12.5px;color:var(--ink3);line-height:1.8}
+.map-tip a{margin-left:10px;color:var(--amber2)}
+@media (max-width:640px){ .map-frame{height:62vh;min-height:360px;border-radius:16px} }
 .page-hd{display:flex;align-items:baseline;gap:14px;margin:4px 4px 18px;flex-wrap:wrap}
 .page-hd h2{margin:0;font-size:29px;font-weight:800;letter-spacing:1px}
 .page-hd p{margin:0;color:var(--ink2);font-size:13.5px}
@@ -538,6 +546,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
     </div>
     <nav class="tabs">
       <button class="act" data-t="home">今天</button>
+      <button data-t="map">地图</button>
       <button data-t="rank">排行榜</button>
       <button data-t="fish">鱼市</button>
       <button data-t="prog">大家的进度</button>
@@ -573,6 +582,13 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
       <div id="online24"></div>
     </div>
     <div class="card mt"><h3>冠军墙<span class="r">谁拿的第一最多</span></h3><div id="wall"></div></div>
+  </section>
+
+  <section class="tab" id="t-map">
+    <div class="card">
+      <h3>服务器地图<span class="r" id="mapInfo"></span></h3>
+      <div id="mapBody"><div class="map-load">地图加载中…</div></div>
+    </div>
   </section>
 
   <section class="tab" id="t-rank">
@@ -2478,6 +2494,27 @@ function renderHomeTransport(project) {
     + '<dl>' + fields(stats) + '</dl>'
     + '<p>材料 ' + fmt(project.materials) + ' 币 · 人工 ' + fmt(project.labor) + ' 币 · 已退回 ' + fmt(project.refunded) + ' 币</p>';
 }
+// ---------- 服务器地图（服务端 BlueMap，地址由面板写进 data.json 的 map） ----------
+function renderMapTab() {
+  const box = $('mapBody'), info = $('mapInfo');
+  if (!box) return;
+  const m = (D && D.map) || {};
+  const url = String(m.url || '').replace(/\/+$/, '');
+  if (!url) {
+    info.textContent = '暂时只在家里能看';
+    box.innerHTML = '<div class="map-load"><b>地图还没开到外网</b>'
+      + '<span>服务器里已经装好 3D 网页地图了，<br>但现在只有服主家里和局域网能打开。</span>'
+      + '<span style="color:var(--ink3)">等公网地址弄好，这一页直接就是地图。</span></div>';
+    return;
+  }
+  info.textContent = m.up === true ? '实时 · 可拖拽缩放' : '服务器休息中，看的是上次存下的存档';
+  if (box.dataset.on === url) return;
+  box.dataset.on = url;
+  box.innerHTML = '<div class="map-frame"><iframe src="' + esc(url) + '/" title="深夜食堂服务器地图" loading="lazy" referrerpolicy="no-referrer"></iframe></div>'
+    + '<div class="map-tip">拖拽旋转、滚轮缩放，右上角点图层能切维度（主世界 / 下界 / 末地 / 沧海星 / 山河星）。'
+    + '<a href="' + esc(url) + '/" target="_blank" rel="noopener">全屏打开 ↗</a></div>';
+}
+
 function render() {
   const live = D.server && D.server.online && Date.now() - D.updated < 40 * 60000;
   const s = $('srv');
@@ -2491,6 +2528,7 @@ function render() {
   renderRank();
   renderPlayers();
   renderEco();
+  renderMapTab();
 }
 
 async function load() {
