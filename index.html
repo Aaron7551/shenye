@@ -1200,9 +1200,9 @@ const BOARDS = [
   {c: 'life', t: '繁殖动物', nick: '饲养员', v: p => S(p, 'animalsBred'), f: v => v + ' 次'},
   {c: 'life', t: '村民交易', nick: '奸商', v: p => S(p, 'tradedVillager'), f: v => v + ' 次'},
   {c: 'life', t: '睡觉', nick: '早睡早起', v: p => S(p, 'sleep'), f: v => v + ' 次'},
-  {c: 'time', t: '总在线', nick: '肝帝', v: p => p.onlineTotal, f: dur},
-  {c: 'time', t: '今日在线', nick: '今日最肝', v: p => p.onlineToday, f: dur},
-  {c: 'time', t: '近 7 天在线', nick: '周榜肝帝', v: p => p.onlineWeek, f: dur}
+  {c: 'time', t: '总在线', nick: '肝帝', v: p => p.onlineTotal, f: durH},
+  {c: 'time', t: '今日在线', nick: '今日最肝', v: p => p.onlineToday, f: durH},
+  {c: 'time', t: '近 7 天在线', nick: '周榜肝帝', v: p => p.onlineWeek, f: durH}
 ];
 const ava = (n, size) => `<div class="ava" style="width:${size}px;height:${size}px">${esc(n[0].toUpperCase())}<img src="https://mc-heads.net/avatar/${encodeURIComponent(n)}/${size}" alt="" onerror="this.remove()" onload="this.parentNode.firstChild.textContent=''"></div>`;
 
@@ -2114,7 +2114,7 @@ function renderPlayers() {
         <div class="k">酒馆营收</div><div><b>${fmt(te)}</b> <span class="dim">/ 15,000${tNext ? ' · 下一档 ' + fmt(tNext) : ' · 满了'}</span><div class="prog"><i style="width:${Math.min(100, te / 250)}%"></i>${tticks}</div></div>
         <div class="k">Boss</div><div>${(p.bosses || []).length ? `<b style="color:var(--amber2)">${p.bosses.length}</b> <span class="dim">/ ${D.bossTotal || 25} · ${p.bosses.slice(-4).map(esc).join('、')}</span>` : '<span class="dim">还没有</span>'}</div>
         <div class="k">成就</div><div>${p.adv ? `${p.adv.n} 个 · <b style="color:var(--amber2)">${p.adv.pts}</b> 分` : '—'}</div>
-        <div class="k">在线</div><div>${dur(p.onlineTotal)} <span class="dim">· 今天 ${dur(p.onlineToday)}</span></div>
+        <div class="k">在线</div><div>${durH(p.onlineTotal)} <span class="dim">· 今天 ${durH(p.onlineToday)}</span></div>
       </div></div>`;
   }).join('');
 }
@@ -2137,7 +2137,7 @@ function renderOnline24() {
     const segs = (r.segs || []).filter(s => s[1] > from);
     return `<div class="tl-row"><span class="nm" title="${esc(r.n)}">${esc(r.n)}</span>` +
       `<div class="tl-track">${segs.map(s => `<i class="${s[2] ? 'live' : ''}" style="left:${W(s[0])}%;width:${Math.max(0.4, W(s[1]) - W(s[0]))}%" title="${hm(s[0])} – ${s[2] ? '现在还在服里' : hm(s[1])}"></i>`).join('')}</div>` +
-      `<span class="v">${dur(r.ms)}</span></div>`;
+      `<span class="v">${durH(r.ms)}</span></div>`;
   }).join('') +
     `<div class="tl-axis"><i></i><div>${axis}</div><i></i></div>` +
     `<div class="dim" style="font-size:11.5px;margin-top:10px">${anyLive ? '橙色是现在还在服里；' : ''}横轴是最近 24 小时，鼠标停在色块上看具体时间；进出记录从装上面板脚本开始记。</div>`;
