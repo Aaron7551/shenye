@@ -1146,6 +1146,13 @@ function dur(ms) {
   if (h > 0) return h + ' 小时 ' + (m % 60) + ' 分';
   return m + ' 分钟';
 }
+// 在线时长一律折成小时，超过一天也不换成天，几个榜才好横向比
+function durH(ms) {
+  if (ms == null || ms < 0) return '—';
+  const m = Math.round(ms / 60000), h = Math.floor(m / 60);
+  if (h > 0) return h + ' 小时' + (m % 60 ? ' ' + (m % 60) + ' 分' : '');
+  return m + ' 分钟';
+}
 function ago(t) {
   const s = (Date.now() - t) / 1000;
   if (s < 90) return '刚刚';
