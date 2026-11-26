@@ -553,6 +553,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
       <button data-t="map">地图</button>
       <button data-t="rank">排行榜</button>
       <button data-t="fish">鱼市</button>
+      <button data-t="expedition">星际远征</button>
       <button data-t="prog">大家的进度</button>
       <button data-t="eco">开店与经济</button>
       <button data-t="news">更新公告</button>
@@ -571,9 +572,9 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <div class="who" id="hmWho"></div>
       </div>
       <div class="card news-bar" data-goto="news">
-        <span class="tag">5.2.2</span>
-        <div class="t">5.2.2：单人修复 · 深夜手机 · 性能优化</div>
-        <div class="d">修复 5.2.1 不能进单人模式的问题，并入深夜食堂智能手机模组与全套双端性能优化。</div>
+        <span class="tag">6.0.0</span>
+        <div class="t">6.0.0：星际食堂与跨星球大循环 · 戴夫昼战夜店 · 轨道星港与首领</div>
+        <div class="d">深夜版「潜水员戴夫」昼战夜店双闭环（鱼获稀料入今夜特供、夜间 +40% 爆赚反哺护服/枪匠/TACZ军械）、地球轨道星港 Lv.0-5 全服基建、13×13 双层星球迷宫搜打撤/外卖、七大行星首领与深夜手机 1.2.0。</div>
         <div class="go">看更新公告 <i>→</i></div>
       </div>
     </div>
@@ -750,8 +751,45 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
     <div id="fishContent"><div class="card empty">正在读取鱼市数据…</div></div>
   </section>
 
+  <section class="tab" id="t-expedition" aria-labelledby="expTitle">
+    <div class="fish-head">
+      <h2 id="expTitle">星际远征 · 星球主题迷宫、轨道星港与实星首领</h2>
+      <span id="expUpdated" class="fish-note"></span>
+    </div>
+    <div id="expContent"><div class="card empty">正在读取星际远征与首领数据…</div></div>
+  </section>
+
   <section class="tab" id="t-news">
     <div class="card news">
+      <h3>深夜食堂 6.0.0<span class="ver">2026-11-26</span><span class="r">星际食堂与跨星球大循环 · 轨道星港 · 深夜手机 1.2.0</span></h3>
+      <p>大版本升级上线！以 <b>星际远征（shenye_expedition 2.0.0）</b> 为核心，联动 <b>深夜酒馆 1.3.5</b>、<b>深夜鱼市 1.2.6</b>、<b>零号星独立背包 1.0.2</b> 与 <b>深夜手机 1.2.0</b>，把餐厅料理/酿酒、TACZ 枪械、打工/打捞与八大星球真正串联成可长期游玩的跨星系大循环。</p>
+      <h4>星际餐饮 × 枪械美食增益（Cuisine Buffs）</h4>
+      <ul>
+        <li><b>吃进嘴的战力与外星护盾</b>：热菜、甜点与陈酿美酒不再只是饱食度——在异星提供短暂氧气/热压免伤与近战/枪械增益，<b>料理 + 酿酒组合</b>可把原本繁琐的太空生存成本转化为食堂玩家的独家优势。</li>
+      </ul>
+      <h4>深夜版「潜水员戴夫」昼战夜店双闭环（<code>/dave</code> · 手机顶栏 · 远征右栏）</h4>
+      <ul>
+        <li><b>白天战钓供夜店</b>：将带 <code>shenye_fish</code> 印章鱼获与远征珍稀食材存入 6 格「今夜特供冷柜」，在餐厅出菜或酒馆端酒时自动售出 1 份高价入账（MC 夜晚黄金档额外 <b>+40%</b>）。</li>
+        <li><b>开店反哺装备与安全箱</b>：花费开店赚取的 OTC 币 + 餐厅/酒馆经营星级 + 探索零件，即可在手机或远征大厅升级<b>深潜宇航护服 Lv.1~5</b>、<b>枪械精密整备 Lv.1~5</b>（伤害 +25% · 自带出征备弹 +128），免战功购买 TACZ 步枪/重武、精妙背包与 3~4 格安全箱；老锚每晚另接 <code>/tavern salvage gear</code> 定制武装匣。</li>
+      </ul>
+      <h4>地球轨道星港（Lv.0–5 全服共建）与星际外卖配送</h4>
+      <ul>
+        <li><b>全服共同基建</b>：输入 <code>/spaceport</code>、按手机「轨道星港」图标或向星港补给官捐献食材与物资，推动地球轨道 <b>Lv.0 → Lv.5 星港等级</b>成长，解锁更高级的穹顶庇护、轨道鱼池、高价配送与全服增益。</li>
+        <li><b>星际外卖订单</b>：通过手机「星际外卖」或 <code>/delivery</code> 接单，把餐厅现货热菜/美酒跨星系送往月球/火星/水星/金星/霜原定居点，获得外卖报酬、战功与声望。</li>
+      </ul>
+      <h4>星球主题迷宫搜打撤 · 七大行星实星首领（低挫败共斗）</h4>
+      <ul>
+        <li><b>8 大星域 · 13×13 双层主题迷宫副本</b>：按 <code>J</code>、<code>/raid</code> 或手机「星际远征」开启以 <code>ad_astra</code>（月球/火星/水星/金星/霜原/轨道）或 <code>shenye</code>（沧海/山河）为主题的独立星球构筑迷宫副本（含月球低重力断桥捷径、沧海深水下沉货舱等特色机制）；208×208 双层悬空连廊迷宫、密钥卡封锁金库、20 分钟限时搜打撤、异变体精英守卫与三层背包快照防护。</li>
+        <li><b>七大行星世界首领（BOMD / Mowzie / 灾变）</b>：按 <code>K</code>、<code>/boss</code> 或手机直达 56×56 加高防破坏角斗场（月球钢铁守护者・火星暗夜巫妖・金星下界铁掌・水星黑曜巨石柱・霜原冻兽・沧海斯库拉・无名虚空之花；仅限副本与角斗场降临），<b>死亡 0 掉落、10 秒满状态再战</b>。</li>
+      </ul>
+      <h4>旧星球盘活：沧海星 / 山河星 / 零号星</h4>
+      <ul>
+        <li><b>沧海星</b>：古旧零件修机门槛从 20 个大幅降至 <b>8 个</b>（1/3/5 次累计里程碑奖励），深海 Y&lt;20 打捞零件翻倍，酒馆离星营业 +35% 营收与 ×2 旅人。</li>
+        <li><b>山河星 &amp; 鱼市扩展</b>：雾海灯塔（<code>/lighthouse</code>）全服共振，<code>Y≥165</code> 高空云道赐予云翼滑翔翼，新增霜原/轨道 4 种鱼类与全秘闻鱼线索、深海/灯塔/星港品质变异联动。</li>
+        <li><b>零号星重访与独立背包</b>：点亮 4 盏主线灯即可用 <code>/zero visit</code> 限时记忆巡礼，零号星防丢物背包（1.0.2）同步加固跨服稳定性。</li>
+      </ul>
+    </div>
+    <div class="card news" style="margin-top:14px">
       <h3>深夜食堂 5.2.2<span class="ver">2026-11-20</span><span class="r">单人模式修复 · 深夜手机 1.0.0 · 双端性能优化</span></h3>
       <p>本次 5.2.2 主要修复单人模式无法进入的问题，同时并入「深夜食堂智能手机」模组与全套双端性能优化。<b>请所有玩家更新客户端以使用深夜手机和获得优化体验</b>。</p>
       <h4>单人模式修复</h4>
@@ -2584,6 +2622,68 @@ function showFish(fish, missing = '深夜鱼市未安装或还没开服') {
 }
 setInterval(updateFishTimers, 1000);
 
+function expSecText(sec) {
+  const s = Math.max(0, Math.round(Number(sec) || 0));
+  return Math.floor(s / 60) + '分' + String(s % 60).padStart(2, '0') + '秒';
+}
+function showExpedition(ex, missing = '星际远征尚未安装或暂无快照') {
+  const box = $('expContent');
+  if (!box) return;
+  const sp = (ex && ex.spaceport) || {};
+  const lh = (ex && ex.lighthouse) || {};
+  $('expUpdated').textContent = ex && fishDate(ex.t) ? ('星际远征 v' + (ex.version || '2.0.0') + ' · 快照 ' + fishDate(ex.t)) : '';
+  if (!ex || !ex.t) {
+    box.innerHTML = `<div class="card empty">${missing}</div>`;
+    return;
+  }
+  const totals = [
+    ['进行中远征', ex.activeRaids || 0, '局'],
+    ['累计出征', ex.totalRuns || 0, '次'],
+    ['成功撤离', ex.totalExtracts || 0, '次'],
+    ['星际配送', sp.totalDeliveries || 0, '单'],
+    ['轨道星港', 'Lv.' + (sp.level || 0), sp.name || '未建'],
+    ['战利品变现', ex.totalLootSold || 0, '币']
+  ];
+  const ov = `<dl class="fish-totals">${totals.map(([l, v, u]) => `<div class="card"><dt>${l}</dt><dd>${typeof v === 'number' ? fishFmt(v) : esc(v)} ${esc(u)}</dd></div>`).join('')}</dl>`;
+
+  const spNext = Math.max(1, Number(sp.nextExp || sp.exp || 1));
+  const spExp = Math.max(0, Number(sp.exp || 0));
+  const spMax = (sp.level || 0) >= 5;
+  const spLeaders = (sp.leaders || []).map((ld, i) => `<li class="fish-row"><span class="fish-rank ${i < 3 ? 'prize' : ''}">${i + 1}</span><span class="fish-main"><b>${esc(ld.name)}</b></span><span class="fish-value">${fishFmt(ld.score || 0)} 贡献</span></li>`);
+  const spCard = fishCard('地球轨道星际港（全服共同基建）',
+    `<div class="fish-raid"><div class="fish-raid-head"><b>🛰 Lv.${sp.level || 0} ${esc(sp.name || '轨道停机坪')}</b><span>${spMax ? '已满级（全星球加成激活）' : (fishFmt(spExp) + ' / ' + fishFmt(spNext) + ' EXP')}</span></div>` +
+    `<progress value="${spMax ? 100 : Math.min(spExp, spNext)}" max="${spMax ? 100 : spNext}"></progress>` +
+    `<div class="fish-meta">当前加成：${esc(sp.perk || '基础护盾与补给')} · 累计补给 ${fishFmt(sp.totalDeliveries || 0)} 单${sp.topContributor ? ' · 头号功臣 ' + esc(sp.topContributor) : ''}</div></div>` +
+    `<h4 class="fish-record-label">星港建设贡献榜</h4>${fishList(spLeaders, '暂无人提交星港补给（/spaceport）')}`, true);
+
+  const lhExp = Math.max(0, Number(lh.exp || 0)), lhGoal = Math.max(1, Number(lh.goal || 600));
+  const lhStatus = lh.lit ? `<b style="color:var(--green)">✓ 已点亮</b>（首亮者：${esc(lh.builder || '全服')} · 解锁雾海空投/山河星滑翔与星海共振）` : `建设中 ${fishFmt(lhExp)} / ${fishFmt(lhGoal)} EXP（<code>/lighthouse</code> 提交食材）`;
+  const lhCard = fishCard('雾海灯塔与八大星球航线',
+    `<p class="fish-meta">山河雾海灯塔：${lhStatus}</p><progress value="${Math.min(lhExp, lhGoal)}" max="${lhGoal}" style="margin:6px 0 10px"></progress>` +
+    `<div class="fish-meta"><b>6.0.0 戴夫星海大循环</b>：白天星球迷宫/深海捞章鱼转「今夜特供」 → 夜间餐厅/酒馆 +40% 赚币反哺护服/枪匠/TACZ军械 → 轨道星港/山河灯塔/4灯巡礼零号星 + 外卖 + 七大行星首领。</div>`, true);
+
+  const b = ex.boss || {};
+  let bossHtml = '';
+  if (b.active) {
+    const pct = b.maxHp > 0 ? Math.max(0, Math.min(100, Math.round(100 * (b.hp || 0) / b.maxHp))) : 0;
+    const shieldTxt = b.vulnerable ? '<span style="color:var(--green);font-weight:700"> · 护盾已破 可全力输出</span>' : `<span style="color:var(--red);font-weight:700"> · 护盾水晶存活 ${b.crystals || 0} 颗</span>`;
+    const dmgRows = (b.liveTop || []).map((d, i) => `<li class="fish-row"><span class="fish-rank">${i + 1}</span><span class="fish-main"><b>${esc(d.name)}</b></span><span class="fish-value">${fishFmt(Math.round(d.dmg || 0))} 伤</span></li>`);
+    bossHtml = `<div class="fish-raid"><div class="fish-raid-head"><b>☠ ${esc(b.name || '世界首领')} · ${esc(b.planetName || '异星战场')}${shieldTxt}</b><span>${fishFmt(Math.round(b.hp || 0))} / ${fishFmt(Math.round(b.maxHp || 0))} HP (${pct}%) · 剩余 ${expSecText(b.remainSec)}</span></div><progress value="${Math.round(b.hp || 0)}" max="${Math.max(1, Math.round(b.maxHp || 1))}"></progress><div class="fish-meta">词缀：${esc(b.affix || '')}${b.mechanism ? ' · 机制：' + esc(b.mechanism) : ''} · 死亡 0 掉落 10 秒再战</div></div>${fishList(dmgRows, '等待输出伤害…')}`;
+  } else {
+    bossHtml = `<p class="fish-meta">下轮首领：<b>${esc(b.name || '钢铁守护者 · 铁甲巨像')}</b>（${esc(b.planetName || '月球')}） · 每日 ${esc(b.nextStart || '20:30')} 开战 · ${esc(b.mechanism || '破水晶虚弱阶段 + 高额伤害上限防秒')}</p>`;
+  }
+  const histRows = (b.history || []).map(h => {
+    if (typeof h === 'string') return `<li>${esc(h)}</li>`;
+    const status = h.killed ? '斩杀成功' : '时间耗尽';
+    return `<li>${esc(h.planet ? '[' + h.planet + '] ' : '')}<b>${esc(h.title || '世界首领')}</b> · ${status} · 最高输出 ${esc(h.top || '—')}（${fishFmt(h.dmg || 0)}）${h.lastHit ? ' · 尾刀 ' + esc(h.lastHit) : ''} · ${h.players || 0}人参战</li>`;
+  }).join('');
+  const bossCard = fishCard('行星世界首领共斗', bossHtml + (histRows ? `<h4 class="fish-record-label">近期战报</h4><ul class="fish-history">${histRows}</ul>` : ''), true);
+
+  const topRows = (ex.topPlayers || []).map((p, i) => `<li class="fish-row"><span class="fish-rank ${i < 3 ? 'prize' : ''}">${i + 1}</span><span class="fish-main"><b>${esc(p.name)}</b><span class="fish-meta">出征 ${p.runs || 0} · 撤离 ${p.extracts || 0} · 配送 ${p.deliveries || 0} · 首领 ${p.bossKills || 0} · 星港 ${fishFmt(p.spaceportContrib || 0)}</span></span><span class="fish-value">${fishFmt(p.merit || 0)} 战功<span class="fish-meta">变现 ${fishFmt(p.sold || 0)} 币</span></span></li>`);
+  const rankCard = fishCard('星际战功、配送与变现榜', fishList(topRows, '尚无出征记录'), true);
+  box.innerHTML = ov + `<div class="grid fish-grid">${spCard}${lhCard}${bossCard}${rankCard}</div>`;
+}
+
 function renderHomeTransport(project) {
   if (!project) return;
   const spent = project.materials + project.labor;
@@ -2633,6 +2733,7 @@ function render() {
   s.lastElementChild.textContent = live ? `服务器开着 · ${D.server.players} 人在线` : '服务器休息中';
   $('upd').textContent = '更新于 ' + ago(D.updated) + (live ? '' : (Date.now() - D.updated > 40 * 60000 ? '（服务器或面板没开，数据停在这里）' : ''));
   showFish(D.fish);
+  showExpedition(D.expedition);
   renderHome(live);
   renderHomeTransport(D.publicTransport);
   renderOnline24();
@@ -2652,6 +2753,7 @@ async function load() {
     if (!D) {
       $('upd').textContent = '数据还没上传，等服务器面板第一次同步';
       showFish(null, '鱼市数据还未同步');
+      showExpedition(null, '星际远征数据还未同步');
     }
   }
 }
