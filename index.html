@@ -230,7 +230,7 @@ footer{color:var(--ink3);font-size:12px;text-align:center;margin-top:36px}
 .tv-sum .ti{padding:14px 16px}
 .tv-sum .ti .v{font-size:21px}
 .tv-sum .ti .sub{display:block;font-size:11.5px;color:var(--ink3);margin-top:3px}
-.tv-tag{display:inline-block;font-size:11.5px;padding:3px 10px;border-radius:99px;background:rgba(255,190,90,.14);color:var(--ac,#f0b35a);font-weight:700;margin-left:8px;vertical-align:middle}
+.tv-tag{display:inline-block;font-size:11.5px;padding:3px 10px;border-radius:99px;background:rgba(255,190,90,.14);color:#f0b35a;font-weight:700;margin-left:8px;vertical-align:middle}
 .tv-how{font-size:13px;color:var(--ink2);line-height:1.95}
 .tv-how b{color:var(--ink)}
 .tv-how code{background:var(--fill);padding:1px 6px;border-radius:6px;font-size:12px}
@@ -334,7 +334,7 @@ footer{color:var(--ink3);font-size:12px;text-align:center;margin-top:36px}
 @media (max-width:980px){
   .home-top,.eco-main,.two,.three{grid-template-columns:1fr}
   .ticker{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .ti:nth-child(4),.ti:nth-child(5){display:none}
+  .ticker .ti:nth-child(4),.ticker .ti:nth-child(5){display:none}
   .topnav{position:static;border-radius:28px}
 }
 @media (max-width:640px){
@@ -345,7 +345,7 @@ footer{color:var(--ink3);font-size:12px;text-align:center;margin-top:36px}
   .kv{grid-template-columns:64px minmax(0,1fr)}
   .card{padding:18px}
   .ticker{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .ti:nth-child(3){display:none}
+  .ticker .ti:nth-child(3){display:none}
   #econChart{height:200px}
   .tl-row,.tl-axis{grid-template-columns:70px minmax(0,1fr) 56px;gap:8px}
   .chart-hd{flex-direction:column;align-items:stretch}
@@ -437,7 +437,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 .coop-empty span{max-width:520px}
 @media (max-width:640px){.coop-grid{grid-template-columns:1fr}.coop-m{grid-template-columns:12px minmax(0,1fr) 40px 80px}.coop-m .ord{display:none}.coop-nums b{font-size:20px}.coop-nums{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-.tv-extra{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}.tv-extra span{font-size:12px;padding:2px 8px;border-radius:10px;background:rgba(255,190,90,.12);color:var(--ac, #f0b35a)}
+.tv-extra{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}.tv-extra span{font-size:12px;padding:2px 8px;border-radius:10px;background:rgba(255,190,90,.12);color:#f0b35a}
 .tv-menu{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
 .tv-drink{font-size:12px;padding:3px 8px;border-radius:999px;background:var(--fill2);white-space:nowrap}
 .tv-drink i{font-style:normal;margin-left:4px;opacity:.65}
@@ -478,6 +478,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
 .fish-totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 18px;padding:0}
 .fish-totals .card{min-width:0;padding:13px 16px}
 .fish-totals dt{color:var(--ink3);font-size:12px}
+.fish-totals dd .fish-meta{display:block;font-size:12px;font-weight:400}
 .fish-totals dd{margin:4px 0 0;font-size:clamp(16px,2vw,23px);font-weight:700;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .fish-raid{padding:14px 16px;border-left:3px solid var(--amber2);border-radius:0 12px 12px 0;background:var(--fill)}
 .fish-raid-head{display:flex;align-items:baseline;justify-content:space-between;gap:4px 12px;flex-wrap:wrap}
@@ -716,7 +717,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
             <li>招牌周围 16 格是店面：森罗<b>高脚凳 / 沙发</b>当座位，<b>酒柜 / 酒架</b>里摆的酒就是酒单。<b>右键招牌</b>打开酒馆界面（开门 / 打烊、升星、邀请朋友合开），<b>潜行右键</b>快捷开门 / 打烊。</li>
             <li>客人坐下会冒出想喝的酒和最低品质，把对的酒<b>潜行右键摆在他面前</b>；喝完钱给端酒的人，算进<b>酒馆营收</b>（和餐厅营收分开）。夜里客人来得更快、小费更多。</li>
             <li>暗处的酒柜是酒窖，酒越陈越值钱；满月夜满座、2 星起夜里来熟客；店里的扑克桌能换筹码、Mino 桌能押币，<code>/tavern price</code> 标价的酒别的玩家能买。</li>
-            <li>开到 4 星、调过鸡尾酒、认下一位熟客、酒馆营收到 5000，就能点亮酒馆的灯。熟客偶尔会压低声音说起<b>一颗没有名字的星</b>——那是酒馆主线的终点。完整改动看「更新公告 → 5.0 beta5」。</li>
+            <li>开到 4 星、调过鸡尾酒、认下一位熟客、酒馆营收到 5000，就能点亮酒馆的灯。向熟客打听星球传闻，并继续完成终章的酒馆主线。主线终点是<b>山河星</b>，旧公告称它为「未命名的星」。</li>
           </ul>
         </div>
       </div>
@@ -787,6 +788,11 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li><b>沧海星</b>：古旧零件修机门槛从 20 个大幅降至 <b>8 个</b>（1/3/5 次累计里程碑奖励），深海 Y&lt;20 打捞零件翻倍，酒馆离星营业 +35% 营收与 ×2 旅人。</li>
         <li><b>山河星 &amp; 鱼市扩展</b>：雾海灯塔（<code>/lighthouse</code>）全服共振，<code>Y≥165</code> 高空云道赐予云翼滑翔翼，新增霜原/轨道 4 种鱼类与全秘闻鱼线索、深海/灯塔/星港品质变异联动。</li>
         <li><b>零号星重访与独立背包</b>：点亮 4 盏主线灯即可用 <code>/zero visit</code> 限时记忆巡礼，零号星防丢物背包（1.0.2）同步加固跨服稳定性。</li>
+      </ul>
+      <h4>客户端更新提示</h4>
+      <ul>
+        <li><b>5.2.2 及更早版本</b>：需要把客户端整合包更新到 6.0.0。</li>
+        <li><b>已安装 6.0.0</b>：本轮服务端热修沿用 6.0.0 客户端，无需重复更新。</li>
       </ul>
     </div>
     <div class="card news" style="margin-top:14px">
@@ -1097,7 +1103,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
       </ul>
     </div>
     
-<div class="card news" style="margin-top:14px">
+    <div class="card news" style="margin-top:14px">
       <h3>深夜食堂 5.0 beta5<span class="ver">2026-11-08</span><span class="r">深夜酒馆 · 地底 · 九盏灯</span></h3>
       <h4>新增 · 深夜酒馆</h4>
       <ul>
@@ -1164,6 +1170,7 @@ html.boot .hbar .tr i,.tab.entering .hbar .tr i{animation:grow .9s var(--ease) b
         <li>更新包里的 <code>kubejs</code> 文件夹要复制到游戏目录（mods 文件夹旁边），同名覆盖：记忆碎片 8、9 和星图坐标是新物品，没有它进服会报错</li>
         <li>这一版新加了 Alex's Caves、Citadel、Kaleidoscope Lib、洞穴厨房 4 个模组，深夜酒馆是 1.2.1，客户端包比 beta4 大了约 80 MB</li>
       </ul>
+    </div>
     <div class="card news" style="margin-top:14px">
       <h3>深夜食堂 5.0 beta4<span class="ver">2026-11-01</span><span class="r">这一版更新了什么</span></h3>
       <h4>合作餐厅 · 鼓励小店，也照顾一个人玩的</h4>
@@ -1270,9 +1277,19 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '
 const fmt = n => n == null || isNaN(n) ? '—' : Math.round(n).toLocaleString('zh-CN');
 const fmt1 = n => n == null || isNaN(n) ? '—' : (Math.round(n * 10) / 10).toLocaleString('zh-CN');
 const km = cm => cm >= 100000 ? (cm / 100000).toFixed(cm >= 1e7 ? 0 : 1) + ' km' : Math.round(cm / 100) + ' m';
-// 维度中文名：面板那边有一整张表，玩家网页只需要认得常去的几个，认不出就把命名空间削掉
-const DIMS = {'minecraft:overworld': '主世界', 'minecraft:the_nether': '下界', 'minecraft:the_end': '末地',
-  'shenye:zero': '零号星', 'shenye:nameless': '山河星', 'shenye:canghai': '沧海星'};
+const DIMS = {
+  'minecraft:overworld':'主世界','minecraft:the_nether':'下界','minecraft:the_end':'末地',
+  'twilightforest:twilight_forest':'暮色森林','aether:the_aether':'天境','shenye:zero':'零号星',
+  'shenye:nameless':'山河星','shenye:canghai':'沧海星','shenye_expedition:lost_realm':'失落界域',
+  'ad_astra:moon':'月球','ad_astra:mars':'火星','ad_astra:venus':'金星','ad_astra:mercury':'水星','ad_astra:glacio':'霜原星',
+  'ad_astra:earth_orbit':'地球轨道','ad_astra:moon_orbit':'月球轨道','ad_astra:mars_orbit':'火星轨道','ad_astra:venus_orbit':'金星轨道',
+  'ad_astra:mercury_orbit':'水星轨道','ad_astra:glacio_orbit':'霜原星轨道',
+  'cataclysm_dimension:cataclysm':'灾变',
+  'cataclysm_dimension:cataclysm_forge_of_aeons':'万古熔炉','cataclysm_dimension:cataclysm_abyssal_depths':'渊墟沉都',
+  'cataclysm_dimension:cataclysm_pharaohs_bane':'法老诅境','cataclysm_dimension:cataclysm_infernos_maw':'焚烬之喉',
+  'cataclysm_dimension:cataclysm_souls_anvil':'魂锻砧墟','cataclysm_dimension:cataclysm_bastion_lost':'遗亡坚垒',
+  'cataclysm_dimension:cataclysm_sanctum_fallen':'圣陨禁域','cataclysm_dimension:cataclysm_eternal_frosthold':'永锢冰狱'
+};
 const dimName = id => DIMS[id] || String(id || '').replace(/^.*:/, '');
 function dur(ms) {
   if (ms == null || ms < 0) return '—';
@@ -2246,7 +2263,7 @@ function renderPlayers() {
         <div class="k">餐厅营收</div><div><b>${fmt(earn)}</b> <span class="dim">/ 35,000${nextMs ? ' · 下一档 ' + fmt(nextMs) : ' · 满了'}</span><div class="prog"><i style="width:${Math.min(100, earn / 350)}%"></i>${ticks}</div></div>
         <div class="k">九盏灯</div><div class="lamps">${lampsHtml}${unknownLamps ? `<span class="dim" style="margin-left:8px;font-size:11px">${unknownLamps} 盏读不到 · 数据还是旧快照</span>` : ''}</div>
         <div class="k">记忆碎片</div><div class="mems">${mems}<span class="dim" style="margin-left:8px">${p.mem || 0} / 9</span></div>
-        <div class="k">酒馆营收</div><div><b>${fmt(te)}</b> <span class="dim">/ 15,000${tNext ? ' · 下一档 ' + fmt(tNext) : ' · 满了'}</span><div class="prog"><i style="width:${Math.min(100, te / 250)}%"></i>${tticks}</div></div>
+        <div class="k">酒馆营收</div><div><b>${fmt(te)}</b> <span class="dim">/ 15,000${tNext ? ' · 下一档 ' + fmt(tNext) : ' · 满了'}</span><div class="prog"><i style="width:${Math.min(100, te / 150)}%"></i>${tticks}</div></div>
         <div class="k">Boss</div><div>${(p.bosses || []).length ? `<b style="color:var(--amber2)">${p.bosses.length}</b> <span class="dim">/ ${D.bossTotal || 25} · ${p.bosses.slice(-4).map(esc).join('、')}</span>` : '<span class="dim">还没有</span>'}</div>
         <div class="k">成就</div><div>${p.adv ? `${p.adv.n} 个 · <b style="color:var(--amber2)">${p.adv.pts}</b> 分` : '—'}</div>
         <div class="k">在线</div><div>${durH(p.onlineTotal)} <span class="dim">· 今天 ${durH(p.onlineToday)}</span></div>
@@ -2631,33 +2648,36 @@ function showExpedition(ex, missing = '星际远征尚未安装或暂无快照')
   if (!box) return;
   const sp = (ex && ex.spaceport) || {};
   const lh = (ex && ex.lighthouse) || {};
-  $('expUpdated').textContent = ex && fishDate(ex.t) ? ('星际远征 v' + (ex.version || '2.0.0') + ' · 快照 ' + fishDate(ex.t)) : '';
+  $('expUpdated').textContent = ex && fishDate(ex.t) ? ('星际远征 v' + (ex.version || '2.0.0') + ' · 快照 ' + fishDate(ex.t) + (ex.themeTitle ? ' · 当前主题：' + ex.themeTitle : '')) : '';
   if (!ex || !ex.t) {
     box.innerHTML = `<div class="card empty">${missing}</div>`;
     return;
   }
+  const spLevel = 'Lv.' + (sp.level ?? 0);
+  const spName = String(sp.name || '轨道停机坪').trim() || '轨道停机坪';
+  const spTitle = /^Lv\.\d+\b/i.test(spName) ? spName : spLevel + ' · ' + spName;
   const totals = [
     ['进行中远征', ex.activeRaids || 0, '局'],
     ['累计出征', ex.totalRuns || 0, '次'],
     ['成功撤离', ex.totalExtracts || 0, '次'],
     ['星际配送', sp.totalDeliveries || 0, '单'],
-    ['轨道星港', 'Lv.' + (sp.level || 0), sp.name || '未建'],
-    ['战利品变现', ex.totalLootSold || 0, '币']
+    ['轨道星港', spTitle, ''],
+    ['战利品变现', ex.totalLootSold || 0, '币', '累计大金 ' + fishFmt(ex.totalBigGold ?? 0) + ' 件']
   ];
-  const ov = `<dl class="fish-totals">${totals.map(([l, v, u]) => `<div class="card"><dt>${l}</dt><dd>${typeof v === 'number' ? fishFmt(v) : esc(v)} ${esc(u)}</dd></div>`).join('')}</dl>`;
+  const ov = `<dl class="fish-totals">${totals.map(([l, v, u, note]) => `<div class="card"><dt>${l}</dt><dd>${typeof v === 'number' ? fishFmt(v) : esc(v)} ${esc(u)}${note ? `<span class="fish-meta">${esc(note)}</span>` : ''}</dd></div>`).join('')}</dl>`;
 
   const spNext = Math.max(1, Number(sp.nextExp || sp.exp || 1));
   const spExp = Math.max(0, Number(sp.exp || 0));
   const spMax = (sp.level || 0) >= 5;
   const spLeaders = (sp.leaders || []).map((ld, i) => `<li class="fish-row"><span class="fish-rank ${i < 3 ? 'prize' : ''}">${i + 1}</span><span class="fish-main"><b>${esc(ld.name)}</b></span><span class="fish-value">${fishFmt(ld.score || 0)} 贡献</span></li>`);
   const spCard = fishCard('地球轨道星际港（全服共同基建）',
-    `<div class="fish-raid"><div class="fish-raid-head"><b>🛰 Lv.${sp.level || 0} ${esc(sp.name || '轨道停机坪')}</b><span>${spMax ? '已满级（全星球加成激活）' : (fishFmt(spExp) + ' / ' + fishFmt(spNext) + ' EXP')}</span></div>` +
+    `<div class="fish-raid"><div class="fish-raid-head"><b>🛰 ${esc(spTitle)}</b><span>${spMax ? '已满级（全星球加成激活）' : (fishFmt(spExp) + ' / ' + fishFmt(spNext) + ' EXP')}</span></div>` +
     `<progress value="${spMax ? 100 : Math.min(spExp, spNext)}" max="${spMax ? 100 : spNext}"></progress>` +
-    `<div class="fish-meta">当前加成：${esc(sp.perk || '基础护盾与补给')} · 累计补给 ${fishFmt(sp.totalDeliveries || 0)} 单${sp.topContributor ? ' · 头号功臣 ' + esc(sp.topContributor) : ''}</div></div>` +
+    `<div class="fish-meta">当前加成：${esc(sp.perk || '基础护盾与补给')} · 累计建设 ${fishFmt(spExp)} 点${sp.topContributor ? ' · 头号功臣 ' + esc(sp.topContributor) : ''}</div></div>` +
     `<h4 class="fish-record-label">星港建设贡献榜</h4>${fishList(spLeaders, '暂无人提交星港补给（/spaceport）')}`, true);
 
   const lhExp = Math.max(0, Number(lh.exp || 0)), lhGoal = Math.max(1, Number(lh.goal || 600));
-  const lhStatus = lh.lit ? `<b style="color:var(--green)">✓ 已点亮</b>（首亮者：${esc(lh.builder || '全服')} · 解锁雾海空投/山河星滑翔与星海共振）` : `建设中 ${fishFmt(lhExp)} / ${fishFmt(lhGoal)} EXP（<code>/lighthouse</code> 提交食材）`;
+  const lhStatus = lh.lit ? `<b style="color:var(--jade)">✓ 已点亮</b>（首亮者：${esc(lh.builder || '全服')} · 解锁雾海空投/山河星滑翔与星海共振）` : `建设中 ${fishFmt(lhExp)} / ${fishFmt(lhGoal)} EXP（<code>/lighthouse</code> 提交食材）`;
   const lhCard = fishCard('雾海灯塔与八大星球航线',
     `<p class="fish-meta">山河雾海灯塔：${lhStatus}</p><progress value="${Math.min(lhExp, lhGoal)}" max="${lhGoal}" style="margin:6px 0 10px"></progress>` +
     `<div class="fish-meta"><b>6.0.0 戴夫星海大循环</b>：白天星球迷宫/深海捞章鱼转「今夜特供」 → 夜间餐厅/酒馆 +40% 赚币反哺护服/枪匠/TACZ军械 → 轨道星港/山河灯塔/4灯巡礼零号星 + 外卖 + 七大行星首领。</div>`, true);
@@ -2666,7 +2686,7 @@ function showExpedition(ex, missing = '星际远征尚未安装或暂无快照')
   let bossHtml = '';
   if (b.active) {
     const pct = b.maxHp > 0 ? Math.max(0, Math.min(100, Math.round(100 * (b.hp || 0) / b.maxHp))) : 0;
-    const shieldTxt = b.vulnerable ? '<span style="color:var(--green);font-weight:700"> · 护盾已破 可全力输出</span>' : `<span style="color:var(--red);font-weight:700"> · 护盾水晶存活 ${b.crystals || 0} 颗</span>`;
+    const shieldTxt = b.vulnerable ? '<span style="color:var(--jade);font-weight:700"> · 护盾已破 可全力输出</span>' : `<span style="color:var(--red);font-weight:700"> · 护盾水晶存活 ${b.crystals || 0} 颗</span>`;
     const dmgRows = (b.liveTop || []).map((d, i) => `<li class="fish-row"><span class="fish-rank">${i + 1}</span><span class="fish-main"><b>${esc(d.name)}</b></span><span class="fish-value">${fishFmt(Math.round(d.dmg || 0))} 伤</span></li>`);
     bossHtml = `<div class="fish-raid"><div class="fish-raid-head"><b>☠ ${esc(b.name || '世界首领')} · ${esc(b.planetName || '异星战场')}${shieldTxt}</b><span>${fishFmt(Math.round(b.hp || 0))} / ${fishFmt(Math.round(b.maxHp || 0))} HP (${pct}%) · 剩余 ${expSecText(b.remainSec)}</span></div><progress value="${Math.round(b.hp || 0)}" max="${Math.max(1, Math.round(b.maxHp || 1))}"></progress><div class="fish-meta">词缀：${esc(b.affix || '')}${b.mechanism ? ' · 机制：' + esc(b.mechanism) : ''} · 死亡 0 掉落 10 秒再战</div></div>${fishList(dmgRows, '等待输出伤害…')}`;
   } else {
@@ -2679,7 +2699,7 @@ function showExpedition(ex, missing = '星际远征尚未安装或暂无快照')
   }).join('');
   const bossCard = fishCard('行星世界首领共斗', bossHtml + (histRows ? `<h4 class="fish-record-label">近期战报</h4><ul class="fish-history">${histRows}</ul>` : ''), true);
 
-  const topRows = (ex.topPlayers || []).map((p, i) => `<li class="fish-row"><span class="fish-rank ${i < 3 ? 'prize' : ''}">${i + 1}</span><span class="fish-main"><b>${esc(p.name)}</b><span class="fish-meta">出征 ${p.runs || 0} · 撤离 ${p.extracts || 0} · 配送 ${p.deliveries || 0} · 首领 ${p.bossKills || 0} · 星港 ${fishFmt(p.spaceportContrib || 0)}</span></span><span class="fish-value">${fishFmt(p.merit || 0)} 战功<span class="fish-meta">变现 ${fishFmt(p.sold || 0)} 币</span></span></li>`);
+  const topRows = (ex.topPlayers || []).map((p, i) => `<li class="fish-row"><span class="fish-rank ${i < 3 ? 'prize' : ''}">${i + 1}</span><span class="fish-main"><b>${esc(p.name)}</b><span class="fish-meta">出征 ${p.runs || 0} · 撤离 ${p.extracts || 0} · 配送 ${p.deliveries || 0} · 首领 ${p.bossKills || 0} · 最高单场伤害 ${p.bestDmg == null ? '—' : fishFmt(p.bestDmg)} · 星港 ${fishFmt(p.spaceportContrib || 0)}</span></span><span class="fish-value">${fishFmt(p.merit || 0)} 战功<span class="fish-meta">变现 ${fishFmt(p.sold || 0)} 币</span></span></li>`);
   const rankCard = fishCard('星际战功、配送与变现榜', fishList(topRows, '尚无出征记录'), true);
   box.innerHTML = ov + `<div class="grid fish-grid">${spCard}${lhCard}${bossCard}${rankCard}</div>`;
 }
